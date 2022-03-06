@@ -3,6 +3,15 @@
 
 <body>
     Welcome, auditionee :)
+
+    List of groups:
+
+    <ul>
+        {% for group in groups: %}
+        <strong>{{group.get_name()}}</strong>
+        <br>
+        {% endfor %}
+    </ul>
 </body>
 
 </html>
