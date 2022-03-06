@@ -6,7 +6,7 @@
 #-----------------------------------------------------------------------
 
 from sys import argv, exit, stderr
-from penny import app
+from acaprez import app
 
 def main():
 
