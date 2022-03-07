@@ -23,12 +23,32 @@ def main():
                          (netID varchar(50) PRIMARY KEY,
                           name varchar(150) NOT NULL);''')
             # Insert data into table
+            ### NETIDS ARE UNKNOWN YET ###
             cur.execute('''INSERT INTO groups (netID, name)
                            VALUES (%s, %s)''',
-                           ('nassoons', 'The Princeton Nassoons'))
+                           ('nassoons', 'The Nassoons'))
             cur.execute('''INSERT INTO groups (netID, name)
                            VALUES (%s, %s)''',
-                           ('footnotes', 'The Princeton Footnotes'))
+                           ('footnotes', 'The Footnotes'))
+            cur.execute('''INSERT INTO groups (netID, name)
+                           VALUES (%s, %s)''',
+                           ('tigerlillies', 'The Tigerlillies'))
+            cur.execute('''INSERT INTO groups (netID, name)
+                           VALUES (%s, %s)''',
+                           ('tigressions', 'The Tigressions'))
+            cur.execute('''INSERT INTO groups (netID, name)
+                           VALUES (%s, %s)''',
+                           ('wildcats', 'The Wildcats'))
+            cur.execute('''INSERT INTO groups (netID, name)
+                           VALUES (%s, %s)''',
+                           ('roaring20', 'Roaring20'))
+            cur.execute('''INSERT INTO groups (netID, name)
+                           VALUES (%s, %s)''',
+                           ('katzenjammers', 'The Katzenjammers'))
+            cur.execute('''INSERT INTO groups (netID, name)
+                           VALUES (%s, %s)''',
+                           ('tigertones', 'The Tigertones'))
+
             # Commit changes
             con.commit()
 
