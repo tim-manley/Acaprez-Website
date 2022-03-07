@@ -22,7 +22,7 @@ def main():
             cur.execute('''CREATE TABLE groups 
                          (netID varchar(50) PRIMARY KEY,
                           name varchar(150) NOT NULL);''')
-            # Insert data into table
+            # Insert group data into table (maybe not to be hardcoded??)
             ### NETIDS ARE UNKNOWN YET ###
             cur.execute('''INSERT INTO groups (netID, name)
                            VALUES (%s, %s)''',
