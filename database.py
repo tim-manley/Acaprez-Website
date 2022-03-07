@@ -3,20 +3,13 @@ from psycopg2 import connect
 from group import Group
 
 # Database specific variables:
-HOST = 'localhost'
-DATABASE = 'test_db'
-USER = 'tim' # Should use: os.environ['DB_USERNAME']
-PASSWORD = 'manley' # Should use: os.environ['DB_PASSWORD']
+DATABASE_URL = os.environ['DATABASE_URL']
 
 def get_groups():
 
     groups = []
 
-    with connect(
-        host=HOST,
-        database=DATABASE,
-        user=USER,
-        password=PASSWORD) as con:
+    with connect(DATABASE_URL, sslmode='require') as con:
         with con.cursor() as cur:
             cur.execute('SELECT * FROM groups;')
             
