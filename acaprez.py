@@ -45,14 +45,8 @@ def leader():
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
-<<<<<<< HEAD
     netID = request.form['netID']
     groups = get_groups() # Exception handling ommitted
-=======
-
-    groups = db.get_groups() # Exception handling ommitted
->>>>>>> 6af54cc4eb0e4cb2e407bde9e3f5b8d85c8bbca5
-
     html = render_template('auditionee.html', groups=groups, id=netID)
     response = make_response(html)
     response.set_cookie('netID', netID)
