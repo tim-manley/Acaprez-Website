@@ -9,6 +9,15 @@ USER = 'cmjmzphzaovzef'
 PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
 def get_groups():
+    '''
+    Returns a list of the groups in the database
+
+        Parameters: 
+            None
+
+        Returns: 
+            groups ([group]): A list of group objects
+    '''
 
     groups = []
 
@@ -19,8 +28,24 @@ def get_groups():
             
             row = cur.fetchone()
             while row is not None:
+                # Do we need exception handling???
                 group = Group(row[0], row[1])
                 groups.append(group)
                 row = cur.fetchone()
 
     return groups
+
+def add_audition(auditionee_netID, group_netID, time_slot):
+    '''
+    Creates an audition time in the auditionTimes table.
+
+        Parameters:
+            auditionee_netID (str): The netID of the auditionee
+            group_netID (str)     : The netID of the group
+            time_slot (str)       : A date and time in string format, 
+                                    the timeslot of the audition.
+        
+        Returns:
+            None
+    '''
+    pass
