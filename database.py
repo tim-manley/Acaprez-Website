@@ -28,6 +28,7 @@ def get_groups():
             
             row = cur.fetchone()
             while row is not None:
+                # Do we need exception handling???
                 group = Group(row[0], row[1])
                 groups.append(group)
                 row = cur.fetchone()
