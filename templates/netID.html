@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
+
+    </head>
+
+<head>
+    <title>Auditionee NetID Login</title>
+    <h3>{{ id }}</h3>
+</head>
+
+<body>
+    <div id="CAS">Please enter your NetID below to login:</div>
+    <form action = "/auditionee" method = "POST">
+        <p><h3>Enter userID</h3></p>
+        <p><input type = 'text' name = 'netID'/></p>
+        <p><input type = 'submit' value = 'Login'/></p>
+    </form>
+</body>
+
+</html>
