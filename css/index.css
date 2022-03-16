@@ -1,0 +1,15 @@
+#box {
+    background-color: #fda04a;
+    align-content: center;
+    padding: 10px 20px 10px 20px;
+    width: 10%;
+    margin: 40px, auto, 40px, auto;
+    overflow: auto;
+    color: whitesmoke;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
+h3 {
+    align-content: center;
+}
