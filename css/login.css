@@ -1,0 +1,15 @@
+#CAS {
+    background-color: whitesmoke;
+    align-content: center;
+    padding: 10px 20px 10px 20px;
+    width:30%;
+    margin: 40px, auto, 40px, auto;
+    overflow: auto;
+    color: gray;
+    border: 3px solid black;
+
+}
+
+ul {
+    align-content: center;
+}
