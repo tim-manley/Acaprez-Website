@@ -45,10 +45,19 @@ def leader():
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
-
+    netID = request.form['netID']
     groups = get_groups() # Exception handling ommitted
 
-    html = render_template('auditionee.html', groups=groups)
+    html = render_template('auditionee.html', groups=groups, id=netID)
+    response = make_response(html)
+    response.set_cookie('netID', netID)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/netID', methods=['GET'])
+def auditionee():
+    html = render_template('netID.html')
     response = make_response(html)
     return response
 

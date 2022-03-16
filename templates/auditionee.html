@@ -6,12 +6,18 @@
     <br>
     List of groups:
 
-    <ul>
+    <table width=500>
+        <tr>
+            <th>Group</th>
+            <th>Time</th>
+        </tr>
         {% for group in groups: %}
-        <strong>{{group.get_name()}}</strong>
-        <br>
+        <tr>
+            <td>{{group.get_name()}}</td>
+            <td> </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 </body>
 
 </html>
