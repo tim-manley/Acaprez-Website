@@ -7,7 +7,7 @@
 
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
-from database import get_groups
+import database as db
 
 #-----------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ def leader():
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
 
-    groups = get_groups() # Exception handling ommitted
+    groups = db.get_groups() # Exception handling ommitted
 
     html = render_template('auditionee.html', groups=groups)
     response = make_response(html)
