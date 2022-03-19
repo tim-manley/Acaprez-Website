@@ -68,7 +68,7 @@ def auditionee():
 #-----------------------------------------------------------------------
 
 @app.route('/netID', methods=['GET'])
-def auditionee():
+def netID():
     html = render_template('netID.html')
     response = make_response(html)
     return response
