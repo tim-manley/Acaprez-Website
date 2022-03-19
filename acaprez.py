@@ -46,23 +46,13 @@ def leader():
 
 #-----------------------------------------------------------------------
 
-@app.route('/auditionee', methods=['GET'])
+@app.route('/auditionee', methods=['GET', 'POST'])
 def auditionee():
-    field_storage = FieldStorage()
-    if 'netID' not in field_storage:
-        netID = ''
-    else:
-        netID = field_storage['netID'].value
-        netID = escape(netID)  # Thwart XSS attacks.
-        netID = netID.strip()
-
-    cookie = SimpleCookie()
-    cookie['netID'] = netID
-
+    netID = request.form['netID']
     groups = db.get_groups() # Exception handling ommitted
     html = render_template('auditionee.html', groups=groups, netID=netID)
     response = make_response(html)
-
+    response.set_cookie('netID', netID)
     return response
 
 #-----------------------------------------------------------------------
