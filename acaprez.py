@@ -60,7 +60,7 @@ def auditionee():
     cookie['netID'] = netID
 
     groups = db.get_groups() # Exception handling ommitted
-    html = render_template('auditionee.html', groups=groups, id=netID)
+    html = render_template('auditionee.html', groups=groups, netID=netID)
     response = make_response(html)
 
     return response
