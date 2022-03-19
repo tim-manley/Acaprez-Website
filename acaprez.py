@@ -7,6 +7,9 @@
 
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
+from http.cookies import SimpleCookie
+from html import escape  # Used to thwart XSS attacks.
+from cgi import FieldStorage
 import database as db
 
 #-----------------------------------------------------------------------
@@ -45,7 +48,17 @@ def leader():
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
-    netID = request.cookies.get('netID')
+    field_storage = FieldStorage()
+    if 'netID' not in field_storage:
+        netID = ''
+    else:
+        netID = field_storage['netID'].value
+        netID = escape(netID)  # Thwart XSS attacks.
+        netID = netID.strip()
+
+    cookie = SimpleCookie()
+    cookie['netID'] = netID
+
     groups = db.get_groups() # Exception handling ommitted
     html = render_template('auditionee.html', groups=groups, id=netID)
     response = make_response(html)
@@ -56,11 +69,8 @@ def auditionee():
 
 @app.route('/netID', methods=['GET'])
 def auditionee():
-
     html = render_template('netID.html')
-    netID = request.form['netID']
     response = make_response(html)
-    response.set_cookie('netID', netID)
     return response
 
 #-----------------------------------------------------------------------
