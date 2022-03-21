@@ -7,8 +7,12 @@
 
 <body>
     <form action="signup-confirmation" method="POST">
-        <p>Your netID</p><input type="text" name="auditionee_netID">
-        <p>Group's netID</p><input type="text" name="group_netID">
+        {% for group in groups %}
+        <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
+        <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
+        <br>
+        {% endfor %}
+        <input type="datetime-local" name="audition_timeslot">
         <input type="submit" value="Sign Up">
     </form>
 </body>
