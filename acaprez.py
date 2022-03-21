@@ -59,6 +59,7 @@ def setcookie():
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
+    netID = request.cookies.get('netID')
     groups = db.get_groups() # Exception handling ommitted
     html = render_template('auditionee.html', groups=groups, netID=netID)
     response = make_response(html)
