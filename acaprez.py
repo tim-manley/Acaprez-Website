@@ -46,7 +46,7 @@ def leader():
 
 #-----------------------------------------------------------------------
 
-@app.route('/setcookie', methods=['GET', 'POST'])
+@app.route('/auditioneelanding', methods=['GET', 'POST'])
 def setcookie():
     netID = request.form['netID']
     groups = db.get_groups() # Exception handling ommitted
