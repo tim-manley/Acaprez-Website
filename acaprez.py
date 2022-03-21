@@ -77,7 +77,7 @@ def netID():
 #-----------------------------------------------------------------------
 
 @app.route('/netIDleader', methods=['GET'])
-def netID():
+def netIDleader():
     html = render_template('netIDleader.html')
     response = make_response(html)
     return response
