@@ -11,10 +11,10 @@
             <th class="table_header">Group</th>
             <th class="table_header">Time</th>
         </tr>
-        {% for group in groups: %}
+        {% for audition in auditions: %}
         <tr>
-            <td id="group_name">{{group.get_name()}}</td>
-            <td> </td>
+            <td id="group_name">{{audition.get_group()}}</td>
+            <td>{{audition.get_timeslot()}} </td>
         </tr>
         {% endfor %}
     </table>
