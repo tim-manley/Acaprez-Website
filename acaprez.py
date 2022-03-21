@@ -65,7 +65,7 @@ def netID():
     return response
 
 #-----------------------------------------------------------------------
-# check the methods plz Ryan
+
 @app.route('/createAudition', methods=['GET'])
 def createAudition():
     groups = db.get_groups()
@@ -75,7 +75,7 @@ def createAudition():
     return response
 
 #-----------------------------------------------------------------------
-# check the methods plz Ryan
+
 @app.route('/signup-confirmation', methods=['GET', 'POST'])
 def signup_confirmation():
     auditionee_netID = request.cookies.get('netID')
