@@ -1,0 +1,2 @@
+# prevents pycache merge conflicts
+*/__pycache__/*
