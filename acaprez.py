@@ -46,13 +46,22 @@ def leader():
 
 #-----------------------------------------------------------------------
 
-@app.route('/auditionee', methods=['GET', 'POST'])
-def auditionee():
+@app.route('/setcookie', methods=['GET', 'POST'])
+def setcookie():
     netID = request.form['netID']
     groups = db.get_groups() # Exception handling ommitted
     html = render_template('auditionee.html', groups=groups, netID=netID)
     response = make_response(html)
     response.set_cookie('netID', netID)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/auditionee', methods=['GET'])
+def auditionee():
+    groups = db.get_groups() # Exception handling ommitted
+    html = render_template('auditionee.html', groups=groups, netID=netID)
+    response = make_response(html)
     return response
 
 #-----------------------------------------------------------------------
