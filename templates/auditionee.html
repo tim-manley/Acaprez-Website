@@ -2,18 +2,18 @@
 <html>
 
 <body>
-    {{"Welcome, " ~ netID ~ ":)"}}
+    <h1 id="welcome">{{"Welcome, " ~ netID ~ ":)"}}</h1>
     <br>
-    List of groups:
+    <h2>Audition Details:</h2>
 
     <table width=500>
         <tr>
-            <th>Group</th>
-            <th>Time</th>
+            <th class="table_header">Group</th>
+            <th class="table_header">Time</th>
         </tr>
         {% for group in groups: %}
         <tr>
-            <td>{{group.get_name()}}</td>
+            <td id="group_name">{{group.get_name()}}</td>
             <td> </td>
         </tr>
         {% endfor %}
