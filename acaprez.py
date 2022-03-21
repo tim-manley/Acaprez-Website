@@ -76,6 +76,24 @@ def netID():
 
 #-----------------------------------------------------------------------
 
+@app.route('/netIDleader', methods=['GET'])
+def netID():
+    html = render_template('netIDleader.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/leaderlanding', methods=['GET', 'POST'])
+def leadercookie():
+    netID = request.form['netID']
+    html = render_template('leader.html', netID=netID)
+    response = make_response(html)
+    response.set_cookie('netID', netID)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/createAudition', methods=['GET'])
 def createAudition():
     groups = db.get_groups()
