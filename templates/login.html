@@ -3,14 +3,24 @@
 
 <head>
     <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
 </head>
 
-<body>
-    <div id="CAS">CAS authentication will go here, in the meantime:</div>
-    <ul>
-        <li><a href='netID'>Auditionee</a></li>
-        <li><a href='leader'>Leader</a></li>
-    </ul>
+<body class="align-middle">
+    <div id="CAS">
+        <h3 id="CAS-text">CAS authentication will go here, in the meantime:</h3>
+    </div>
+    <div class="login">
+        <button id="auditionee-login" class="btn btn-lg">
+            <a href='netID'>Auditionee</a>
+        </button>
+    </div>
+    <div class="login">
+        <button id="leader-login" class="btn btn-lg">
+            <a href='netID'>Leader</a>
+        </button>
+    </div>
 </body>
 
 </html>

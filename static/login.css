@@ -1,16 +1,29 @@
 #CAS {
-    background-color: whitesmoke;
-    align-content: center;
-    padding: 10px 20px 10px 20px;
-    width:30%;
-    margin: 40px, auto, 40px, auto;
-    overflow: auto;
-    color: gray;
-    border: 3px solid black;
-    font-family: sans-serif
+    background-color: white;
+    padding: 10px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: black;
+    width: 30%;
+    height: auto;
+    text-align: center;
+    border-radius: 10px;
 
 }
 
-ul {
-    align-content: center;
+.login {
+    padding: 10px;
+    margin: auto;
+    color: black;
+    height: auto;
+    text-align: center;
+
+}
+
+
+body {
+    background-color: #DFE2EB;
+    font-family: sans-serif;
+    margin-top: 20%;
 }
