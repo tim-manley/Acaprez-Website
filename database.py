@@ -1,6 +1,9 @@
-import os
+from typing import List
 from psycopg2 import connect
 from group import Group
+from audition import Audition
+
+#-----------------------------------------------------------------------
 
 # Database specific variables:
 HOST = 'ec2-3-230-238-86.compute-1.amazonaws.com'
@@ -8,12 +11,14 @@ DATABASE = 'd8tdd1oslp407c'
 USER = 'cmjmzphzaovzef'
 PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
-def get_groups():
+#-----------------------------------------------------------------------
+
+def get_groups() -> List[Group]:
     '''
     Returns a list of the groups in the database
 
         Parameters: 
-            None
+            Nothing
 
         Returns: 
             groups ([group]): A list of group objects
@@ -34,21 +39,25 @@ def get_groups():
 
     return groups
 
-def add_audition(auditionee_netID, group_netID, time_slot):
+#-----------------------------------------------------------------------
+
+def add_audition(auditionee_netID: str, 
+                 group_netID: str, 
+                 time_slot: str):
     '''
     Creates an audition time in the auditionTimes table.
 
         Parameters:
-            auditionee_netID (str): The netID of the auditionee
-            group_netID (str)     : The netID of the group
-            time_slot (str)       : A date and time in string format, 
-                                    the timeslot of the audition.
-                                    Format is: "YYYY-MM-DD hh:mm:ss"
-                                    24hr time
+            auditionee_netID: The netID of the auditionee
+            group_netID: The netID of the group
+            time_slot: A date and time in string format, the timeslot of 
+                       the audition.
+                       Format is: "YYYY-MM-DD hh:mm:ss" 24hr time
         
         Returns:
-            None
+            Nothing
     '''
+    # Need to add error handling for timeslot format
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
@@ -58,9 +67,49 @@ def add_audition(auditionee_netID, group_netID, time_slot):
                         VALUES (%s, %s, %s);
                         ''', (auditionee_netID, group_netID, time_slot))
 
-def print_all_auditions():
+#-----------------------------------------------------------------------
+
+def get_auditionee_auditions(netID: str) -> List[Audition]:
     '''
-    Finish docstring later
+    Given an auditionee's netID, returns a list of the auditions they
+    are signed up for.
+
+        Parameters:
+            netID: The auditionee's netID
+
+        Returns:
+            A list of Audition objects, in which are contained the
+            details of each audition.
+    '''
+    auditions = []
+
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM auditionTimes
+                           WHERE auditioneeNetID=%s;''', (netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                # Do we need exception handling???
+                audition = Audition(row[0], row[1], row[2], row[3])
+                auditions.append(audition)
+                row = cur.fetchone()
+    
+    return auditions
+
+#-----------------------------------------------------------------------
+
+def _print_all_auditions():
+    '''
+    For testing, prints all the auditions scheduled in the database to 
+    the terminal.
+
+        Parameters:
+            Nothing
+
+        Returns:
+            Nothing
     '''
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
@@ -72,7 +121,11 @@ def print_all_auditions():
                 print(row)
                 row = cur.fetchone()
 
+#-----------------------------------------------------------------------
+
 # For testing
 if __name__ == "__main__":
-    add_audition("rjg8", "nassoons", "2022-03-19 19:10:30")
-    print_all_auditions()
+    auditions = get_auditionee_auditions('testID')
+
+    for audition in auditions:
+        print(audition)
