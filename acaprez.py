@@ -73,6 +73,24 @@ def netID():
     return response
 
 #-----------------------------------------------------------------------
+# check the methods plz Ryan
+@app.route('/createAudition', methods=['GET'])
+def createAudition():
+    html = render_template('createAudition.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+# check the methods plz Ryan
+@app.route('/signup-confirmation', methods=['GET', 'POST'])
+def signup_confirmation():
+    auditionee_netID = request.form['auditionee_netID']
+    group_netID = request.form['group_netID']
+    time_slot = "2022-03-19 19:51:00"
+    db.add_audition(auditionee_netID, group_netID, time_slot)
+    html = render_template('signup-confirmation.html')
+    response = make_response(html)
+    return response
 
 #Below here is for reference only
 '''@app.route('/searchform', methods=['GET'])

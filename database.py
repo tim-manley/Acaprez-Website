@@ -18,7 +18,6 @@ def get_groups():
         Returns: 
             groups ([group]): A list of group objects
     '''
-
     groups = []
 
     with connect(host=HOST, database=DATABASE, 
@@ -44,8 +43,36 @@ def add_audition(auditionee_netID, group_netID, time_slot):
             group_netID (str)     : The netID of the group
             time_slot (str)       : A date and time in string format, 
                                     the timeslot of the audition.
+                                    Format is: "YYYY-MM-DD hh:mm:ss"
+                                    24hr time
         
         Returns:
             None
     '''
-    pass
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO auditionTimes 
+                        (auditioneeNetID, groupNetID, timeslot)
+                        VALUES (%s, %s, %s);
+                        ''', (auditionee_netID, group_netID, time_slot))
+
+def print_all_auditions():
+    '''
+    Finish docstring later
+    '''
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('SELECT * FROM auditionTimes;')
+            
+            row = cur.fetchone()
+            while row is not None:
+                print(row)
+                row = cur.fetchone()
+
+# For testing
+if __name__ == "__main__":
+    add_audition("rjg8", "nassoons", "2022-03-19 19:10:30")
+    print_all_auditions()
