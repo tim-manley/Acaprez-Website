@@ -123,11 +123,20 @@ def _add_user(netID: str, access: str):
         err_str += "\"admin\""
         raise ValueError(err_str)
 
-    # Maybe add error handling for if netID is already in table...
-
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
+            # Check if user is already in the table
+            cur.execute('''
+                        SELECT * FROM users WHERE netID=%s;
+                        ''',
+                        (netID,))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"A user with netID: \"{netID}\" already exists"
+                raise ValueError(ex)
+
+            # Add the user
             cur.execute('''
                         INSERT INTO users 
                         (netID, access)
@@ -152,15 +161,37 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
         Returns:
             Nothing
     '''
-    # Need to add error handling for arguments
+    # Check argument types
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+    if not isinstance(name, str):
+        raise ValueError("name must be a string")
+    if not isinstance(class_yr, int):
+        raise ValueError("class_yr must be an integer")
+    if not isinstance(dorm, str):
+        raise ValueError("dorm must be a string")
+    if not isinstance(voice_pt, str):
+        raise ValueError("voice_pt must be a string")
+    if not isinstance(phone, str):
+        raise ValueError("phone must be a string")
 
-    # First need to add to user table with access level of auditionee
-    _add_user(netID, "Auditionee")
-
-    # Now add data to auditionees table
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
+            # Check if auditionee is already in the table
+            cur.execute('''
+                        SELECT * FROM auditionees WHERE netID=%s;
+                        ''',
+                        (netID,))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"An auditionee with netID: {netID} already exists"
+                raise ValueError(ex)
+            
+            # First need to add to user table with access level of auditionee
+            _add_user(netID, "Auditionee")
+
+             # Now add data to auditionees table
             cur.execute('''
                         INSERT INTO auditionees 
                         (netID, name, classYear, 
@@ -212,5 +243,9 @@ if __name__ == "__main__":
         print(ex)
     try:
         _add_user(userID, "leader")
+    except Exception as ex:
+        print(ex)
+    try:
+        _add_user(userID, "admin")
     except Exception as ex:
         print(ex)
