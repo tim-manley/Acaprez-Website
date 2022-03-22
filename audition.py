@@ -27,3 +27,29 @@ class Audition:
         d['timeslot'] = self._timeslot
 
         return d
+
+    def get_auditionID(self):
+        '''
+        Returns auditionID of given audition
+        '''
+        return self._auditionID
+    
+    def get_auditionee_netID(self):
+        '''
+        Returns auditionee netID of given audition
+        '''
+        return self._auditionee_netID
+
+    def get_group(self):
+        '''
+        Returns group netID of given audition
+        '''
+        return self._group_netID
+
+    def get_timeslot(self):
+        '''
+        Returns timeslot of given audition
+        '''
+        return self._timeslot
+
+

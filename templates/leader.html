@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html>
 
+<link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+{% include 'nav.html' %}
+
+
 <body>
-    Welcome, leader of group :)
+
+    <h1 id="welcome">{{"Welcome, group leader " ~ netID ~ " :)"}}</h1>
 </body>
 
 </html>

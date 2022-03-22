@@ -47,13 +47,23 @@ def leader():
 
 #-----------------------------------------------------------------------
 
-@app.route('/auditionee', methods=['GET', 'POST'])
-def auditionee():
+@app.route('/auditioneelanding', methods=['GET', 'POST'])
+def setcookie():
     netID = request.form['netID']
-    groups = db.get_groups() # Exception handling ommitted
-    html = render_template('auditionee.html', groups=groups, netID=netID)
+    auditions = db.get_auditionee_auditions(netID)
+    html = render_template('auditionee.html', auditions=auditions, netID=netID)
     response = make_response(html)
     response.set_cookie('netID', netID)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/auditionee', methods=['GET'])
+def auditionee():
+    netID = request.cookies.get('netID')
+    auditions = db.get_auditionee_auditions(netID)
+    html = render_template('auditionee.html', auditions=auditions, netID=netID)
+    response = make_response(html)
     return response
 
 #-----------------------------------------------------------------------
@@ -62,6 +72,24 @@ def auditionee():
 def netID():
     html = render_template('netID.html')
     response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/netIDleader', methods=['GET'])
+def netIDleader():
+    html = render_template('netIDleader.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/leaderlanding', methods=['GET', 'POST'])
+def leadercookie():
+    netID = request.form['netID']
+    html = render_template('leader.html', netID=netID)
+    response = make_response(html)
+    response.set_cookie('netID', netID)
     return response
 
 #-----------------------------------------------------------------------
