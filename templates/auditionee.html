@@ -1,25 +1,44 @@
 <!DOCTYPE html>
 <html>
 
+
+<head>
+    <title>Acaprez</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
+</head>
+
+{% include 'nav.html' %}
+
+
 <body>
-    <h1 id="welcome">{{"Welcome, " ~ netID ~ " :)"}}</h1>
-    <br>
-    <h2>Audition Details:</h2>
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <h1 id="welcome">{{"Welcome, " ~ netID ~ " :)"}}</h1>
+        <br>
+        <h2>Audition Details:</h2>
 
-    <table width=500>
-        <tr>
-            <th class="table_header">Group</th>
-            <th class="table_header">Time</th>
-        </tr>
-        {% for audition in auditions: %}
-        <tr>
-            <td id="group_name">{{audition.get_group()}}</td>
-            <td>{{audition.get_timeslot()}} </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <table width=500>
+            <tr>
+                <th class="table_header">Group</th>
+                <th class="table_header">Time</th>
+            </tr>
+            {% for audition in auditions: %}
+            <tr>
+                <td id="group_name">{{audition.get_group()}}</td>
+                <td>{{audition.get_timeslot()}} </td>
+            </tr>
+            {% endfor %}
+        </table>
 
-    <a href="createAudition">Click here to sign up for an audition!</a>
+        <br>
+        <div id="new-audition">
+            <button class="btn btn-primary btn-lg">
+                <a href='createAudition'>Click here to sign up for an audition!</a>
+            </button>
+        </div>
+    </div>
 </body>
 
 </html>

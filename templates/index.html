@@ -3,15 +3,18 @@
 
 <head>
     <title>Acaprez</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
+
 </head>
 
+{% include 'nav.html' %}
+
 <body class="align-middle">
-    <div class="container" id="logo-box">
-        <div class="row align-items-center">
-            <h1 id="acaprez">Acaprez</h1>
-        </div>
+    <div id="logo-box">
+        <h1 id="acaprez">Acaprez</h1>
     </div>
 
     <h3 id="login-text">Click here to <a id="login-link" 

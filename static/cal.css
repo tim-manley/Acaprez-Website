@@ -1,0 +1,18 @@
+h1 {
+    color:black;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+a:hover {
+    text-decoration: none;
+    color: whitesmoke;
+}
+
+body {
+    background-color: whitesmoke;
+    font-family: sans-serif;
+
+}

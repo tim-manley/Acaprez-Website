@@ -15,15 +15,20 @@
 .login {
     padding: 10px;
     margin: auto;
-    color: black;
     height: auto;
     text-align: center;
-
 }
 
+a {
+    text-decoration: none;
+    color: white;
+}
+a:hover {
+    text-decoration: none;
+    color: whitesmoke;
+}
 
 body {
-    background-color: #DFE2EB;
+    background-color: whitesmoke;
     font-family: sans-serif;
-    margin-top: 20%;
 }

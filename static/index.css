@@ -1,20 +1,18 @@
 #logo-box {
     background-color: #fda04a;
+    color: whitesmoke;
     padding: auto;
     margin: auto;
-    color: whitesmoke;
-    width: 250px;
-    height: 60px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    align-content: center;
     text-align: center;
     border-radius: 25px;
-    
+    width: 250px;
 }
 
 #acaprez {
-    align-content: center;
-    align-items: center;
     text-align: center;
-
 }
 
 #login-text {
@@ -32,7 +30,6 @@
 
 h1 {
     color:whitesmoke;
-    padding: 10px 20px 10px 20px;
 }
 
 h3 {
@@ -40,8 +37,7 @@ h3 {
 }
 
 body {
-    background-color: #DFE2EB;
+    background-color: whitesmoke;
     font-family: sans-serif;
-    margin-top: 20%;
 
 }
