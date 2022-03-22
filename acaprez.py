@@ -16,6 +16,10 @@ from sys import stderr
 #-----------------------------------------------------------------------
 
 app = Flask(__name__)
+# BAD PRACTICE DON'T DO THIS. GET IT FROM HEROKU ENV IN PROD
+app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
+
+import auth
 
 #-----------------------------------------------------------------------
 
@@ -32,7 +36,10 @@ def index():
 @app.route('/login', methods=['GET'])
 def login():
 
-    html = render_template('login.html')
+    username = auth.authenticate()
+
+    html = render_template('login.html',
+                           username=username)
     response = make_response(html)
     return response
 
