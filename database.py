@@ -175,6 +175,8 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
     if not isinstance(phone, str):
         raise ValueError("phone must be a string")
 
+    # Need to add some better validation for inputs here
+
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
@@ -189,14 +191,14 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
                 raise ValueError(ex)
             
             # First need to add to user table with access level of auditionee
-            _add_user(netID, "Auditionee")
+            _add_user(netID, "auditionee")
 
              # Now add data to auditionees table
             cur.execute('''
                         INSERT INTO auditionees 
                         (netID, name, classYear, 
                          voicePart, dormRoom, phoneNumber)
-                        VALUES (%s, %s, %d, %s, %s, %s);
+                        VALUES (%s, %s, %s, %s, %s, %s);
                         ''', 
                         (netID, name, class_yr, voice_pt, dorm, phone))
 
@@ -227,25 +229,5 @@ def _print_all_auditions():
 
 # For testing
 if __name__ == "__main__":
-    userID = "testUser"
-
-    try:
-        _add_user(5, 5)
-    except Exception as ex:
-        print(ex)
-    try:
-        _add_user(userID, 5)
-    except Exception as ex:
-        print(ex)
-    try:
-        _add_user(userID, "wrong_access")
-    except Exception as ex:
-        print(ex)
-    try:
-        _add_user(userID, "leader")
-    except Exception as ex:
-        print(ex)
-    try:
-        _add_user(userID, "admin")
-    except Exception as ex:
-        print(ex)
+    add_auditionee("tdmanley", "Tim Manley", 2024, 
+                   "Baker S202", "Bass", "(917) 930-9924")
