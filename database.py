@@ -41,34 +41,6 @@ def get_groups() -> List[Group]:
 
 #-----------------------------------------------------------------------
 
-def add_audition(auditionee_netID: str, 
-                 group_netID: str, 
-                 time_slot: str):
-    '''
-    Creates an audition time in the auditionTimes table.
-
-        Parameters:
-            auditionee_netID: The netID of the auditionee
-            group_netID: The netID of the group
-            time_slot: A date and time in string format, the timeslot of 
-                       the audition.
-                       Format is: "YYYY-MM-DD hh:mm:ss" 24hr time
-        
-        Returns:
-            Nothing
-    '''
-    # Need to add error handling for timeslot format
-    with connect(host=HOST, database=DATABASE, 
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('''
-                        INSERT INTO auditionTimes 
-                        (auditioneeNetID, groupNetID, timeslot)
-                        VALUES (%s, %s, %s);
-                        ''', (auditionee_netID, group_netID, time_slot))
-
-#-----------------------------------------------------------------------
-
 def get_auditionee_auditions(netID: str) -> List[Audition]:
     '''
     Given an auditionee's netID, returns a list of the auditions they
@@ -100,6 +72,105 @@ def get_auditionee_auditions(netID: str) -> List[Audition]:
 
 #-----------------------------------------------------------------------
 
+def add_audition(auditionee_netID: str, group_netID: str, 
+                 time_slot: str):
+    '''
+    Creates an audition time in the auditionTimes table.
+
+        Parameters:
+            auditionee_netID: The netID of the auditionee
+            group_netID: The netID of the group
+            time_slot: A date and time in string format, the timeslot of 
+                       the audition.
+                       Format is: "YYYY-MM-DD hh:mm:ss" 24hr time
+        
+        Returns:
+            Nothing
+    '''
+    # Need to add error handling for arguments
+
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO auditionTimes 
+                        (auditioneeNetID, groupNetID, timeslot)
+                        VALUES (%s, %s, %s);
+                        ''', (auditionee_netID, group_netID, time_slot))
+
+#-----------------------------------------------------------------------
+
+def _add_user(netID: str, access: str):
+    '''
+    File private method which adds a user to the users table. Should
+    only be called from within add_auditionee, add_group or add_admin.
+
+        Parameters:
+            netID: The netID of the user
+            access: The access level of the user. The access levels are:
+                    ("leader", "auditionee", "admin")
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+    if not isinstance(access, str):
+        raise ValueError("access must be a string")
+
+    if access != "leader" and access != "auditionee" and access != "admin":
+        err_str = "access must be one of \"leader\", \"auditionee\" or "
+        err_str += "\"admin\""
+        raise ValueError(err_str)
+
+    # Maybe add error handling for if netID is already in table...
+
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO users 
+                        (netID, access)
+                        VALUES (%s, %s);
+                        ''', (netID, access))
+
+#-----------------------------------------------------------------------
+
+def add_auditionee(netID: str, name: str, class_yr: int, dorm: str, 
+                   voice_pt="", phone=""):
+    '''
+    Creates an auditionee in the auditionees table.
+
+        Parameters:
+            netID: The netID of the auditionee
+            name: The name of the auditionee
+            class_yr: The auditionee's class year
+            dorm: The auditionee's hall and room number
+            voice_pt: The voice part(s) of the auditionee (optional)
+            phone: The auditionee's phone number (optional)
+
+        Returns:
+            Nothing
+    '''
+    # Need to add error handling for arguments
+
+    # First need to add to user table with access level of auditionee
+    _add_user(netID, "Auditionee")
+
+    # Now add data to auditionees table
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO auditionees 
+                        (netID, name, classYear, 
+                         voicePart, dormRoom, phoneNumber)
+                        VALUES (%s, %s, %d, %s, %s, %s);
+                        ''', 
+                        (netID, name, class_yr, voice_pt, dorm, phone))
+
+#-----------------------------------------------------------------------
+
 def _print_all_auditions():
     '''
     For testing, prints all the auditions scheduled in the database to 
@@ -125,7 +196,21 @@ def _print_all_auditions():
 
 # For testing
 if __name__ == "__main__":
-    auditions = get_auditionee_auditions('testID')
+    userID = "testUser"
 
-    for audition in auditions:
-        print(audition)
+    try:
+        _add_user(5, 5)
+    except Exception as ex:
+        print(ex)
+    try:
+        _add_user(userID, 5)
+    except Exception as ex:
+        print(ex)
+    try:
+        _add_user(userID, "wrong_access")
+    except Exception as ex:
+        print(ex)
+    try:
+        _add_user(userID, "leader")
+    except Exception as ex:
+        print(ex)
