@@ -1,7 +1,7 @@
 #logo-box {
-    background-color: #fda04a;
-    color: whitesmoke;
-    padding: auto;
+    background-color: #f3804b;
+    color: white;
+    padding: 0px 10px 0px 10px;
     margin: auto;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -25,19 +25,19 @@
 }
 #login-link:hover {
     text-decoration: none;
-    color: white;
+    color: darkorange;
 }
 
 h1 {
-    color:whitesmoke;
+    color:white;
 }
 
-h3 {
+h4 {
     align-content: center;
 }
 
 body {
-    background-color: whitesmoke;
+    background-color: white;
     font-family: sans-serif;
 
 }
