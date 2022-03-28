@@ -14,7 +14,8 @@ PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
 
 def create_users(cur):
-    cur.execute('''CREATE TABLE  IF NOT EXISTS users 
+    cur.execute('DROP TABLE IF EXISTS users;')
+    cur.execute('''CREATE TABLE users 
                     (netID varchar(50) PRIMARY KEY,
                      access varchar(50) NOT NULL);''')
 
@@ -36,7 +37,8 @@ def add_group(cur, netID, name):
                    (netID, name))
 
 def create_auditionees(cur):
-    cur.execute('''CREATE TABLE IF NOT EXISTS auditionees
+    cur.execute('DROP TABLE IF EXISTS auditionees;')
+    cur.execute('''CREATE TABLE auditionees
                    (netID varchar(50) PRIMARY KEY,
                     name varchar(50) NOT NULL,
                     classYear integer NOT NULL,
@@ -45,9 +47,10 @@ def create_auditionees(cur):
                     phoneNumber varchar(50));''')
 
 def create_audition_times(cur):
-    cur.execute('''CREATE TABLE IF NOT EXISTS auditionTimes
+    cur.execute('DROP TABLE IF EXISTS auditionTimes;')
+    cur.execute('''CREATE TABLE auditionTimes
                    (auditionID SERIAL PRIMARY KEY,
-                    auditioneeNetID varchar(50) NOT NULL,
+                    auditioneeNetID varchar(50),
                     groupNetID varchar(50) NOT NULL,
                     timeSlot timestamp NOT NULL)''')
 

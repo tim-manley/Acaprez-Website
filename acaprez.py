@@ -109,7 +109,7 @@ def signup_confirmation():
     auditionee_netID = request.cookies.get('netID')
     group_netID = request.form['selected_group']
     time_slot = request.form['audition_timeslot']
-    db.add_audition(auditionee_netID, group_netID, time_slot)
+    db.audition_signup(auditionee_netID, group_netID, time_slot)
     html = render_template('signup-confirmation.html')
     response = make_response(html)
     return response

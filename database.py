@@ -72,10 +72,10 @@ def get_auditionee_auditions(netID: str) -> List[Audition]:
 
 #-----------------------------------------------------------------------
 
-def add_audition(auditionee_netID: str, group_netID: str, 
+def audition_signup(auditionee_netID: str, group_netID: str, 
                  time_slot: str):
     '''
-    Creates an audition time in the auditionTimes table.
+    Adds auditionee to audition time.
 
         Parameters:
             auditionee_netID: The netID of the auditionee
@@ -92,11 +92,62 @@ def add_audition(auditionee_netID: str, group_netID: str,
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
+            # Check if audition time exists
             cur.execute('''
-                        INSERT INTO auditionTimes 
-                        (auditioneeNetID, groupNetID, timeslot)
-                        VALUES (%s, %s, %s);
+                        SELECT * FROM auditionTimes 
+                        WHERE groupNetID=%s AND timeSlot=%s;
+                        ''',
+                        (group_netID, time_slot))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"No audition for {group_netID} at {time_slot} exists"
+                raise ValueError(ex)
+
+            # Need to check if someone else is already signed up
+
+            # Signup the user
+            cur.execute('''
+                        UPDATE auditionTimes 
+                        SET auditioneeNetID=%s
+                        WHERE groupNetID=%s AND timeSlot=%s;
                         ''', (auditionee_netID, group_netID, time_slot))
+
+#-----------------------------------------------------------------------
+
+def add_audition_time(group_netID: str, time_slot: str):
+    '''
+    Creates an available audition time for a group.
+
+        Parameters:
+            group_netID: The netID of the group
+            time_slot: A date and time in string format, the timeslot of 
+                       the audition.
+                       Format is: "YYYY-MM-DD hh:mm:ss" 24hr time
+        
+        Returns:
+            Nothing
+    '''
+    # Need to add error handling for arguments
+
+    with connect(host=HOST, database=DATABASE, 
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if audition time already exists
+            cur.execute('''
+                        SELECT * FROM auditionTimes 
+                        WHERE groupNetID=%s AND timeSlot=%s;
+                        ''',
+                        (group_netID, time_slot))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"An audition slot for {group_netID} at {time_slot} already exists"
+                raise ValueError(ex)
+
+            # Create audition time
+            cur.execute('''
+                        INSERT INTO auditionTimes (groupNetID, timeSlot)
+                        VALUES (%s, %s);
+                        ''', (group_netID, time_slot))
 
 #-----------------------------------------------------------------------
 
@@ -229,5 +280,4 @@ def _print_all_auditions():
 
 # For testing
 if __name__ == "__main__":
-    add_auditionee("tdmanley", "Tim Manley", 2024, 
-                   "Baker S202", "Bass", "(917) 930-9924")
+    audition_signup("tdmanley", "footnotes", "2022-03-27 22:00:00")
