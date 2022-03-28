@@ -62,7 +62,8 @@ def setcookie():
 def auditionee():
     netID = request.cookies.get('netID')
     auditions = db.get_auditionee_auditions(netID)
-    html = render_template('auditionee.html', auditions=auditions, netID=netID)
+    groups = db.get_groups()
+    html = render_template('auditionee.html', auditions=auditions, netID=netID, groups=groups)
     response = make_response(html)
     return response
 
