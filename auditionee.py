@@ -12,3 +12,13 @@ class Auditionee:
         self._dorm_room = dorm_room
         self._voice_part = voice_part
         self._phone_number = phone_number
+
+    def __str__(self):
+        s = ""
+        s += f"\nnetID: {self._netID}\n"
+        s += f"name: {self._name}\n"
+        s += f"class year: {self._class_year}\n"
+        s += f"dorm room: {self._dorm_room}\n"
+        s += f"voice part(s): {self._voice_part}\n"
+        s += f"phone number: {self._phone_number}\n"
+        return s

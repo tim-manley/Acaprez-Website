@@ -1,7 +1,9 @@
+from ssl import ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION
 from typing import List
 from psycopg2 import connect
 from group import Group
 from audition import Audition
+from auditionee import Auditionee
 
 #-----------------------------------------------------------------------
 
@@ -38,6 +40,40 @@ def get_groups() -> List[Group]:
                 row = cur.fetchone()
 
     return groups
+
+#-----------------------------------------------------------------------
+
+def get_auditionee(netID: str) -> Auditionee:
+    '''
+    Given an auditionee's netID, returns an auditionee object containing
+    all the auditionee's details.
+
+        Parameters:
+            netID: The auditionee's netID
+
+        Returns:
+            An auditionee object
+    '''
+    # Type validation
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM auditionees
+                           WHERE netID=%s;''', (netID,))
+
+            row = cur.fetchone()
+            # Check the auditionee exists
+            if row is None:
+                raise KeyError(f"No auditionee with {netID} exists")
+            
+            auditionee = Auditionee(row[0], row[1], row[2], row[4], 
+                                    row[3], row[5])
+
+    return auditionee
+
 
 #-----------------------------------------------------------------------
 
@@ -89,7 +125,7 @@ def audition_signup(auditionee_netID: str, group_netID: str,
     '''
     # Type validation
     if not isinstance(auditionee_netID, str):
-        raise ValueError("auditionee_netID")
+        raise ValueError("auditionee_netID must be a string")
     if not isinstance(group_netID, str):
         raise ValueError("group_netID must be a string")
     if not isinstance(time_slot, str):
@@ -295,4 +331,6 @@ def _print_all_auditions():
 
 # For testing
 if __name__ == "__main__":
-    _add_user("test", "oops")
+    add_auditionee("janeec", "Jane Castleman", 2024, "Butler")
+    auditionee = get_auditionee("janeec")
+    print(auditionee)
