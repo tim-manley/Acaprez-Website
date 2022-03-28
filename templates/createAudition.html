@@ -3,6 +3,8 @@
 
 <head>
     <title>Audition Signup</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     
 </head>
@@ -10,15 +12,23 @@
 {% include 'nav.html' %}
 
 <body>
-    <form action="signup-confirmation" method="POST">
-        {% for group in groups %}
-        <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
-        <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
-        <br>
-        {% endfor %}
-        <input type="datetime-local" name="audition_timeslot">
-        <input type="submit" value="Sign Up">
-    </form>
+    <div id="container-fluid">
+        <div class="row">
+            <div class="col-sm-4">
+                <form action="signup-confirmation" method="POST">
+                    {% for group in groups %}
+                    <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
+                    <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
+                    <br>
+                    {% endfor %}
+                    <input type="datetime-local" name="audition_timeslot">
+                    <input type="submit" value="Sign Up">
+                </form>
+            </div>
+
+            
+        </div>
+    </div>
 </body>
 
 </html>

@@ -6,8 +6,9 @@
     <title>Acaprez</title>
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
+
 </head>
 
 {% include 'nav.html' %}
@@ -15,30 +16,128 @@
 
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
-        <h1 id="welcome">{{"Welcome, " ~ netID ~ " :)"}}</h1>
-        <br>
-        <h2>Audition Details:</h2>
-
-        <table width=500>
-            <tr>
-                <th class="table_header">Group</th>
-                <th class="table_header">Time</th>
-            </tr>
-            {% for audition in auditions: %}
-            <tr>
-                <td id="group_name">{{audition.get_group()}}</td>
-                <td>{{audition.get_timeslot()}} </td>
-            </tr>
-            {% endfor %}
-        </table>
-
-        <br>
-        <div id="new-audition">
-            <button class="btn btn-primary btn-lg">
-                <a href='createAudition'>Click here to sign up for an audition!</a>
-            </button>
+        <div class="row">
+            <div class="col-sm-8">
+                <h1 id="welcome">{{"Welcome, " ~ netID ~ " :)"}}</h1>
+            </div>
+            <div class="col-sm-4">
+                <button id="new-audition" class="btn btn-primary btn-lg">
+                    <a href='createAudition'>New Audition</a>
+                </button>
+            </div>
         </div>
+        <div class="row">
+            
+        </div>
+        
+        <br>
+
+
+        <h3>Groups:</h3>
+
+        <div class="row">
+            <div class="col-sm-4">
+
+                <form action="signup-confirmation" method="POST">
+                    {% for group in groups %}
+                    <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
+                    <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
+                    <br>
+                    {% endfor %}
+                    <input type="datetime-local" name="audition_timeslot">
+                    <input type="submit" value="Sign Up">
+                </form>
+                
+
+            </div>  
+            <div class="col-sm-8">
+                <table id="calendar">
+                    <tr id="headers">
+                        <th class="table_header">Time</th>
+                        <th class="table_header">Day 1</th>
+                        <th class="table_header">Day 2</th>
+                        <th class="table_header">Day 3</th>
+                    </tr>
+
+                    <tr>
+                        <td id="2100">21:00</td>
+                    </tr>
+                    <tr>
+                        <td id="2115">21:15</td>
+                    </tr>
+                    <tr>
+                        <td id="2130">21:30</td>
+                    </tr>
+                    <tr>
+                        <td id="2145">21:45</td>
+                    </tr>
+
+                </table>
+            </div>
+
+        </div>
+
+        <br>
+
+        <h3>Current Auditions:</h3>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <table>
+                    <tr>
+                        <th class="table_header">Group</th>
+                        <th class="table_header">Time</th>
+                    </tr>
+                    {% for audition in auditions: %}
+                    <tr>
+                        <td id="group_name">{{audition.get_group()}}</td>
+                        <td>{{audition.get_timeslot()}} </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                
+            </div>  
+        </div>
+
+
+        
     </div>
+
+    <script src=
+     "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+    </script>
+
+    <script>
+
+        'use strict';
+
+        let exampleTimes = ["21:00", "21:15", "21:30"]
+
+        function addTimes() {
+
+        }
+
+        function addSlot(group_name, time) {
+            var slot = document.createElement("td");
+            slot.innerHTML = group_name + " - " + time;
+            var afterID = "#" + time.replace(":", "");
+            $(afterID).after(slot);
+        }
+
+        function setup() {
+            for (var i in exampleTimes) {
+                addSlot("Nassoons", exampleTimes[i])
+    
+            }
+        }
+        
+        $('document').ready(setup);
+
+
+
+    </script>
+
+
 </body>
 
 </html>
