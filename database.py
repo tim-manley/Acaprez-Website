@@ -87,7 +87,13 @@ def audition_signup(auditionee_netID: str, group_netID: str,
         Returns:
             Nothing
     '''
-    # Need to add error handling for arguments
+    # Type validation
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID")
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    if not isinstance(time_slot, str):
+        raise ValueError("time_slot must be a string")
 
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
@@ -129,7 +135,7 @@ def add_audition_time(group_netID: str, time_slot: str):
         Returns:
             Nothing
     '''
-    # Error handling for arguments
+    # Type validation
     if not isinstance(group_netID, str):
         raise ValueError("group_netID must be a string")
     if not isinstance(time_slot, str):
