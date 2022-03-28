@@ -3,7 +3,6 @@ Created this file based on the tutorial provided at:
 https://www.digitalocean.com/community/tutorials/how-to-use-a-postgresql-database-in-a-flask-application
 '''
 
-import os
 from psycopg2 import connect
 
 # Database specific variables:
@@ -15,7 +14,7 @@ PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
 def create_users(cur):
     cur.execute('DROP TABLE IF EXISTS users;')
-    cur.execute('''CREATE TABLE users 
+    cur.execute('''CREATE TABLE users
                     (netID varchar(50) PRIMARY KEY,
                      access varchar(50) NOT NULL);''')
 
@@ -26,7 +25,7 @@ def add_user(cur, netID, access):
 
 def create_groups(cur):
     cur.execute('DROP TABLE IF EXISTS groups;')
-    cur.execute('''CREATE TABLE groups 
+    cur.execute('''CREATE TABLE groups
                     (netID varchar(50) PRIMARY KEY,
                     name varchar(50) NOT NULL);''')
 
@@ -56,7 +55,7 @@ def create_audition_times(cur):
 
 def main():
     # Setup connection and cursor
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             # Create the tables
