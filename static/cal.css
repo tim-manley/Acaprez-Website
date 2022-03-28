@@ -6,6 +6,7 @@ a {
     text-decoration: none;
     color: white;
 }
+
 a:hover {
     text-decoration: none;
     color: whitesmoke;
@@ -15,4 +16,19 @@ body {
     background-color: white;
     font-family: sans-serif;
 
+}
+
+table {
+    width:100%;
+    table-layout: fixed;
+
+}
+
+#calendar th, #calendar tr {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#new-audition {
+    float: right;
 }

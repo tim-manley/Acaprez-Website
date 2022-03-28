@@ -1,28 +1,29 @@
 #logo-box {
     background-color: #f3804b;
     color: white;
-    padding: 0px 10px 0px 10px;
     margin: auto;
     margin-top: 20px;
     margin-bottom: 20px;
     align-content: center;
     text-align: center;
-    border-radius: 25px;
     width: 250px;
 }
 
 #acaprez {
     text-align: center;
+    padding: 5px;
 }
 
 #login-text {
     text-decoration: none;
     text-align: center;
 }
+
 #login-link {
     text-decoration: none;
     text-align: center;
 }
+
 #login-link:hover {
     text-decoration: none;
     color: darkorange;
