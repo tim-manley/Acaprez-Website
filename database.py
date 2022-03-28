@@ -92,18 +92,20 @@ def audition_signup(auditionee_netID: str, group_netID: str,
     with connect(host=HOST, database=DATABASE, 
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
-            # Check if audition time exists
             cur.execute('''
                         SELECT * FROM auditionTimes 
                         WHERE groupNetID=%s AND timeSlot=%s;
                         ''',
                         (group_netID, time_slot))
             row = cur.fetchone()
+            # Check if audition time exists
             if row is None:
                 ex = f"No audition for {group_netID} at {time_slot} exists"
                 raise ValueError(ex)
-
             # Need to check if someone else is already signed up
+            elif row[1] is not None:
+                ex = f"{row[1]} is already signed up for this audition"
+                raise ValueError(ex)
 
             # Signup the user
             cur.execute('''
@@ -280,4 +282,5 @@ def _print_all_auditions():
 
 # For testing
 if __name__ == "__main__":
-    audition_signup("tdmanley", "footnotes", "2022-03-27 22:00:00")
+    audition_signup("janeec", "nassoons", "2022-03-27 22:00:00")
+    audition_signup("tdmanley", "nassoons", "2022-03-27 22:00:00")
