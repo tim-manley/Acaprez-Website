@@ -17,19 +17,19 @@ def get_groups() -> List[Group]:
     '''
     Returns a list of the groups in the database
 
-        Parameters: 
+        Parameters:
             Nothing
 
-        Returns: 
+        Returns:
             groups ([group]): A list of group objects
     '''
     groups = []
 
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             cur.execute('SELECT * FROM groups;')
-            
+
             row = cur.fetchone()
             while row is not None:
                 # Do we need exception handling???
@@ -55,24 +55,24 @@ def get_auditionee_auditions(netID: str) -> List[Audition]:
     '''
     auditions = []
 
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             cur.execute('''SELECT * FROM auditionTimes
                            WHERE auditioneeNetID=%s;''', (netID,))
-            
+
             row = cur.fetchone()
             while row is not None:
                 # Do we need exception handling???
                 audition = Audition(row[0], row[1], row[2], row[3])
                 auditions.append(audition)
                 row = cur.fetchone()
-    
+
     return auditions
 
 #-----------------------------------------------------------------------
 
-def audition_signup(auditionee_netID: str, group_netID: str, 
+def audition_signup(auditionee_netID: str, group_netID: str,
                  time_slot: str):
     '''
     Adds auditionee to audition time.
@@ -80,10 +80,10 @@ def audition_signup(auditionee_netID: str, group_netID: str,
         Parameters:
             auditionee_netID: The netID of the auditionee
             group_netID: The netID of the group
-            time_slot: A date and time in string format, the timeslot of 
+            time_slot: A date and time in string format, the timeslot of
                        the audition.
                        Format is: "YYYY-MM-DD hh:mm:ss" 24hr time
-        
+
         Returns:
             Nothing
     '''
@@ -95,7 +95,7 @@ def audition_signup(auditionee_netID: str, group_netID: str,
     if not isinstance(time_slot, str):
         raise ValueError("time_slot must be a string")
 
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             cur.execute('''
@@ -106,10 +106,11 @@ def audition_signup(auditionee_netID: str, group_netID: str,
             row = cur.fetchone()
             # Check if audition time exists
             if row is None:
-                ex = f"No audition for {group_netID} at {time_slot} exists"
+                ex = f"No audition for {group_netID} at {time_slot} "
+                ex += "exists"
                 raise ValueError(ex)
             # Need to check if someone else is already signed up
-            elif row[1] is not None:
+            if row[1] is not None:
                 ex = f"{row[1]} is already signed up for this audition"
                 raise ValueError(ex)
 
@@ -128,10 +129,10 @@ def add_audition_time(group_netID: str, time_slot: str):
 
         Parameters:
             group_netID: The netID of the group
-            time_slot: A date and time in string format, the timeslot of 
+            time_slot: A date and time in string format, the timeslot of
                        the audition.
                        Format is: "YYYY-MM-DD hh:mm:ss" 24hr time
-        
+
         Returns:
             Nothing
     '''
@@ -141,7 +142,7 @@ def add_audition_time(group_netID: str, time_slot: str):
     if not isinstance(time_slot, str):
         raise ValueError("time_slot must be a string")
 
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             # Check if audition time already exists
@@ -152,7 +153,8 @@ def add_audition_time(group_netID: str, time_slot: str):
                         (group_netID, time_slot))
             row = cur.fetchone()
             if row is not None:
-                ex = f"An audition slot for {group_netID} at {time_slot} already exists"
+                ex = f"An audition slot for {group_netID} at "
+                ex += f"{time_slot} already exists"
                 raise ValueError(ex)
 
             # Create audition time
@@ -181,12 +183,12 @@ def _add_user(netID: str, access: str):
     if not isinstance(access, str):
         raise ValueError("access must be a string")
 
-    if access != "leader" and access != "auditionee" and access != "admin":
+    if access not in ("leader", "auditionee", "admin"):
         err_str = "access must be one of \"leader\", \"auditionee\" or "
         err_str += "\"admin\""
         raise ValueError(err_str)
 
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             # Check if user is already in the table
@@ -208,7 +210,7 @@ def _add_user(netID: str, access: str):
 
 #-----------------------------------------------------------------------
 
-def add_auditionee(netID: str, name: str, class_yr: int, dorm: str, 
+def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
                    voice_pt="", phone=""):
     '''
     Creates an auditionee in the auditionees table.
@@ -240,7 +242,7 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
 
     # Need to add some better validation for inputs here
 
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             # Check if auditionee is already in the table
@@ -252,8 +254,9 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
             if row is not None:
                 ex = f"An auditionee with netID: {netID} already exists"
                 raise ValueError(ex)
-            
-            # First need to add to user table with access level of auditionee
+
+            # First need to add to user table with access level of 
+            # auditionee
             _add_user(netID, "auditionee")
 
              # Now add data to auditionees table
@@ -262,14 +265,14 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
                         (netID, name, classYear, 
                          voicePart, dormRoom, phoneNumber)
                         VALUES (%s, %s, %s, %s, %s, %s);
-                        ''', 
+                        ''',
                         (netID, name, class_yr, voice_pt, dorm, phone))
 
 #-----------------------------------------------------------------------
 
 def _print_all_auditions():
     '''
-    For testing, prints all the auditions scheduled in the database to 
+    For testing, prints all the auditions scheduled in the database to
     the terminal.
 
         Parameters:
@@ -278,7 +281,7 @@ def _print_all_auditions():
         Returns:
             Nothing
     '''
-    with connect(host=HOST, database=DATABASE, 
+    with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             cur.execute('SELECT * FROM auditionTimes;')
@@ -292,5 +295,4 @@ def _print_all_auditions():
 
 # For testing
 if __name__ == "__main__":
-    audition_signup("janeec", "nassoons", "2022-03-27 22:00:00")
-    audition_signup("tdmanley", "nassoons", "2022-03-27 22:00:00")
+    _add_user("test", "oops")

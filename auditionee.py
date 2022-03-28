@@ -2,7 +2,7 @@ class Auditionee:
     '''An object for an Acaprez auditionee'''
 
     # Will need to figure out exact implementation (what attributes are
-    # necessary etc.) 
+    # necessary etc.)
     def __init__(self, netID, name, class_year, dorm_room,
                  voice_part=None, phone_number=None):
         # Need to add error handling
