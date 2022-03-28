@@ -1,6 +1,7 @@
 class Audition:
 
-    def __init__(self, auditionID, auditionee_netID, group_netID, timeslot):
+    def __init__(self, auditionID, auditionee_netID, group_netID, 
+    timeslot):
         self._auditionID = auditionID
         self._auditionee_netID = auditionee_netID
         self._group_netID = group_netID
@@ -19,7 +20,7 @@ class Audition:
         Returns audition object as a dictionary
         '''
 
-        d = dict()
+        d = {}
 
         d['auditionID'] = self._auditionID
         d['auditionee_netID'] = self._auditionee_netID
@@ -33,7 +34,7 @@ class Audition:
         Returns auditionID of given audition
         '''
         return self._auditionID
-    
+
     def get_auditionee_netID(self):
         '''
         Returns auditionee netID of given audition
@@ -51,5 +52,3 @@ class Audition:
         Returns timeslot of given audition
         '''
         return self._timeslot
-
-

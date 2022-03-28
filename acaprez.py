@@ -51,7 +51,9 @@ def leader():
 def setcookie():
     netID = request.form['netID']
     auditions = db.get_auditionee_auditions(netID)
-    html = render_template('auditionee.html', auditions=auditions, netID=netID)
+    html = render_template('auditionee.html',
+                           auditions=auditions,
+                           netID=netID)
     response = make_response(html)
     response.set_cookie('netID', netID)
     return response
@@ -110,7 +112,7 @@ def signup_confirmation():
     auditionee_netID = request.cookies.get('netID')
     group_netID = request.form['selected_group']
     time_slot = request.form['audition_timeslot']
-    db.add_audition(auditionee_netID, group_netID, time_slot)
+    db.audition_signup(auditionee_netID, group_netID, time_slot)
     html = render_template('signup-confirmation.html')
     response = make_response(html)
     return response
