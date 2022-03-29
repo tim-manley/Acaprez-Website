@@ -101,6 +101,7 @@ def get_group_availability(group_netID: str) -> List[Audition]:
                         SELECT * FROM auditionTimes
                         WHERE groupNetID=%s 
                         AND auditioneeNetID IS NULL
+                        ORDER BY timeSlot
                         ''',
                         (group_netID,))
             
@@ -138,6 +139,7 @@ def get_group_auditions(group_netID: str) -> List[Audition]:
                         SELECT * FROM auditionTimes
                         WHERE groupNetID=%s 
                         AND auditioneeNetID IS NOT NULL
+                        ORDER BY timeSlot
                         ''',
                         (group_netID,))
             
@@ -174,6 +176,7 @@ def get_group_times(group_netID: str) -> List[Audition]:
             cur.execute('''
                         SELECT * FROM auditionTimes
                         WHERE groupNetID=%s
+                        ORDER BY timeSlot
                         ''',
                         (group_netID,))
             
@@ -449,4 +452,12 @@ if __name__ == "__main__":
     #audition_signup("tdmanley", "nassoons", "2022-03-29 20:15:00")
     times = get_group_times("nassoons")
     for audition in times:
+        print(audition)
+    print()
+    available = get_group_availability("nassoons")
+    for audition in available:
+        print(audition)
+    print()
+    unavailable = get_group_auditions("nassoons")
+    for audition in unavailable:
         print(audition)
