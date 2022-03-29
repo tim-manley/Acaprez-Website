@@ -74,6 +74,50 @@ def get_auditionee(netID: str) -> Auditionee:
 
     return auditionee
 
+#-----------------------------------------------------------------------
+
+def get_group_availability(group_netID: str) -> List[Audition]:
+    '''
+    Given a group netID, returns a list of all times that HAVE NOT been
+    signed up for by an auditionee.
+
+        Parameters:
+        group_netID: The group's netID
+
+        Returns:
+            A list of Audition objects, in which are contained the 
+            details of each un-occupied audition.
+    '''
+
+#-----------------------------------------------------------------------
+
+def get_group_auditions(group_netID: str) -> List[Audition]:
+    '''
+    Given a group netID, returns a list of all times that HAVE been
+    signed up for by an auditionee.
+
+        Parameters:
+        group_netID: The group's netID
+
+        Returns:
+            A list of Audition objects, in which are contained the 
+            details of each audition that has been signed up for.
+    '''
+
+#-----------------------------------------------------------------------
+
+def get_group_times(group_netID: str) -> List[Audition]:
+    '''
+    Given a group netID, returns a list of ALL times that the group 
+    has listed for auditions.
+
+        Parameters:
+        group_netID: The group's netID
+
+        Returns:
+            A list of Audition objects, in which are contained the 
+            details of each audition.
+    '''
 
 #-----------------------------------------------------------------------
 
