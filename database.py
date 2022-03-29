@@ -1,4 +1,3 @@
-from ssl import ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION
 from typing import List
 from psycopg2 import connect
 from group import Group
