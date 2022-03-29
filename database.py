@@ -126,6 +126,28 @@ def get_group_auditions(group_netID: str) -> List[Audition]:
             A list of Audition objects, in which are contained the 
             details of each audition that has been signed up for.
     '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    
+    auditions = []
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s 
+                        AND auditioneeNetID IS NOT NULL
+                        ''',
+                        (group_netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                audition = Audition(row[0], row[1], row[2], row[3])
+                auditions.append(audition)
+                row = cur.fetchone()
+    
+    return auditions
 
 #-----------------------------------------------------------------------
 
@@ -403,7 +425,7 @@ if __name__ == "__main__":
         time = time_template.format(i * 15)
         add_audition_time("nassoons", time)'''
 
-    audition_signup("tdmanley", "nassoons", "2022-03-29 20:00:00")
-    available = get_group_availability("nassoons")
-    for audition in available:
+    #audition_signup("tdmanley", "nassoons", "2022-03-29 20:15:00")
+    unavailable = get_group_auditions("nassoons")
+    for audition in unavailable:
         print(audition)
