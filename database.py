@@ -207,8 +207,12 @@ def get_auditionee_auditions(netID: str) -> List[Audition]:
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
-            cur.execute('''SELECT * FROM auditionTimes
-                           WHERE auditioneeNetID=%s;''', (netID,))
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE auditioneeNetID=%s
+                        ORDER BY timeSlot;
+                        ''',
+                        (netID,))
 
             row = cur.fetchone()
             while row is not None:
@@ -450,14 +454,6 @@ if __name__ == "__main__":
         add_audition_time("nassoons", time)'''
 
     #audition_signup("tdmanley", "nassoons", "2022-03-29 20:15:00")
-    times = get_group_times("nassoons")
+    times = get_auditionee_auditions("tdmanley")
     for audition in times:
-        print(audition)
-    print()
-    available = get_group_availability("nassoons")
-    for audition in available:
-        print(audition)
-    print()
-    unavailable = get_group_auditions("nassoons")
-    for audition in unavailable:
         print(audition)
