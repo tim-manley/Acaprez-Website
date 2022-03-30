@@ -13,6 +13,24 @@ class Auditionee:
         self._voice_part = voice_part
         self._phone_number = phone_number
 
+    def get_netID(self):
+        return self._netID
+    
+    def get_name(self):
+        return self._name
+    
+    def get_class_year(self):
+        return self._class_year
+
+    def get_dorm_room(self):
+        return self._dorm_room
+
+    def get_voice_part(self):
+        return self._voice_part
+    
+    def get_phone_number(self):
+        return self._phone_number
+
     def __str__(self):
         s = ""
         s += f"\nnetID: {self._netID}\n"

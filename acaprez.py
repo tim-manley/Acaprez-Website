@@ -5,6 +5,10 @@
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
 
+from doctest import DocTestRunner
+from os import remove
+from unicodedata import name
+from xml.dom import domreg
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 from http.cookies import SimpleCookie
@@ -22,16 +26,17 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-
     html = render_template('index.html')
     response = make_response(html)
+    #clears any existing cookies, need to add back later
+    #response.set_cookie('netID', '', max_age=0)
+    db._print_all_auditionees()
     return response
 
 #-----------------------------------------------------------------------
 
 @app.route('/login', methods=['GET'])
 def login():
-
     html = render_template('login.html')
     response = make_response(html)
     return response
@@ -52,9 +57,18 @@ def setcookie():
     netID = request.form['netID']
     auditions = db.get_auditionee_auditions(netID)
     groups = db.get_groups()
-    html = render_template('auditionee.html',
+    profile = db.get_auditionee(netID)
+    print(profile, flush=True)
+    if profile is None:
+        welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
+        html = render_template('editprofile.html', 
+                                netID=netID, instruction=welcome,
+                                year='', room='', voice='', phone=''
+        )
+    else:
+        html = render_template('auditionee.html',
                            auditions=auditions,
-                           netID=netID,
+                           profile=profile,
                            groups=groups)
     response = make_response(html)
     response.set_cookie('netID', netID)
@@ -67,7 +81,51 @@ def auditionee():
     netID = request.cookies.get('netID')
     auditions = db.get_auditionee_auditions(netID)
     groups = db.get_groups()
-    html = render_template('auditionee.html', auditions=auditions, netID=netID, groups=groups)
+    profile = db.get_auditionee(netID)
+    if profile is None:
+        welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
+        html = render_template('editprofile.html', 
+                                netID=netID, instruction=welcome,
+                                year='', room='', voice='', phone=''
+        )
+    else:
+        html = render_template('auditionee.html', auditions=auditions, profile=profile, groups=groups)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/editprofile', methods=['GET'])
+def editprofile():
+    netID = request.cookies.get('netID')
+    user_instr = 'Fill out the form to change your profile.'
+    user = db.get_auditionee(netID)
+    html = render_template('editprofile.html', netID=netID, name=user.get_name(),
+                            instruction=user_instr, year=user.get_class_year(),
+                            dorm=user.get_dorm_room(), voice=user.get_voice_part(),
+                            phone=user.get_phone_number())
+    response = make_response(html)
+    return response
+
+
+#-----------------------------------------------------------------------
+
+@app.route('/confirmprofile', methods=['GET', 'POST'])
+def confirmprofile():
+    db._print_all_users()
+
+    name = request.form['name']
+    year = int(request.form['year'])
+    dorm = request.form['dorm']
+    voice = request.form['voice']
+    phone = request.form['phone']
+    netID = request.cookies.get('netID')
+    if db.get_auditionee(netID) is not None:
+        db.remove_auditionee(netID)
+    db.add_auditionee(netID, name, year, dorm, voice, phone)
+
+    html = render_template('confirmprofile.html', netID=netID, name=name,
+                         year=year, dorm=dorm, voice=voice, phone=phone)
     response = make_response(html)
     return response
 

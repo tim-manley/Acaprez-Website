@@ -67,12 +67,40 @@ def get_auditionee(netID: str) -> Auditionee:
             row = cur.fetchone()
             # Check the auditionee exists
             if row is None:
-                raise KeyError(f"No auditionee with {netID} exists")
+                return None
+                #raise KeyError(f"No auditionee with {netID} exists")
             
             auditionee = Auditionee(row[0], row[1], row[2], row[4], 
                                     row[3], row[5])
 
     return auditionee
+
+#-----------------------------------------------------------------------
+
+def remove_auditionee(netID: str) -> Auditionee:
+    '''
+    Given an auditionee's netID, removes the auditionee associated with
+    it.
+
+        Parameters:
+            netID: The auditionee's netID
+
+        Returns:
+            An auditionee object
+    '''
+    # Type validation
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''DELETE FROM auditionees
+                           WHERE netID=%s;''', (netID,))
+            cur.execute('''
+                        DELETE FROM users WHERE netID=%s;
+                        ''',
+                        (netID,))
 
 #-----------------------------------------------------------------------
 
@@ -332,6 +360,7 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
                         (netID,))
             row = cur.fetchone()
             if row is not None:
+                print(row, flush=True)
                 ex = f"An auditionee with netID: {netID} already exists"
                 raise ValueError(ex)
 
@@ -347,6 +376,29 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
                         VALUES (%s, %s, %s, %s, %s, %s);
                         ''',
                         (netID, name, class_yr, voice_pt, dorm, phone))
+
+#-----------------------------------------------------------------------
+
+def _print_all_auditionees():
+    '''
+    For testing, prints all the auditionees in the database
+
+        Parameters:
+            Nothing
+
+        Returns:
+            Nothing
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('SELECT * FROM auditionees;')
+            
+            row = cur.fetchone()
+            while row is not None:
+                print(row, flush=True)
+                row = cur.fetchone()
+            
 
 #-----------------------------------------------------------------------
 
@@ -370,6 +422,30 @@ def _print_all_auditions():
             while row is not None:
                 print(row)
                 row = cur.fetchone()
+
+#-----------------------------------------------------------------------
+
+def _print_all_users():
+    '''
+    For testing, prints all the users scheduled in the database to
+    the terminal.
+
+        Parameters:
+            Nothing
+
+        Returns:
+            Nothing
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('SELECT * FROM users;')
+            
+            row = cur.fetchone()
+            while row is not None:
+                print(row)
+                row = cur.fetchone()
+
 
 #-----------------------------------------------------------------------
 
