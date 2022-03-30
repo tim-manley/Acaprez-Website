@@ -76,33 +76,6 @@ def get_auditionee(netID: str) -> Auditionee:
 
 #-----------------------------------------------------------------------
 
-def remove_auditionee(netID: str) -> Auditionee:
-    '''
-    Given an auditionee's netID, removes the auditionee associated with
-    it.
-
-        Parameters:
-            netID: The auditionee's netID
-
-        Returns:
-            An auditionee object
-    '''
-    # Type validation
-    if not isinstance(netID, str):
-        raise ValueError("netID must be a string")
-
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('''DELETE FROM auditionees
-                           WHERE netID=%s;''', (netID,))
-            cur.execute('''
-                        DELETE FROM users WHERE netID=%s;
-                        ''',
-                        (netID,))
-
-#-----------------------------------------------------------------------
-
 def get_group_availability(group_netID: str) -> List[Audition]:
     '''
     Given a group netID, returns a list of all times that HAVE NOT been
@@ -451,6 +424,101 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
 
 #-----------------------------------------------------------------------
 
+def update_auditionee(netID: str, name=None, class_yr=None, dorm=None,
+                      voice_pt=None, phone=None):
+    '''
+    Updates an auditionee with the given parameters.
+
+        Parameters:
+            netID: The netID of the auditionee
+            name: The name of the auditionee
+            class_yr: The auditionee's class year
+            dorm: The auditionee's hall and room number
+            voice_pt: The voice part(s) of the auditionee (optional)
+            phone: The auditionee's phone number (optional)
+
+        Returns:
+            Nothing
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if auditionee exists
+            cur.execute('''
+                        SELECT * FROM auditionees WHERE netID=%s;
+                        ''',
+                        (netID,))
+            row = cur.fetchone()
+            if row is None:
+                print(row, flush=True)
+                ex = f"No auditionee with netID: {netID} exists"
+                raise ValueError(ex)
+            # Update table
+            if name is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET name=%s
+                            WHERE netID=%s;
+                            ''',
+                            (name, netID))
+            if class_yr is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET classYear=%s
+                            WHERE netID=%s;
+                            ''',
+                            (class_yr, netID))
+            if dorm is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET dormRoom=%s
+                            WHERE netID=%s;
+                            ''',
+                            (dorm, netID))
+            if voice_pt is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET voicePart=%s
+                            WHERE netID=%s;
+                            ''',
+                            (voice_pt, netID))
+            if phone is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET phoneNumber=%s
+                            WHERE netID=%s;
+                            ''',
+                            (phone, netID))
+
+#-----------------------------------------------------------------------
+
+def remove_auditionee(netID: str):
+    '''
+    Given an auditionee's netID, removes the auditionee associated with
+    it.
+
+        Parameters:
+            netID: The auditionee's netID
+
+        Returns:
+            Nothing
+    '''
+    # Type validation
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''DELETE FROM auditionees
+                           WHERE netID=%s;''', (netID,))
+            cur.execute('''
+                        DELETE FROM users WHERE netID=%s;
+                        ''',
+                        (netID,))
+
+#-----------------------------------------------------------------------
+
 def _print_all_auditionees():
     '''
     For testing, prints all the auditionees in the database
@@ -523,12 +591,5 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    time_template = "2022-03-29 20:{}:00"
-    '''for i in range(4):
-        time = time_template.format(i * 15)
-        add_audition_time("nassoons", time)'''
-
-    #audition_signup("tdmanley", "nassoons", "2022-03-29 20:15:00")
-    times = get_auditionee_auditions("tdmanley")
-    for audition in times:
-        print(audition)
+    update_auditionee("tdmanley", "Tim Manley", 2023, "Spelman",
+    "Tenor", "0987654321")

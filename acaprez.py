@@ -117,8 +117,7 @@ def confirmprofile():
     phone = request.form['phone']
     netID = request.cookies.get('netID')
     if db.get_auditionee(netID) is not None:
-        db.remove_auditionee(netID)
-    db.add_auditionee(netID, name, year, dorm, voice, phone)
+        db.update_auditionee(netID, name, year, dorm, voice, phone)
 
     html = render_template('confirmprofile.html', netID=netID, name=name,
                          year=year, dorm=dorm, voice=voice, phone=phone)
