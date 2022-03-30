@@ -1,4 +1,3 @@
-from ssl import ALERT_DESCRIPTION_UNSUPPORTED_EXTENSION
 from typing import List
 from psycopg2 import connect
 from group import Group
@@ -114,8 +113,32 @@ def get_group_availability(group_netID: str) -> List[Audition]:
 
         Returns:
             A list of Audition objects, in which are contained the 
-            details of each un-occupied audition.
+            details of each un-occupied audition. Returns empty list if
+            no auditions are available
     '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    
+    available_auditions = []
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s 
+                        AND auditioneeNetID IS NULL
+                        ORDER BY timeSlot
+                        ''',
+                        (group_netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                audition = Audition(row[0], row[1], row[2], row[3])
+                available_auditions.append(audition)
+                row = cur.fetchone()
+    
+    return available_auditions
 
 #-----------------------------------------------------------------------
 
@@ -131,6 +154,29 @@ def get_group_auditions(group_netID: str) -> List[Audition]:
             A list of Audition objects, in which are contained the 
             details of each audition that has been signed up for.
     '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    
+    auditions = []
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s 
+                        AND auditioneeNetID IS NOT NULL
+                        ORDER BY timeSlot
+                        ''',
+                        (group_netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                audition = Audition(row[0], row[1], row[2], row[3])
+                auditions.append(audition)
+                row = cur.fetchone()
+    
+    return auditions
 
 #-----------------------------------------------------------------------
 
@@ -146,6 +192,28 @@ def get_group_times(group_netID: str) -> List[Audition]:
             A list of Audition objects, in which are contained the 
             details of each audition.
     '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    
+    times = []
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s
+                        ORDER BY timeSlot
+                        ''',
+                        (group_netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                audition = Audition(row[0], row[1], row[2], row[3])
+                times.append(audition)
+                row = cur.fetchone()
+    
+    return times
 
 #-----------------------------------------------------------------------
 
@@ -166,8 +234,12 @@ def get_auditionee_auditions(netID: str) -> List[Audition]:
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
-            cur.execute('''SELECT * FROM auditionTimes
-                           WHERE auditioneeNetID=%s;''', (netID,))
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE auditioneeNetID=%s
+                        ORDER BY timeSlot;
+                        ''',
+                        (netID,))
 
             row = cur.fetchone()
             while row is not None:
@@ -451,6 +523,12 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    add_auditionee("janeec", "Jane Castleman", 2024, "Butler")
-    auditionee = get_auditionee("janeec")
-    print(auditionee)
+    time_template = "2022-03-29 20:{}:00"
+    '''for i in range(4):
+        time = time_template.format(i * 15)
+        add_audition_time("nassoons", time)'''
+
+    #audition_signup("tdmanley", "nassoons", "2022-03-29 20:15:00")
+    times = get_auditionee_auditions("tdmanley")
+    for audition in times:
+        print(audition)
