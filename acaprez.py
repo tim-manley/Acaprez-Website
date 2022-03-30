@@ -30,7 +30,6 @@ def index():
     response = make_response(html)
     #clears any existing cookies, need to add back later
     #response.set_cookie('netID', '', max_age=0)
-    db._print_all_auditionees()
     return response
 
 #-----------------------------------------------------------------------
@@ -58,7 +57,6 @@ def setcookie():
     auditions = db.get_auditionee_auditions(netID)
     groups = db.get_groups()
     profile = db.get_auditionee(netID)
-    print(profile, flush=True)
     if profile is None:
         welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
         html = render_template('editprofile.html', 
@@ -112,8 +110,6 @@ def editprofile():
 
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
-    db._print_all_users()
-
     name = request.form['name']
     year = int(request.form['year'])
     dorm = request.form['dorm']
