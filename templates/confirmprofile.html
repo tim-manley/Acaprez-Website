@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Profile</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+<body>
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <h1 id="welcome">Here is your profile. Would you like to make any changes?</h1>
+        <div class="row">
+            <div class="col-sm-4">
+                <h2 id="profile">My Profile</h2>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-warning">Name: {{name}} </li>
+                    <li class="list-group-item list-group-item-light">NetID: {{netID}} </li>
+                    <li class="list-group-item list-group-item-light">Class Year: {{year}} </li>
+                    <li class="list-group-item list-group-item-light">Dorm Room: {{dorm}} </li>
+                    <li class="list-group-item list-group-item-light">Voice Part: {{voice}} </li>
+                    <li class="list-group-item list-group-item-light">Phone Number: {{phone}} </li>
+                </ul>
+                <br>
+                <a href="/auditionee" class="btn btn-outline-primary" role="button">Confirm</a>
+                <a href="/editprofile" class="btn btn-outline-danger" role="button">Make Changes</a>
+            </div>
+        </div>
+
+</body>
+
+</html>

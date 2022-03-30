@@ -16,15 +16,50 @@
 
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <h1 id="welcome">{{"Welcome, " ~ profile.get_name() ~ " :)"}}</h1>
         <div class="row">
-            <div class="col-sm-8">
-                <h1 id="welcome">{{"Welcome, " ~ netID ~ " :)"}}</h1>
-            </div>
             <div class="col-sm-4">
+                <h2 id="profile">My Profile</h2>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-warning">NetID: {{profile.get_netID()}} </li>
+                    <li class="list-group-item list-group-item-light">Class Year: {{profile.get_class_year()}} </li>
+                    <li class="list-group-item list-group-item-light">Dorm Room: {{profile.get_dorm_room()}} </li>
+                    <li class="list-group-item list-group-item-light">Voice Part: {{profile.get_voice_part()}} </li>
+                    <li class="list-group-item list-group-item-light">Phone Number: {{profile.get_phone_number()}} </li>
+                </ul>
+                <br>
+                <a href="/editprofile" class="btn btn-outline-primary" role="button">Edit Profile</a>
+            </div>
+            <div class="col-sm-8">
+                <h2 id="profile">My Auditions</h2>
+                <table id="calendar">
+                    <tr id="headers">
+                        <th class="table_header">Time</th>
+                        <th class="table_header">Day 1</th>
+                        <th class="table_header">Day 2</th>
+                        <th class="table_header">Day 3</th>
+                    </tr>
+
+                    <tr>
+                        <td id="2100">21:00</td>
+                    </tr>
+                    <tr>
+                        <td id="2115">21:15</td>
+                    </tr>
+                    <tr>
+                        <td id="2130">21:30</td>
+                    </tr>
+                    <tr>
+                        <td id="2145">21:45</td>
+                    </tr>
+
+                </table>
                 <button id="new-audition" class="btn btn-primary btn-lg">
                     <a href='createAudition'>New Audition</a>
                 </button>
-            </div>
+            </div>  
+
+
         </div>
         <div class="row">
             
@@ -50,29 +85,8 @@
                 
 
             </div>  
-            <div class="col-sm-8">
-                <table id="calendar">
-                    <tr id="headers">
-                        <th class="table_header">Time</th>
-                        <th class="table_header">Day 1</th>
-                        <th class="table_header">Day 2</th>
-                        <th class="table_header">Day 3</th>
-                    </tr>
+        
 
-                    <tr>
-                        <td id="2100">21:00</td>
-                    </tr>
-                    <tr>
-                        <td id="2115">21:15</td>
-                    </tr>
-                    <tr>
-                        <td id="2130">21:30</td>
-                    </tr>
-                    <tr>
-                        <td id="2145">21:45</td>
-                    </tr>
-
-                </table>
             </div>
 
         </div>
