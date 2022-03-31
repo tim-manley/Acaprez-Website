@@ -12,9 +12,10 @@
 {% include 'nav.html' %}
 
 <body>
-    <div id="container-fluid">
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <div class="row">
             <div class="col-sm-4">
+                <h2>Sign up for an audition: </h2>
                 <form action="signup-confirmation" method="POST">
                     {% for group in groups %}
                     <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
@@ -24,7 +25,15 @@
                     <input type="datetime-local" name="audition_timeslot">
                     <input type="submit" value="Sign Up">
                 </form>
+                <br>
+                <button class="btn btn-primary">
+                    <a style="color:white" href='auditionee'>Cancel</a>
+                </button>
             </div>
+
+
+    
+
 
             
         </div>
