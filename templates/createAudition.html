@@ -12,9 +12,10 @@
 {% include 'nav.html' %}
 
 <body>
-    <div id="container-fluid">
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <div class="row">
             <div class="col-sm-4">
+                <h2>Sign up for an audition: </h2>
                 <form action="signup-confirmation" method="POST">
                     {% for group in groups %}
                     <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
@@ -24,9 +25,150 @@
                     <input type="datetime-local" name="audition_timeslot">
                     <input type="submit" value="Sign Up">
                 </form>
-            </div>
+                <br>
+                <button class="btn btn-primary">
+                    <a style="color:white" href='auditionee'>Cancel</a>
+                </button>
+            </div>    
+            <div class="col-sm-8">
+                <table id="calendar">
+                    <tr id="headers">
+                        <th class="table_header">Time</th>
+                        <th class="table_header">Sept 1</th>
+                        <th class="table_header">Sept 2</th>
+                        <th class="table_header">Sept 3</th>
+                    </tr>
+                    <tr>
+                        <td id="1700">17:00</td>
+                        <td id="1700-01-09"></td>
+                        <td id="1700-02-09"></td>
+                        <td id="1700-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1715">17:15</td>
+                        <td id="1715-01-09"></td>
+                        <td id="1715-02-09"></td>
+                        <td id="1715-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1730">17:30</td>
+                        <td id="1730-01-09"></td>
+                        <td id="1730-02-09"></td>
+                        <td id="1730-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1745">17:45</td>
+                        <td id="1745-01-09"></td>
+                        <td id="1745-02-09"></td>
+                        <td id="1745-03-09"></td>
+                    </tr>
 
-            
+                    <tr>
+                        <td id="1800">18:00</td>
+                        <td id="1800-01-09"></td>
+                        <td id="1800-02-09"></td>
+                        <td id="1800-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1815">18:15</td>
+                        <td id="1815-01-09"></td>
+                        <td id="1815-02-09"></td>
+                        <td id="1815-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1830">18:30</td>
+                        <td id="1830-01-09"></td>
+                        <td id="1830-02-09"></td>
+                        <td id="1830-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1845">18:45</td>
+                        <td id="1845-01-09"></td>
+                        <td id="1845-02-09"></td>
+                        <td id="1845-03-09"></td>
+                    </tr>
+
+                    <tr>
+                        <td id="1900">19:00</td>
+                        <td id="1900-01-09"></td>
+                        <td id="1900-02-09"></td>
+                        <td id="1900-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1915">19:15</td>
+                        <td id="1915-01-09"></td>
+                        <td id="1915-02-09"></td>
+                        <td id="1915-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1930">19:30</td>
+                        <td id="1930-01-09"></td>
+                        <td id="1930-02-09"></td>
+                        <td id="1930-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="1945">19:45</td>
+                        <td id="1945-01-09"></td>
+                        <td id="1945-02-09"></td>
+                        <td id="1945-03-09"></td>
+                    </tr>
+
+                    <tr>
+                        <td id="2000">20:00</td>
+                        <td id="2000-01-09"></td>
+                        <td id="2000-02-09"></td>
+                        <td id="2000-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="2015">20:15</td>
+                        <td id="2015-01-09"></td>
+                        <td id="2015-02-09"></td>
+                        <td id="2015-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="2030">20:30</td>
+                        <td id="2030-01-09"></td>
+                        <td id="2030-02-09"></td>
+                        <td id="2030-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="2045">20:45</td>
+                        <td id="2045-01-09"></td>
+                        <td id="2045-02-09"></td>
+                        <td id="2045-03-09"></td>
+                    </tr>
+
+                    <tr>
+                        <td id="2100">21:00</td>
+                        <td id="2100-01-09"></td>
+                        <td id="2100-02-09"></td>
+                        <td id="2100-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="2115">21:15</td>
+                        <td id="2115-01-09"></td>
+                        <td id="2115-02-09"></td>
+                        <td id="2115-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="2130">21:30</td>
+                        <td id="2130-01-09"></td>
+                        <td id="2130-02-09"></td>
+                        <td id="2130-03-09"></td>
+                    </tr>
+                    <tr>
+                        <td id="2145">21:45</td>
+                        <td id="2145-01-09"></td>
+                        <td id="2145-02-09"></td>
+                        <td id="2145-03-09"></td>
+                    </tr>
+
+                </table>
+                <br>
+
+
+
+            </div>
         </div>
     </div>
 </body>
