@@ -17,9 +17,28 @@
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <h1 id="welcome">{{"Welcome, " ~ profile.get_name() ~ " :)"}}</h1>
+        <br>
+        <div class="row">
+            <div class="col-sm-2">
+                <h3 id="profile">My Profile</h3>
+            </div>
+            <div class="col-sm-2">
+                <a href="/editprofile" class="btn btn-outline-primary" id="edit-profile-but" role="button">Edit Profile</a>
+            </div>
+            <div class="col-sm-6">
+                <h3 id="profile">My Auditions</h3>
+            </div>
+            <div class="col-sm-2">
+                <button id="new-audition" class="btn btn-primary">
+                    <a href='createAudition'>New Audition</a>
+                </button>
+            </div>
+
+
+        </div>
+
         <div class="row">
             <div class="col-sm-4">
-                <h2 id="profile">My Profile</h2>
                 <ul class="list-group">
                     <li class="list-group-item list-group-item-warning">NetID: {{profile.get_netID()}} </li>
                     <li class="list-group-item list-group-item-light">Class Year: {{profile.get_class_year()}} </li>
@@ -28,10 +47,10 @@
                     <li class="list-group-item list-group-item-light">Phone Number: {{profile.get_phone_number()}} </li>
                 </ul>
                 <br>
-                <a href="/editprofile" class="btn btn-outline-primary" role="button">Edit Profile</a>
+                
             </div>
+
             <div class="col-sm-8">
-                <h2 id="profile">My Auditions</h2>
                 <table id="calendar">
                     <tr id="headers">
                         <th class="table_header">Time</th>
@@ -54,41 +73,14 @@
                     </tr>
 
                 </table>
-                <button id="new-audition" class="btn btn-primary btn-lg">
-                    <a href='createAudition'>New Audition</a>
-                </button>
+                <br>
+
             </div>  
 
 
         </div>
         <div class="row">
             
-        </div>
-        
-        <br>
-
-
-        <h3>Groups:</h3>
-
-        <div class="row">
-            <div class="col-sm-4">
-
-                <form action="signup-confirmation" method="POST">
-                    {% for group in groups %}
-                    <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
-                    <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
-                    <br>
-                    {% endfor %}
-                    <input type="datetime-local" name="audition_timeslot">
-                    <input type="submit" value="Sign Up">
-                </form>
-                
-
-            </div>  
-        
-
-            </div>
-
         </div>
 
         <br>
