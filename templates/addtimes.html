@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Audition Times</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+{% include 'nav.html' %}
+
+<body>
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <div class="row">
+            <div class="col-sm-4">
+                <h2>Add Audition Times: </h2>
+                <form action="addedtimes" method="POST" class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <h4>Select a date to add times to: </h4>
+                        <label>
+                            <input type="radio" value="2022-09-01" name="date" required> September 1, 2022
+                        </label>
+                        <br>
+                        <label><input type="radio" value="2022-09-02" name="date"> September 2, 2022</label>
+                        <br>
+                        <label><input type="radio" value="2022-09-03" name="date"> September 3, 2022</label>
+                    </div>
+                    <div class="form-group">
+                        <h4>Select all times you would like to add: </h4>
+                        {% for time in times %}
+                        <label>
+                            <input type="checkbox" name="times" value="{{time}}"> {{time}}
+                        </label>
+                        <br>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+
+            </div>
+            
+            
+            <div class="col-sm-2">
+                <br>
+                <br>
+                <br>
+                <button class="btn btn-warning">
+                <br>
+                <br>
+                <br>
+                <a style="color:white" href='leader'>Click here to Cancel</a>
+                <br>
+                <br>
+                <br>
+                <br>
+            </button>
+            </div>
+        </div>
+
+
+    </div>
+    </div>
+</body>
+
+</html>

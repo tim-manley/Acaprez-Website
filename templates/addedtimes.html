@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Request Success</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+{% include 'nav.html' %}
+
+<body>
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <div class="row">
+            <div class="col-sm-4">
+                <h2>Request Success</h2>
+
+            </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <button id="new-audition" class="btn btn-primary">
+                    <a href='addtimes'>Add More Times</a>
+                </button>
+            </div>
+            <div class="col-sm-2">
+                <button id="leader" class="btn btn-primary">
+                    <a href='leader'>Return Home</a>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -44,8 +44,10 @@ def login():
 
 @app.route('/leader', methods=['GET'])
 def leader():
-
-    html = render_template('leader.html')
+    netID = request.cookies.get('netID')
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
     return response
 
@@ -108,6 +110,37 @@ def editprofile():
 
 #-----------------------------------------------------------------------
 
+@app.route('/addtimes', methods=['GET'])
+def addtimes():
+    netID = request.cookies.get('netID')
+    times = []
+    for i in range(17, 22):
+        times.append(str(i) + ":" + "00")
+        times.append(str(i) + ":" + "15")
+        times.append(str(i) + ":" + "30")
+        times.append(str(i) + ":" + "45")
+
+    html = render_template('addtimes.html', netID=netID, times=times)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/addedtimes', methods=['GET', 'POST'])
+def addedtimes():
+    date = request.form['date']
+    times = request.form.getlist('times')
+    netID = request.cookies.get('netID')
+    for time in times:
+        #testing
+        print(date + " " + time)
+        db.add_audition_time(netID, date + " " + time)
+    html = render_template('addedtimes.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
     name = request.form['name']
@@ -147,7 +180,9 @@ def netIDleader():
 @app.route('/leaderlanding', methods=['GET', 'POST'])
 def leadercookie():
     netID = request.form['netID']
-    html = render_template('leader.html', netID=netID)
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
     response.set_cookie('netID', netID)
     return response
