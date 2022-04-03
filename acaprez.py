@@ -8,6 +8,7 @@
 from doctest import DocTestRunner
 from os import remove
 from unicodedata import name
+from urllib import response
 from xml.dom import domreg
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
@@ -141,6 +142,21 @@ def netIDleader():
     html = render_template('netIDleader.html')
     response = make_response(html)
     return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/showgroupauditions', methods=['GET'])
+def show_group_auditions():
+    groupNetID = request.args.get('groupNetID')
+    available_auditions = db.get_group_availability(groupNetID)
+    available = []
+    for audition in available_auditions:
+        time = audition.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        available.append(time)
+    html = render_template('auditioneeCalendar.html', available=available)
+    response = make_response(html)
+    return response
+
 
 #-----------------------------------------------------------------------
 

@@ -318,6 +318,33 @@ def add_audition_time(group_netID: str, time_slot: str):
 
 #-----------------------------------------------------------------------
 
+def is_available_audition(group_netID: str, time_slot: str):
+    '''
+        TO-DO
+    '''
+    # Type validation
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    if not isinstance(time_slot, str):
+        raise ValueError("time_slot must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s AND timeSlot=%s
+                        AND auditioneeNetID IS NULL
+                        ''',
+                        (group_netID, time_slot))
+            
+            row = cur.fetchone()
+            if row is not None:
+                return True
+            return False
+
+#-----------------------------------------------------------------------
+
 def _add_user(netID: str, access: str):
     '''
     File private method which adds a user to the users table. Should
@@ -591,5 +618,4 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    update_auditionee("tdmanley", "Tim Manley", 2023, "Spelman",
-    "Tenor", "0987654321")
+    print(is_available_audition("nassoons", "2022-09-02 17:00:00"))
