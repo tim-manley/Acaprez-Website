@@ -45,11 +45,28 @@
 
     <script>
 
-        function handleResponse(response) {
-            $('#calendar').html(response);
+        function buttonPress() {
+            let groupNetID = $("input[type='radio']:checked").val();
+            let time_slot = this.id;
+            let str = "Would you like to sign up for an audition for ";
+            str += groupNetID + " at " + time_slot + "?";
+            let confirmed = window.confirm(str);
+
+            if (confirmed) {
+                groupNetID = encodeURIComponent(groupNetID);
+                time_slot = encodeURIComponent(time_slot);
+                let url = '/signup-confirmation?group=' + groupNetID;
+                url += '&timeslot=' + time_slot;
+                window.location.href = url;
+            }
         }
 
-        let request = null;
+        function handleResponse(response) {
+            $('#calendar').html(response);
+            $('#calendar button').on('click', buttonPress);
+        }
+
+        let showRequest = null;
 
         function showAuditions() {
             let groupNetID = $("input[type='radio']:checked").val();
@@ -58,11 +75,11 @@
 
             let url = "/showgroupauditions?groupNetID=" + groupNetID;
 
-            if (request != null) {
-                request.abort();
+            if (showRequest != null) {
+                showRequest.abort();
             }
 
-            request = $.ajax(
+            showRequest = $.ajax(
                 {
                     type: 'GET',
                     url: url,

@@ -7,6 +7,7 @@
 
 from doctest import DocTestRunner
 from os import remove
+from time import time
 from unicodedata import name
 from urllib import response
 from xml.dom import domreg
@@ -17,6 +18,7 @@ from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
 from sys import stderr
+from urllib.parse import unquote
 
 #-----------------------------------------------------------------------
 
@@ -183,8 +185,10 @@ def createAudition():
 @app.route('/signup-confirmation', methods=['GET', 'POST'])
 def signup_confirmation():
     auditionee_netID = request.cookies.get('netID')
-    group_netID = request.form['selected_group']
-    time_slot = request.form['audition_timeslot']
+    group_netID = request.args.get('group')
+    time_slot = request.args.get('timeslot')
+    group_netID = unquote(group_netID)
+    time_slot = unquote(time_slot)
     db.audition_signup(auditionee_netID, group_netID, time_slot)
     html = render_template('signup-confirmation.html')
     response = make_response(html)
