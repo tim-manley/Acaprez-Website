@@ -12,9 +12,13 @@
         {% for k in range(1,4)%}
         {% set time_slot = '2022-09-%02d %02d:%02d:00' % (k, i, j) %}
         {% if time_slot in available %}
-        <td>Available</td>
+        <td>
+            <button id="{{time_slot}}" type="button" class="btn btn-primary">
+                Available
+            </button>
+        </td>
         {% else %}
-        <td>Unavailable</td>
+        <td></td>
         {% endif %}
         {% endfor %}
     </tr>
