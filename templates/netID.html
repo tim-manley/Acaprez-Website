@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
-        <title>Auditionee NetID Login</title>
-    </head>
+
+<head>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
+    <title>Auditionee NetID Login</title>
+</head>
 
 {% include 'nav.html' %}
 
 <body>
     <div id="CAS">Please enter your NetID below to login:</div>
-    <form id="CAS" action = "auditioneelanding" method = "POST">
-        <p><input type = 'text' name = 'netID'required/></p>
-        <p><input type = 'submit' class="btn btn-primary btn-lg" value = 'Login'/></p>
+    <form id="CAS" action="auditioneelanding" method="POST">
+        <p><input type='text' name='netID' required /></p>
+        <p><input type='submit' class="btn btn-primary btn-lg" value='Login' /></p>
     </form>
 </body>
 

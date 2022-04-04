@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Audition Times</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+
+</head>
+
+{% include 'nav.html' %}
+
+<body>
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <div class="row">
+            <div class="col-sm-10">
+                <h2>Add Audition Times: </h2>
+                <form action="addedtimes" method="POST" class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <h4>Select all times you would like to add: </h4>
+                        <table id="calendar">
+                            {% include 'leaderCalendar.html' %}
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+
+            </div>
+
+
+            <div class="col-sm-2">
+                <br>
+                <br>
+                <br>
+                <button class="btn btn-warning">
+                    <br>
+                    <br>
+                    <br>
+                    <a style="color:white" href='leader'>Click here to Cancel</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+    </div>
+</body>
+
+</html>

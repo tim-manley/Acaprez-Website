@@ -7,6 +7,7 @@
 
 from doctest import DocTestRunner
 from os import remove
+import sched
 from time import time
 from unicodedata import name
 from urllib import response
@@ -47,8 +48,10 @@ def login():
 
 @app.route('/leader', methods=['GET'])
 def leader():
-
-    html = render_template('leader.html')
+    netID = request.cookies.get('netID')
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
     return response
 
@@ -111,6 +114,35 @@ def editprofile():
 
 #-----------------------------------------------------------------------
 
+@app.route('/addtimes', methods=['GET'])
+def addtimes():
+    netID = request.cookies.get('netID')
+    scheduled_slots = db.get_group_times(netID)
+    scheduled = []
+    for slot in scheduled_slots:
+        time = slot.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        scheduled.append(time)
+
+    html = render_template('addtimes.html', 
+                            netID=netID,
+                            scheduled=scheduled)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/addedtimes', methods=['GET', 'POST'])
+def addedtimes():
+    times = request.form.getlist('times')
+    netID = request.cookies.get('netID')
+    for time in times:
+        db.add_audition_time(netID, time)
+    html = render_template('addedtimes.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
     name = request.form['name']
@@ -165,7 +197,9 @@ def show_group_auditions():
 @app.route('/leaderlanding', methods=['GET', 'POST'])
 def leadercookie():
     netID = request.form['netID']
-    html = render_template('leader.html', netID=netID)
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
     response.set_cookie('netID', netID)
     return response
@@ -195,27 +229,6 @@ def signup_confirmation():
     return response
 
 #Below here is for reference only
-'''@app.route('/searchform', methods=['GET'])
-def search_form():
-
-    error_msg = request.args.get('error_msg')
-    if error_msg is None:
-        error_msg = ''
-
-    prev_author = request.cookies.get('prev_author')
-    if prev_author is None:
-        prev_author = '(None)'
-
-    html = render_template('searchform.html',
-        ampm=get_ampm(),
-        current_time=get_current_time(),
-        error_msg=error_msg,
-        prev_author=prev_author)
-    response = make_response(html)
-    return response'''
-
-#-----------------------------------------------------------------------
-
 '''@app.route('/searchresults', methods=['GET'])
 def search_results():
 
