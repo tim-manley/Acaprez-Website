@@ -7,6 +7,7 @@
 
 from doctest import DocTestRunner
 from os import remove
+import sched
 from time import time
 from unicodedata import name
 from urllib import response
@@ -116,14 +117,15 @@ def editprofile():
 @app.route('/addtimes', methods=['GET'])
 def addtimes():
     netID = request.cookies.get('netID')
-    times = []
-    for i in range(17, 22):
-        times.append(str(i) + ":" + "00")
-        times.append(str(i) + ":" + "15")
-        times.append(str(i) + ":" + "30")
-        times.append(str(i) + ":" + "45")
+    scheduled_slots = db.get_group_times(netID)
+    scheduled = []
+    for slot in scheduled_slots:
+        time = slot.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        scheduled.append(time)
 
-    html = render_template('addtimes.html', netID=netID, times=times)
+    html = render_template('addtimes.html', 
+                            netID=netID,
+                            scheduled=scheduled)
     response = make_response(html)
     return response
 
@@ -131,13 +133,10 @@ def addtimes():
 
 @app.route('/addedtimes', methods=['GET', 'POST'])
 def addedtimes():
-    date = request.form['date']
     times = request.form.getlist('times')
     netID = request.cookies.get('netID')
     for time in times:
-        #testing
-        print(date + " " + time)
-        db.add_audition_time(netID, date + " " + time)
+        db.add_audition_time(netID, time)
     html = render_template('addedtimes.html')
     response = make_response(html)
     return response
@@ -230,27 +229,6 @@ def signup_confirmation():
     return response
 
 #Below here is for reference only
-'''@app.route('/searchform', methods=['GET'])
-def search_form():
-
-    error_msg = request.args.get('error_msg')
-    if error_msg is None:
-        error_msg = ''
-
-    prev_author = request.cookies.get('prev_author')
-    if prev_author is None:
-        prev_author = '(None)'
-
-    html = render_template('searchform.html',
-        ampm=get_ampm(),
-        current_time=get_current_time(),
-        error_msg=error_msg,
-        prev_author=prev_author)
-    response = make_response(html)
-    return response'''
-
-#-----------------------------------------------------------------------
-
 '''@app.route('/searchresults', methods=['GET'])
 def search_results():
 

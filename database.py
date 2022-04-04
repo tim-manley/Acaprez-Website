@@ -1,3 +1,4 @@
+from tokenize import group
 from typing import List
 from psycopg2 import connect
 from group import Group
@@ -298,6 +299,16 @@ def add_audition_time(group_netID: str, time_slot: str):
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
+            # Check the netID is a valid group
+            cur.execute('''
+                        SELECT * FROM groups
+                        WHERE netID=%s;
+                        ''',
+                        (group_netID,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{group_netID} is not a valid group netID"
+                raise ValueError(ex)
             # Check if audition time already exists
             cur.execute('''
                         SELECT * FROM auditionTimes 

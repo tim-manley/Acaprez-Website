@@ -3,23 +3,24 @@
 
 <head>
     <title>Acaprez</title>
-    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
 
 </head>
 
 {% include 'nav.html' %}
 
 <div class="container-fluid">
+
     <body class="align-middle">
         <div id="logo-box">
             <h1 id="acaprez">acaprez</h1>
         </div>
 
-        <h4 id="login-text">Click here to <a id="login-link" 
-            href="login">login</a></h4>
+        <h4 id="login-text">Click here to <a id="login-link" href="login">login</a></h4>
 
     </body>
 </div>
