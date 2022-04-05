@@ -5,8 +5,9 @@
     <title>Audition Signup</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
-    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+
 </head>
 
 {% include 'nav.html' %}
@@ -16,28 +17,83 @@
         <div class="row">
             <div class="col-sm-4">
                 <h2>Sign up for an audition: </h2>
-                <form action="signup-confirmation" method="POST">
+                <div class="group-selection">
                     {% for group in groups %}
                     <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
                     <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
                     <br>
                     {% endfor %}
-                    <input type="datetime-local" name="audition_timeslot">
-                    <input type="submit" value="Sign Up">
-                </form>
+                </div>
                 <br>
                 <button class="btn btn-primary">
                     <a style="color:white" href='auditionee'>Cancel</a>
                 </button>
+
             </div>
-
-
-    
-
-
-            
+            <div class="col-sm-8">
+                <table id="calendar"></table>
+                <br>
+            </div>
         </div>
+
+
     </div>
+    </div>
+
+    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+    </script>
+
+    <script>
+
+        function buttonPress() {
+            let groupNetID = $("input[type='radio']:checked").val();
+            let time_slot = this.id;
+            let str = "Would you like to sign up for an audition for ";
+            str += groupNetID + " at " + time_slot + "?";
+            let confirmed = window.confirm(str);
+
+            if (confirmed) {
+                groupNetID = encodeURIComponent(groupNetID);
+                time_slot = encodeURIComponent(time_slot);
+                let url = '/signup-confirmation?group=' + groupNetID;
+                url += '&timeslot=' + time_slot;
+                window.location.href = url;
+            }
+        }
+
+        function handleResponse(response) {
+            $('#calendar').html(response);
+            $('#calendar button').on('click', buttonPress);
+        }
+
+        let showRequest = null;
+
+        function showAuditions() {
+            let groupNetID = $("input[type='radio']:checked").val();
+
+            groupNetID = encodeURIComponent(groupNetID);
+
+            let url = "/showgroupauditions?groupNetID=" + groupNetID;
+
+            if (showRequest != null) {
+                showRequest.abort();
+            }
+
+            showRequest = $.ajax(
+                {
+                    type: 'GET',
+                    url: url,
+                    success: handleResponse
+                }
+            );
+        }
+
+        function setup() {
+            $('.group-selection input').on('change', showAuditions);
+        }
+
+        $('document').ready(setup);
+    </script>
 </body>
 
 </html>

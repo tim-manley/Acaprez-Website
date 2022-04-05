@@ -1,3 +1,4 @@
+from tokenize import group
 from typing import List
 from psycopg2 import connect
 from group import Group
@@ -298,6 +299,16 @@ def add_audition_time(group_netID: str, time_slot: str):
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
+            # Check the netID is a valid group
+            cur.execute('''
+                        SELECT * FROM groups
+                        WHERE netID=%s;
+                        ''',
+                        (group_netID,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{group_netID} is not a valid group netID"
+                raise ValueError(ex)
             # Check if audition time already exists
             cur.execute('''
                         SELECT * FROM auditionTimes 
@@ -315,6 +326,33 @@ def add_audition_time(group_netID: str, time_slot: str):
                         INSERT INTO auditionTimes (groupNetID, timeSlot)
                         VALUES (%s, %s);
                         ''', (group_netID, time_slot))
+
+#-----------------------------------------------------------------------
+
+def is_available_audition(group_netID: str, time_slot: str):
+    '''
+        TO-DO
+    '''
+    # Type validation
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    if not isinstance(time_slot, str):
+        raise ValueError("time_slot must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s AND timeSlot=%s
+                        AND auditioneeNetID IS NULL
+                        ''',
+                        (group_netID, time_slot))
+            
+            row = cur.fetchone()
+            if row is not None:
+                return True
+            return False
 
 #-----------------------------------------------------------------------
 
@@ -591,5 +629,4 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    update_auditionee("tdmanley", "Tim Manley", 2023, "Spelman",
-    "Tenor", "0987654321")
+    print(is_available_audition("nassoons", "2022-09-02 17:00:00"))

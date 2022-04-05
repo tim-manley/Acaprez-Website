@@ -4,10 +4,14 @@
 # acaprez.py
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
-import os
+
 from doctest import DocTestRunner
 from os import remove, environ
+from os import remove
+import sched
+from time import time
 from unicodedata import name
+from urllib import response
 from xml.dom import domreg
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
@@ -16,6 +20,7 @@ from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
 from sys import stderr
+from urllib.parse import unquote
 
 #-----------------------------------------------------------------------
 
@@ -50,8 +55,10 @@ def login():
 
 @app.route('/leader', methods=['GET'])
 def leader():
-
-    html = render_template('leader.html')
+    netID = request.cookies.get('netID')
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
     return response
 
@@ -114,6 +121,35 @@ def editprofile():
 
 #-----------------------------------------------------------------------
 
+@app.route('/addtimes', methods=['GET'])
+def addtimes():
+    netID = request.cookies.get('netID')
+    scheduled_slots = db.get_group_times(netID)
+    scheduled = []
+    for slot in scheduled_slots:
+        time = slot.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        scheduled.append(time)
+
+    html = render_template('addtimes.html',
+                            netID=netID,
+                            scheduled=scheduled)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/addedtimes', methods=['GET', 'POST'])
+def addedtimes():
+    times = request.form.getlist('times')
+    netID = request.cookies.get('netID')
+    for time in times:
+        db.add_audition_time(netID, time)
+    html = render_template('addedtimes.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
     name = request.form['name']
@@ -150,10 +186,27 @@ def netIDleader():
 
 #-----------------------------------------------------------------------
 
+@app.route('/showgroupauditions', methods=['GET'])
+def show_group_auditions():
+    groupNetID = request.args.get('groupNetID')
+    available_auditions = db.get_group_availability(groupNetID)
+    available = []
+    for audition in available_auditions:
+        time = audition.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        available.append(time)
+    html = render_template('auditioneeCalendar.html', available=available)
+    response = make_response(html)
+    return response
+
+
+#-----------------------------------------------------------------------
+
 @app.route('/leaderlanding', methods=['GET', 'POST'])
 def leadercookie():
     netID = request.form['netID']
-    html = render_template('leader.html', netID=netID)
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
     response.set_cookie('netID', netID)
     return response
@@ -173,35 +226,16 @@ def createAudition():
 @app.route('/signup-confirmation', methods=['GET', 'POST'])
 def signup_confirmation():
     auditionee_netID = request.cookies.get('netID')
-    group_netID = request.form['selected_group']
-    time_slot = request.form['audition_timeslot']
+    group_netID = request.args.get('group')
+    time_slot = request.args.get('timeslot')
+    group_netID = unquote(group_netID)
+    time_slot = unquote(time_slot)
     db.audition_signup(auditionee_netID, group_netID, time_slot)
     html = render_template('signup-confirmation.html')
     response = make_response(html)
     return response
 
 #Below here is for reference only
-'''@app.route('/searchform', methods=['GET'])
-def search_form():
-
-    error_msg = request.args.get('error_msg')
-    if error_msg is None:
-        error_msg = ''
-
-    prev_author = request.cookies.get('prev_author')
-    if prev_author is None:
-        prev_author = '(None)'
-
-    html = render_template('searchform.html',
-        ampm=get_ampm(),
-        current_time=get_current_time(),
-        error_msg=error_msg,
-        prev_author=prev_author)
-    response = make_response(html)
-    return response'''
-
-#-----------------------------------------------------------------------
-
 '''@app.route('/searchresults', methods=['GET'])
 def search_results():
 
