@@ -60,29 +60,6 @@
 
         </div>
 
-        <h3>All Audition Slots:</h3>
-
-        <div class="row">
-            <div class="col-sm-4">
-                <table class="table">
-                    <tr>
-                        <th class="table_header">Auditionee</th>
-                        <th class="table_header">Time</th>
-                    </tr>
-                    {% for audition in times: %}
-                    <tr>
-                        <td id="group_name">{{audition.get_auditionee_netID()}}</td>
-                        <td>{{audition.get_timeslot()}} </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>  
-            <div class="col-sm-2">
-                <button id="new-audition" class="btn btn-primary">
-                    <a href='addtimes'>Add Audition Times</a>
-                </button>
-            </div>
-        </div>
 
         
     </div>
