@@ -4,9 +4,9 @@
 # acaprez.py
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
-
+import os
 from doctest import DocTestRunner
-from os import remove
+from os import remove, environ
 from unicodedata import name
 from xml.dom import domreg
 from flask import Flask, request, make_response, redirect, url_for
@@ -20,6 +20,12 @@ from sys import stderr
 #-----------------------------------------------------------------------
 
 app = Flask(__name__)
+
+import auth
+try:
+    app.secret_key = environ.get('SECRET_KEY')
+except KeyError:
+    app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
 

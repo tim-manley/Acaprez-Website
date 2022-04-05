@@ -14,9 +14,12 @@ from flask import session, abort
 
 from acaprez import app
 
+from database import get_groups, get_auditionee
+
 # ----------------------------------------------------------------------
 
 # Authors: Alex Halderman, Scott Karlin, Brian Kernighan, Bob Dondero
+# Editors: Silas Mohr
 
 # ----------------------------------------------------------------------
 
@@ -90,6 +93,18 @@ def authenticate():
     # the session.
     session['username'] = username
     return username
+
+
+# ----------------------------------------------------------------------
+
+
+def authorize(netid):
+    is_auditionee = get_auditionee(netid)
+    if not is_auditionee:
+        groups = get_groups()
+    else:
+        return 'auditionee'
+
 
 
 # ----------------------------------------------------------------------
