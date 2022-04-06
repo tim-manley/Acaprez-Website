@@ -31,6 +31,8 @@ app.secret_key = environ.get('SECRET_KEY')
 if app.secret_key is None:
     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
+debug = False
+
 #-----------------------------------------------------------------------
 
 @app.route('/', methods=['GET'])
@@ -46,9 +48,15 @@ def index():
 
 @app.route('/login', methods=['GET'])
 def login():
-    html = render_template('login.html')
+    if debug:
+        html = render_template('login.html')
+    else:
+        html = render_template('caslogin.html')
+
     response = make_response(html)
     return response
+
+
 
 #-----------------------------------------------------------------------
 
@@ -148,7 +156,7 @@ def addtimes():
 @app.route('/addedtimes', methods=['GET', 'POST'])
 def addedtimes():
     times = request.form.getlist('times')
-    netID = request.cookies.get('netID')
+    netID = auth.authenticate()
     for time in times:
         db.add_audition_time(netID, time)
     html = render_template('addedtimes.html')
@@ -164,7 +172,7 @@ def confirmprofile():
     dorm = request.form['dorm']
     voice = request.form['voice']
     phone = request.form['phone']
-    netID = request.cookies.get('netID')
+    netID = auth.authenticate()
     if db.get_auditionee(netID) is not None:
         db.update_auditionee(netID, name, year, dorm, voice, phone)
     else:
@@ -179,9 +187,16 @@ def confirmprofile():
 
 @app.route('/netID', methods=['GET'])
 def netID():
-    html = render_template('netID.html')
-    response = make_response(html)
-    return response
+    if debug:
+        html = render_template('netID.html')
+        response = make_response(html)
+        return response
+    else:
+        netid = auth.authenticate()
+        if session.get('permissions') == 'leader':
+            return redirect(url_for('leader'))
+        else:
+            return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
 
