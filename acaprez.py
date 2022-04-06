@@ -33,7 +33,9 @@ if app.secret_key is None:
 
 debug = environ.get('DEBUG')
 if debug is None:
-    debug = False
+    debug = True
+    debug_netid = 'nassoons'
+    debug_perms = 'leader'
 
 #-----------------------------------------------------------------------
 
@@ -51,6 +53,8 @@ def index():
 @app.route('/login', methods=['GET'])
 def login():
     if debug:
+        session['username'] = debug_netid
+        session['permissions'] = debug_perms
         html = render_template('login.html')
     else:
         html = render_template('caslogin.html')
@@ -77,31 +81,13 @@ def leader():
 
 #-----------------------------------------------------------------------
 
-@app.route('/auditioneelanding', methods=['GET', 'POST'])
-def setcookie():
-    netID = auth.authenticate()
-    auditions = db.get_auditionee_auditions(netID)
-    groups = db.get_groups()
-    profile = db.get_auditionee(netID)
-    if profile is None:
-        welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
-        html = render_template('editprofile.html', 
-                                netID=netID, instruction=welcome,
-                                year='', room='', voice='', phone=''
-        )
-    else:
-        html = render_template('auditionee.html',
-                           auditions=auditions,
-                           profile=profile,
-                           groups=groups)
-    response = make_response(html)
-    return response
-
-#-----------------------------------------------------------------------
-
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()
+    if session.get('permissions') == 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     auditions = db.get_auditionee_auditions(netID)
     groups = db.get_groups()
     profile = db.get_auditionee(netID)
@@ -121,6 +107,10 @@ def auditionee():
 @app.route('/editprofile', methods=['GET'])
 def editprofile():
     netID = auth.authenticate()
+    if session.get('permissions') == 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     user_instr = 'Fill out the form to change your profile.'
     user = db.get_auditionee(netID)
     html = render_template('editprofile.html', netID=netID, name=user.get_name(),
