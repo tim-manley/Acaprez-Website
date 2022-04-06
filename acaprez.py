@@ -170,7 +170,7 @@ def addedtimes():
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
     netID = auth.authenticate()
-    if session.get('permissions') != 'auditionee' or \
+    if session.get('permissions') == 'leader' or \
             request.referrer.split('/')[-1] != 'editprofile' or \
             request.referrer.split('/')[-1] != 'auditionee':
         html = render_template('insufficient.html')
