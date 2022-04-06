@@ -249,7 +249,7 @@ def createAudition():
 
 @app.route('/auditioneeInfo', methods=['GET'])
 def auditioneeInfo():
-    netid = auth.authenticate()
+    netid = request.args.get('netID')
     if session.get('permissions') != 'leader':
         html = render_template('insufficient.html')
         response = make_response(html)
