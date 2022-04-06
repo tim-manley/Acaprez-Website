@@ -27,9 +27,10 @@ app = Flask(__name__)
 
 import auth
 
-debug = environ.get('DEBUG')
-app.secret_key = environ.get('SECRET_KEY')
-if debug is None:
+try:
+    debug = environ['DEBUG']
+    app.secret_key = environ['SECRET_KEY']
+except KeyError:
     debug = True
     debug_netid = ''
     debug_perms = ''
