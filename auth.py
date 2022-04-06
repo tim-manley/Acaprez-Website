@@ -9,6 +9,8 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from re import sub
 
+from sys import stderr
+
 from flask import request, redirect
 from flask import session, abort
 
@@ -73,7 +75,9 @@ def authenticate():
     # authenticated previously.  So return the username.
     if 'username' in session:
         username = session.get('username')
+        print('auth user: ', username, file=stderr)
         perms = get_permissions(username)
+        print('auth perms: ', perms, file=stderr)
         session['permissions'] = perms
         return username
 
@@ -92,7 +96,9 @@ def authenticate():
                      + quote(strip_ticket(request.url)))
         abort(redirect(login_url))
 
+    print('auth user: ', username, file=stderr)
     perms = get_permissions(username)
+    print('auth perms: ', perms, file=stderr)
 
     # The user is authenticated, so store the username in
     # the session.

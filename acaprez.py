@@ -197,6 +197,8 @@ def confirmprofile():
 @app.route('/netID', methods=['GET'])
 def netID():
     _ = auth.authenticate()
+    print('acaprez user: ', session.get('username'), file=stderr)
+    print('acaprez perms: ', session.get('perms'), file=stderr)
     if session.get('permissions') == 'leader':
         return redirect(url_for('leader'))
     else:
