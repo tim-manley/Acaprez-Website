@@ -28,15 +28,16 @@ app = Flask(__name__)
 import auth
 
 # This should be made to work, but for alpha we can just hard code stuff
-# debug = environ.get('DEBUG')
-# app.secret_key = environ.get('SECRET_KEY')
-# if debug is None:
-#     debug = True
-#     debug_netid = ''
-#     debug_perms = ''
-#     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
-debug = False
-app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
+try:
+    debug = environ['DEBUG']
+    app.secret_key = environ['SECRET_KEY']
+except KeyError:
+    debug = True
+    debug_netid = ''
+    debug_perms = ''
+    app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
+# debug = False
+# app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
 
