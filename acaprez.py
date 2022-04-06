@@ -237,6 +237,16 @@ def createAudition():
 
 #-----------------------------------------------------------------------
 
+@app.route('/auditioneeInfo', methods=['GET'])
+def auditioneeInfo():
+    netID = request.args.get('netID')
+    auditionee = db.get_auditionee(netID)
+    html = render_template('auditioneeInfo.html', auditionee=auditionee)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/signup-confirmation', methods=['GET', 'POST'])
 def signup_confirmation():
     auditionee_netID = request.cookies.get('netID')
