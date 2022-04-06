@@ -31,7 +31,9 @@ app.secret_key = environ.get('SECRET_KEY')
 if app.secret_key is None:
     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
-debug = False
+debug = environ.get('DEBUG')
+if debug is None:
+    debug = False
 
 #-----------------------------------------------------------------------
 
