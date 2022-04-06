@@ -72,7 +72,9 @@ def authenticate():
     # If the username is in the session, then the user was
     # authenticated previously.  So return the username.
     if 'username' in session:
-        return session.get('username')
+        username = session.get('username')
+        authorize(username)
+        return username
 
     # If the request does not contain a login ticket, then redirect
     # the browser to the login page to get one.
