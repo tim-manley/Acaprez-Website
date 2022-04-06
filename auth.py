@@ -14,7 +14,7 @@ from flask import session, abort
 
 from acaprez import app
 
-from database import get_groups, get_auditionee
+from database import get_permissions
 
 # ----------------------------------------------------------------------
 
@@ -99,11 +99,10 @@ def authenticate():
 
 
 def authorize(netid):
-    is_auditionee = get_auditionee(netid)
-    if not is_auditionee:
-        groups = get_groups()
-    else:
-        return 'auditionee'
+    perms = get_permissions(netid)
+    if perms is None:
+        return
+    session['permissions'] = perms
 
 
 

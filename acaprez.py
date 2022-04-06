@@ -14,8 +14,7 @@ from unicodedata import name
 from urllib import response
 from xml.dom import domreg
 from flask import Flask, request, make_response, redirect, url_for
-from flask import render_template
-from http.cookies import SimpleCookie
+from flask import render_template, session
 from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
@@ -27,9 +26,9 @@ from urllib.parse import unquote
 app = Flask(__name__)
 
 import auth
-try:
-    app.secret_key = environ.get('SECRET_KEY')
-except KeyError:
+
+app.secret_key = environ.get('SECRET_KEY')
+if app.secret_key is None:
     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
@@ -55,7 +54,11 @@ def login():
 
 @app.route('/leader', methods=['GET'])
 def leader():
-    netID = request.cookies.get('netID')
+    netID = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     auds = db.get_group_auditions(netID)
     times = db.get_group_times(netID)
     html = render_template('leader.html', netID=netID, auds=auds, times=times)
@@ -66,7 +69,7 @@ def leader():
 
 @app.route('/auditioneelanding', methods=['GET', 'POST'])
 def setcookie():
-    netID = request.form['netID']
+    netID = auth.authenticate()
     auditions = db.get_auditionee_auditions(netID)
     groups = db.get_groups()
     profile = db.get_auditionee(netID)
@@ -82,14 +85,13 @@ def setcookie():
                            profile=profile,
                            groups=groups)
     response = make_response(html)
-    response.set_cookie('netID', netID)
     return response
 
 #-----------------------------------------------------------------------
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
-    netID = request.cookies.get('netID')
+    netID = auth.authenticate()
     auditions = db.get_auditionee_auditions(netID)
     groups = db.get_groups()
     profile = db.get_auditionee(netID)
@@ -108,7 +110,7 @@ def auditionee():
 
 @app.route('/editprofile', methods=['GET'])
 def editprofile():
-    netID = request.cookies.get('netID')
+    netID = auth.authenticate()
     user_instr = 'Fill out the form to change your profile.'
     user = db.get_auditionee(netID)
     html = render_template('editprofile.html', netID=netID, name=user.get_name(),
@@ -123,7 +125,12 @@ def editprofile():
 
 @app.route('/addtimes', methods=['GET'])
 def addtimes():
-    netID = request.cookies.get('netID')
+    netID = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
     scheduled_slots = db.get_group_times(netID)
     scheduled = []
     for slot in scheduled_slots:

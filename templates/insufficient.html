@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Acaprez</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
+
+</head>
+
+{% include 'nav.html' %}
+
+<div class="container-fluid">
+
+    <body class="align-middle">
+
+        <h4 id="insufficient-perms">Sorry, but you do not have the permissions necessary to view this page.</h4>
+
+    </body>
+</div>
+
+</html>
