@@ -5,6 +5,7 @@
 # Author: Bob Dondero
 # ----------------------------------------------------------------------
 
+from sys import stderr
 from urllib.request import urlopen
 from urllib.parse import quote
 from re import sub
@@ -92,12 +93,15 @@ def authenticate():
                      + quote(strip_ticket(request.url)))
         abort(redirect(login_url))
 
+    print("Username: " + username, file=stderr)
     perms = get_permissions(username)
+    print("Permissions from database: " + perms, file=stderr)
 
     # The user is authenticated, so store the username in
     # the session.
     session['username'] = username
     session['permissions'] = perms
+    print("Set permissions to: " + session['permissions'], file=stderr)
     return username
 
 
