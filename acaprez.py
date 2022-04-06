@@ -27,15 +27,13 @@ app = Flask(__name__)
 
 import auth
 
-app.secret_key = environ.get('SECRET_KEY')
-if app.secret_key is None:
-    app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
-
 debug = environ.get('DEBUG')
+app.secret_key = environ.get('SECRET_KEY')
 if debug is None:
     debug = True
-    debug_netid = 'nassoons'
-    debug_perms = 'leader'
+    debug_netid = ''
+    debug_perms = ''
+    app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
 
@@ -55,10 +53,8 @@ def login():
     if debug:
         session['username'] = debug_netid
         session['permissions'] = debug_perms
-        html = render_template('login.html')
-    else:
-        html = render_template('caslogin.html')
 
+    html = render_template('caslogin.html')
     response = make_response(html)
     return response
 
@@ -84,7 +80,10 @@ def leader():
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()
-    if session.get('permissions') == 'leader':
+    print('username: ', session.get('username'))
+    if session.get('permissions') == 'leader' or \
+            session.get('username') is None or \
+            session.get('username').strip() == '':
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
@@ -107,7 +106,7 @@ def auditionee():
 @app.route('/editprofile', methods=['GET'])
 def editprofile():
     netID = auth.authenticate()
-    if session.get('permissions') == 'leader':
+    if session.get('permissions') != 'auditionee':
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
@@ -147,8 +146,13 @@ def addtimes():
 
 @app.route('/addedtimes', methods=['GET', 'POST'])
 def addedtimes():
-    times = request.form.getlist('times')
     netID = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    times = request.form.getlist('times')
     for time in times:
         db.add_audition_time(netID, time)
     html = render_template('addedtimes.html')
@@ -159,12 +163,18 @@ def addedtimes():
 
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
+    netID = auth.authenticate()
+    if session.get('permissions') != 'auditionee' or \
+            request.referrer.split()[-1] != 'editprofile':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
     name = request.form['name']
     year = int(request.form['year'])
     dorm = request.form['dorm']
     voice = request.form['voice']
     phone = request.form['phone']
-    netID = auth.authenticate()
     if db.get_auditionee(netID) is not None:
         db.update_auditionee(netID, name, year, dorm, voice, phone)
     else:
@@ -179,29 +189,28 @@ def confirmprofile():
 
 @app.route('/netID', methods=['GET'])
 def netID():
-    if debug:
-        html = render_template('netID.html')
-        response = make_response(html)
-        return response
+    _ = auth.authenticate()
+    if session.get('permissions') == 'leader':
+        return redirect(url_for('leader'))
     else:
-        netid = auth.authenticate()
-        if session.get('permissions') == 'leader':
-            return redirect(url_for('leader'))
-        else:
-            return redirect(url_for('auditionee'))
-
-#-----------------------------------------------------------------------
-
-@app.route('/netIDleader', methods=['GET'])
-def netIDleader():
-    html = render_template('netIDleader.html')
-    response = make_response(html)
-    return response
+        return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
 
 @app.route('/showgroupauditions', methods=['GET'])
 def show_group_auditions():
+    if request.referrer is None or request.referrer.split('/')[-1] != 'createAudition':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    _ = auth.authenticate()
+    if session.get('permissions') is None:
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    print('From: ' + str(request.referrer))
     groupNetID = request.args.get('groupNetID')
     available_auditions = db.get_group_availability(groupNetID)
     available = []
@@ -215,20 +224,13 @@ def show_group_auditions():
 
 #-----------------------------------------------------------------------
 
-@app.route('/leaderlanding', methods=['GET', 'POST'])
-def leadercookie():
-    netID = request.form['netID']
-    auds = db.get_group_auditions(netID)
-    times = db.get_group_times(netID)
-    html = render_template('leader.html', netID=netID, auds=auds, times=times)
-    response = make_response(html)
-    response.set_cookie('netID', netID)
-    return response
-
-#-----------------------------------------------------------------------
-
 @app.route('/createAudition', methods=['GET'])
 def createAudition():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     groups = db.get_groups()
     html = render_template('createAudition.html',
                             groups=groups)
@@ -239,8 +241,13 @@ def createAudition():
 
 @app.route('/auditioneeInfo', methods=['GET'])
 def auditioneeInfo():
-    netID = request.args.get('netID')
-    auditionee = db.get_auditionee(netID)
+    netid = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    auditionee = db.get_auditionee(netid)
     html = render_template('auditioneeInfo.html', auditionee=auditionee)
     response = make_response(html)
     return response
@@ -249,7 +256,17 @@ def auditioneeInfo():
 
 @app.route('/signup-confirmation', methods=['GET', 'POST'])
 def signup_confirmation():
-    auditionee_netID = request.cookies.get('netID')
+    if request.referrer is None or request.referrer.split('/')[-1] != 'createAudition':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    auditionee_netID = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
     group_netID = request.args.get('group')
     time_slot = request.args.get('timeslot')
     group_netID = unquote(group_netID)
