@@ -33,8 +33,8 @@ try:
     app.secret_key = environ['SECRET_KEY']
 except KeyError:
     debug = False
-    # debug_netid = 'smohr'
-    # debug_perms = ''
+    debug_netid = ''
+    debug_perms = ''
     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
