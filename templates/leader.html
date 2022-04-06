@@ -14,11 +14,11 @@
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <h1 id="welcome">{{"Welcome, group leader of " ~ netID ~ " :)"}}</h1>
     
-        <h3>Current Auditions:</h3>
-
+        <br>
         <div class="row">
-            <div class="col-sm-4">
-                <table class="table">
+            <div class="col-sm-6">
+                <h3>Current Auditions:</h3>
+                <table class="table table-striped">
                     <tr>
                         <th class="table_header">Auditionee</th>
                         <th class="table_header">Time</th>
@@ -31,14 +31,20 @@
                     {% endfor %}
                 </table>
                 
-            </div>  
-        </div>
-
-        <h3>All Audition Slots:</h3>
-
-        <div class="row">
-            <div class="col-sm-4">
-                <table class="table">
+            </div> 
+            
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>All Audition Slots:</h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <button id="new-audition" class="btn btn-primary">
+                            <a href='addtimes'>Add Audition Times</a>
+                        </button>
+                    </div>
+                </div>
+                <table class="table table-striped">
                     <tr>
                         <th class="table_header">Auditionee</th>
                         <th class="table_header">Time</th>
@@ -51,12 +57,9 @@
                     {% endfor %}
                 </table>
             </div>  
-            <div class="col-sm-2">
-                <button id="new-audition" class="btn btn-primary">
-                    <a href='addtimes'>Add Audition Times</a>
-                </button>
-            </div>
+
         </div>
+
 
         
     </div>

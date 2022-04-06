@@ -29,10 +29,23 @@ table {
     padding: 8px;
 }
 
+#calendar {
+    align-content: center;
+}
+
 #new-audition {
     float: right;
 }
 
 #edit-profile-but {
     float: right;
+}
+
+tr {
+    height: 41px;
+}
+
+.avail-button {
+    align-content: center;
+    width: 100%;
 }
