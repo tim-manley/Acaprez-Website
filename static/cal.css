@@ -2,16 +2,6 @@ h1 {
     color:black;
 }
 
-a {
-    text-decoration: none;
-    color: white;
-}
-
-a:hover {
-    text-decoration: none;
-    color: whitesmoke;
-}
-
 body {
     background-color: white;
     font-family: sans-serif;
@@ -32,6 +22,8 @@ table {
 #calendar {
     align-content: center;
 }
+
+
 
 #new-audition {
     float: right;
