@@ -73,7 +73,8 @@ def authenticate():
     # authenticated previously.  So return the username.
     if 'username' in session:
         username = session.get('username')
-        authorize(username)
+        perms = authorize(username)
+        session['permissions'] = perms
         return username
 
     # If the request does not contain a login ticket, then redirect
