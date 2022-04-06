@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Acaprez</title>
-        <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
-    
-    </head>
+
+<head>
+    <title>Acaprez</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+
+</head>
 {% include 'nav.html' %}
 
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <h1 id="welcome">{{"Welcome, group leader of " ~ netID ~ " :)"}}</h1>
-    
+
         <br>
         <div class="row">
             <div class="col-sm-6">
@@ -25,21 +27,23 @@
                     </tr>
                     {% for audition in auds: %}
                     <tr>
-                        <td id="group_name"><a href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}" target="_blank">{{audition.get_auditionee_netID()}}</a></td>
+                        <td id="group_name"><a href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}\n"
+                                target="_blank">{{audition.get_auditionee_netID()}}</a></td>
                         <td>{{audition.get_timeslot()}} </td>
                     </tr>
                     {% endfor %}
                 </table>
-                
-            </div> 
-            
+
+            </div>
+
             <div class="col-sm-6">
                 <div class="row">
                     <div class="col-sm-6">
                         <h3>All Audition Slots:</h3>
                     </div>
                     <div class="col-sm-6">
-                        <a href="addtimes" class="btn btn-primary" role="button" style="float:right">Add Audition Times</a>
+                        <a href="addtimes" class="btn btn-primary" role="button" style="float:right">Add Audition
+                            Times</a>
                     </div>
                 </div>
                 <table class="table table-striped">
@@ -54,12 +58,12 @@
                     </tr>
                     {% endfor %}
                 </table>
-            </div>  
+            </div>
 
         </div>
 
 
-        
+
     </div>
 
 
