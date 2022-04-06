@@ -65,14 +65,14 @@ def main():
             create_audition_times(cur)
 
             # Add acaprez groups to database
-            add_group(cur, 'nassoons', 'The Nassoons')
-            add_group(cur, 'footnotes', 'The Footnotes')
-            add_group(cur, 'tigerlillies', 'The Tigerlillies')
-            add_group(cur, 'tigressions', 'The Tigressions')
-            add_group(cur, 'wildcats', 'The Wildcats')
-            add_group(cur, 'roaring20', 'Roaring 20')
-            add_group(cur, 'katzenjammers', 'The Katzenjammers')
-            add_group(cur, 'tigertones', 'The Tigertones')
+            add_group(cur, 'nassoons\n', 'The Nassoons')
+            add_group(cur, 'footnotes\n', 'The Footnotes')
+            add_group(cur, 'tigerlillies\n', 'The Tigerlillies')
+            add_group(cur, 'tigressions\n', 'The Tigressions')
+            add_group(cur, 'wildcats\n', 'The Wildcats')
+            add_group(cur, 'roaring20\n', 'Roaring 20')
+            add_group(cur, 'katzenjammers\n', 'The Katzenjammers')
+            add_group(cur, 'tigertones\n', 'The Tigertones')
 
             # Commit changes
             con.commit()
