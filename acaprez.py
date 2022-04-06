@@ -28,16 +28,14 @@ app = Flask(__name__)
 import auth
 
 # This should be made to work, but for alpha we can just hard code stuff
-# try:
-#     debug = environ['DEBUG']
-#     app.secret_key = environ['SECRET_KEY']
-# except KeyError:
-#     debug = True
-#     debug_netid = ''
-#     debug_perms = ''
-#     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
-debug = False
-app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
+try:
+    debug = environ['DEBUG']
+    app.secret_key = environ['SECRET_KEY']
+except KeyError:
+    debug = False
+    # debug_netid = 'smohr'
+    # debug_perms = ''
+    app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
 
@@ -84,7 +82,6 @@ def leader():
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()
-    print('username: ', session.get('username'))
     if session.get('permissions') == 'leader' or \
             session.get('username') is None or \
             session.get('username').strip() == '':
@@ -214,7 +211,6 @@ def show_group_auditions():
         response = make_response(html)
         return response
 
-    print('From: ' + str(request.referrer))
     groupNetID = request.args.get('groupNetID')
     available_auditions = db.get_group_availability(groupNetID)
     available = []

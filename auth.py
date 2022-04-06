@@ -89,9 +89,12 @@ def authenticate():
                      + quote(strip_ticket(request.url)))
         abort(redirect(login_url))
 
+    perms = authorize(username)
+
     # The user is authenticated, so store the username in
     # the session.
     session['username'] = username
+    session['permissions'] = perms
     return username
 
 
@@ -102,8 +105,7 @@ def authorize(netid):
     perms = get_permissions(netid)
     if perms is None:
         return
-    session['permissions'] = perms
-
+    return perms
 
 
 # ----------------------------------------------------------------------
@@ -115,6 +117,7 @@ def logout():
 
     # Delete the user's username from the session.
     session.pop('username')
+    session.pop('permissions')
 
     # Logout, and redirect the browser to the index page.
     logout_url = (_CAS_URL + 'logout?service='
