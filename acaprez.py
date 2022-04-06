@@ -171,7 +171,7 @@ def addedtimes():
 def confirmprofile():
     netID = auth.authenticate()
     if session.get('permissions') != 'auditionee' or \
-            request.referrer.split()[-1] != 'editprofile':
+            request.referrer.split('/')[-1] != 'editprofile':
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
