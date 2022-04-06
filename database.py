@@ -1,4 +1,5 @@
 from tokenize import group
+from sys import stderr
 from typing import List
 from psycopg2 import connect
 from group import Group
@@ -649,7 +650,7 @@ def get_permissions(netID: str):
                            WHERE netID=%s;''', (netID,))
 
             row = cur.fetchone()
-
+            print('database row: ', row, file=stderr)
             # Check the auditionee exists
             if row is None:
                 return None
