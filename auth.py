@@ -73,7 +73,7 @@ def authenticate():
     # authenticated previously.  So return the username.
     if 'username' in session:
         username = session.get('username')
-        perms = authorize(username)
+        perms = get_permissions(username)
         session['permissions'] = perms
         return username
 
@@ -92,23 +92,13 @@ def authenticate():
                      + quote(strip_ticket(request.url)))
         abort(redirect(login_url))
 
-    perms = authorize(username)
+    perms = get_permissions(username)
 
     # The user is authenticated, so store the username in
     # the session.
     session['username'] = username
     session['permissions'] = perms
     return username
-
-
-# ----------------------------------------------------------------------
-
-
-def authorize(netid):
-    perms = get_permissions(netid)
-    if perms is None:
-        return
-    return perms
 
 
 # ----------------------------------------------------------------------

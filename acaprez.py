@@ -39,7 +39,6 @@ import auth
 
 debug = False
 debug_netid = ''
-debug_perms = ''
 app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
@@ -59,7 +58,7 @@ def index():
 def login():
     if debug:
         session['username'] = debug_netid
-        session['permissions'] = debug_perms
+        auth.authenticate()
 
     html = render_template('caslogin.html')
     response = make_response(html)
