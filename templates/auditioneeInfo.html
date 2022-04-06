@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <title>Acaprez</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+
+</head>
+
+{% include 'nav.html' %}
+
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Auditionee Details</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-warning">NetID: {{auditionee.get_netID()}} </li>
+                    <li class="list-group-item list-group-item-light">Class Year: {{auditionee.get_class_year()}} </li>
+                    <li class="list-group-item list-group-item-light">Dorm Room: {{auditionee.get_dorm_room()}} </li>
+                    <li class="list-group-item list-group-item-light">Voice Part: {{auditionee.get_voice_part()}} </li>
+                    <li class="list-group-item list-group-item-light">Phone Number: {{auditionee.get_phone_number()}} </li>
+                </ul>
+
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="https://mail.google.com/mail/u/0/?fs=1&tf=cm&to={{ auditionee.get_netID() }}@princeton.edu" target="_blank" class="btn btn-primary" id="email-auditionee" role="button">Email Auditionee</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
