@@ -13,7 +13,7 @@
         {% set time_slot = '2022-09-%02d %02d:%02d:00' % (k, i, j) %}
         {% if time_slot in available %}
         <td>
-            <button id="{{time_slot}}" type="button" class="btn btn-primary">
+            <button id="{{time_slot}}" type="button" class="btn btn-primary" style="width:100%">
                 Available
             </button>
         </td>
