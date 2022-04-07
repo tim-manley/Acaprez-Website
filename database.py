@@ -1,4 +1,5 @@
 from tokenize import group
+from sys import stderr
 from typing import List
 from psycopg2 import connect
 from group import Group
@@ -626,6 +627,38 @@ def _print_all_users():
 
 
 #-----------------------------------------------------------------------
+
+
+def get_permissions(netID: str):
+    """
+    Given a netID, returns the permissions of the user.
+
+        Parameters:
+            netID: The auditionee's netID
+
+        Returns:
+            An string containing the type of user
+    """
+    # Type validation
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM users
+                           WHERE netID=%s;''', (netID,))
+
+            row = cur.fetchone()
+            print('database row: ', row, file=stderr)
+            # Check the auditionee exists
+            if row is None:
+                return None
+
+    return row[1]
+
+# ----------------------------------------------------------------------
+
 
 # For testing
 if __name__ == "__main__":
