@@ -85,7 +85,7 @@ def leader():
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
-    netID = auth.authenticate().strip()
+    netID = auth.authenticate()
     if session.get('permissions') == 'leader' or \
             session.get('username') is None or \
             session.get('username').strip() == '':
@@ -110,7 +110,7 @@ def auditionee():
 
 @app.route('/editprofile', methods=['GET'])
 def editprofile():
-    netID = auth.authenticate().strip()
+    netID = auth.authenticate()
     if session.get('permissions') != 'auditionee':
         html = render_template('insufficient.html')
         response = make_response(html)
@@ -168,7 +168,7 @@ def addedtimes():
 
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
-    netID = auth.authenticate().strip()
+    netID = auth.authenticate()
     if session.get('permissions') == 'leader' or \
             request.referrer is None or not \
             (request.referrer.split('/')[-1] == 'editprofile' or \
@@ -234,7 +234,7 @@ def show_group_auditions():
 
 @app.route('/createAudition', methods=['GET'])
 def createAudition():
-    _ = auth.authenticate().strip()
+    _ = auth.authenticate()
     if session.get('permissions') != 'auditionee':
         html = render_template('insufficient.html')
         response = make_response(html)
