@@ -176,7 +176,7 @@ def confirmprofile():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-
+    print("db netID addition: ", repr(netID), file=stderr)
     name = request.form['name']
     year = int(request.form['year'])
     dorm = request.form['dorm']
@@ -256,6 +256,7 @@ def auditioneeInfo():
         return response
 
     netid = request.args.get('netID')
+    print("looking for this netID: ", repr(netid), file=stderr)
     auditionee = db.get_auditionee(netid)
     html = render_template('auditioneeInfo.html', auditionee=auditionee)
     response = make_response(html)
