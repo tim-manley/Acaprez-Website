@@ -6,7 +6,6 @@
 #-----------------------------------------------------------------------
 
 from doctest import DocTestRunner
-from os import remove, environ
 from os import remove
 import sched
 from time import time
@@ -15,6 +14,7 @@ from urllib import response
 from xml.dom import domreg
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template, session
+from http.cookies import SimpleCookie
 from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
@@ -64,21 +64,38 @@ def login():
     response = make_response(html)
     return response
 
-
-
 #-----------------------------------------------------------------------
 
 @app.route('/leader', methods=['GET'])
 def leader():
-    netID = auth.authenticate()
-    if session.get('permissions') != 'leader':
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
+    netID = request.cookies.get('netID')
     auds = db.get_group_auditions(netID)
     times = db.get_group_times(netID)
     html = render_template('leader.html', netID=netID, auds=auds, times=times)
     response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/auditioneelanding', methods=['GET', 'POST'])
+def setcookie():
+    netID = request.form['netID']
+    auditions = db.get_auditionee_auditions(netID)
+    groups = db.get_groups()
+    profile = db.get_auditionee(netID)
+    if profile is None:
+        welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
+        html = render_template('editprofile.html', 
+                                netID=netID, instruction=welcome,
+                                year='', room='', voice='', phone=''
+        )
+    else:
+        html = render_template('auditionee.html',
+                           auditions=auditions,
+                           profile=profile,
+                           groups=groups)
+    response = make_response(html)
+    response.set_cookie('netID', netID)
     return response
 
 #-----------------------------------------------------------------------
@@ -129,19 +146,14 @@ def editprofile():
 
 @app.route('/addtimes', methods=['GET'])
 def addtimes():
-    netID = auth.authenticate()
-    if session.get('permissions') != 'leader':
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
-
+    netID = request.cookies.get('netID')
     scheduled_slots = db.get_group_times(netID)
     scheduled = []
     for slot in scheduled_slots:
         time = slot.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
         scheduled.append(time)
 
-    html = render_template('addtimes.html',
+    html = render_template('addtimes.html', 
                             netID=netID,
                             scheduled=scheduled)
     response = make_response(html)
@@ -151,13 +163,8 @@ def addtimes():
 
 @app.route('/addedtimes', methods=['GET', 'POST'])
 def addedtimes():
-    netID = auth.authenticate()
-    if session.get('permissions') != 'leader':
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
-
     times = request.form.getlist('times')
+    netID = request.cookies.get('netID')
     for time in times:
         db.add_audition_time(netID, time)
     html = render_template('addedtimes.html')
@@ -182,6 +189,7 @@ def confirmprofile():
     dorm = request.form['dorm']
     voice = request.form['voice']
     phone = request.form['phone']
+    netID = request.cookies.get('netID')
     if db.get_auditionee(netID) is not None:
         db.update_auditionee(netID, name, year, dorm, voice, phone)
     else:
@@ -206,19 +214,16 @@ def netID():
 
 #-----------------------------------------------------------------------
 
+@app.route('/netIDleader', methods=['GET'])
+def netIDleader():
+    html = render_template('netIDleader.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/showgroupauditions', methods=['GET'])
 def show_group_auditions():
-    if request.referrer is None or request.referrer.split('/')[-1] != 'createAudition':
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
-
-    _ = auth.authenticate()
-    if session.get('permissions') is None:
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
-
     groupNetID = request.args.get('groupNetID')
     available_auditions = db.get_group_availability(groupNetID)
     available = []
@@ -229,6 +234,18 @@ def show_group_auditions():
     response = make_response(html)
     return response
 
+
+#-----------------------------------------------------------------------
+
+@app.route('/leaderlanding', methods=['GET', 'POST'])
+def leadercookie():
+    netID = request.form['netID']
+    auds = db.get_group_auditions(netID)
+    times = db.get_group_times(netID)
+    html = render_template('leader.html', netID=netID, auds=auds, times=times)
+    response = make_response(html)
+    response.set_cookie('netID', netID)
+    return response
 
 #-----------------------------------------------------------------------
 
@@ -266,17 +283,7 @@ def auditioneeInfo():
 
 @app.route('/signup-confirmation', methods=['GET', 'POST'])
 def signup_confirmation():
-    if request.referrer is None or request.referrer.split('/')[-1] != 'createAudition':
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
-
-    auditionee_netID = auth.authenticate()
-    if session.get('permissions') != 'auditionee':
-        html = render_template('insufficient.html')
-        response = make_response(html)
-        return response
-
+    auditionee_netID = request.cookies.get('netID')
     group_netID = request.args.get('group')
     time_slot = request.args.get('timeslot')
     group_netID = unquote(group_netID)
