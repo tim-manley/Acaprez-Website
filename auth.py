@@ -74,7 +74,7 @@ def authenticate():
     # If the username is in the session, then the user was
     # authenticated previously.  So return the username.
     if 'username' in session:
-        username = session.get('username')
+        username = session.get('username').strip()
         print('auth user: ', username, file=stderr)
         perms = get_permissions(username)
         print('auth perms: ', perms, file=stderr)
