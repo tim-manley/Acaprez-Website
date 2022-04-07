@@ -85,7 +85,7 @@ def leader():
 
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
-    netID = auth.authenticate()
+    netID = auth.authenticate().strip()
     if session.get('permissions') == 'leader' or \
             session.get('username') is None or \
             session.get('username').strip() == '':
@@ -110,7 +110,7 @@ def auditionee():
 
 @app.route('/editprofile', methods=['GET'])
 def editprofile():
-    netID = auth.authenticate()
+    netID = auth.authenticate().strip()
     if session.get('permissions') != 'auditionee':
         html = render_template('insufficient.html')
         response = make_response(html)
