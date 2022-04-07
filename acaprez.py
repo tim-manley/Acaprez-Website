@@ -168,7 +168,7 @@ def addedtimes():
 
 @app.route('/confirmprofile', methods=['GET', 'POST'])
 def confirmprofile():
-    netID = auth.authenticate()
+    netID = auth.authenticate().strip()
     if session.get('permissions') == 'leader' or \
             request.referrer is None or not \
             (request.referrer.split('/')[-1] == 'editprofile' or \
@@ -255,7 +255,7 @@ def auditioneeInfo():
         response = make_response(html)
         return response
 
-    netid = request.args.get('netID')
+    netid = request.args.get('netID') + "\n" # newline for how cas
     print("looking for this netID: ", repr(netid), file=stderr)
     auditionee = db.get_auditionee(netid)
     html = render_template('auditioneeInfo.html', auditionee=auditionee)
