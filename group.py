@@ -17,3 +17,15 @@ class Group:
     def get_name(self):
         '''Returns the name of the group'''
         return self._name
+
+'''
+Sites:
+http://www.nassoons.com/
+http://princetonfootnotes.com/
+https://www.putigerlilies.com/
+http://www.theprincetontigressions.com/
+https://www.princetonwildcats.com/
+https://www.princetonroaring20.com/
+http://www.theprincetonkatzenjammers.com/
+http://www.tigertones.com/
+'''

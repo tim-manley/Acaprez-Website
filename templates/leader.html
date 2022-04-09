@@ -27,9 +27,8 @@
                     </tr>
                     {% for audition in auds: %}
                     <tr>
-                        <td id="group_name"><a href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}"
-                                target="_blank">{{audition.get_auditionee_netID()}}</a></td>
-                        <td>{{audition.get_timeslot()}} </td>
+                        <td id="group_name"><a href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}" target="_blank">{{audition.get_auditionee_netID()}}</a></td>
+                        <td>{{audition.get_formatted_timeslot()}} </td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -54,7 +53,7 @@
                     {% for audition in times: %}
                     <tr>
                         <td id="group_name">{{audition.get_auditionee_netID()}}</td>
-                        <td>{{audition.get_timeslot()}} </td>
+                        <td>{{audition.get_formatted_timeslot()}} </td>
                     </tr>
                     {% endfor %}
                 </table>

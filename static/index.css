@@ -14,19 +14,9 @@
     padding: 5px;
 }
 
-#login-text {
-    text-decoration: none;
-    text-align: center;
-}
-
-#login-link {
-    text-decoration: none;
-    text-align: center;
-}
-
-#login-link:hover {
-    text-decoration: none;
-    color: darkorange;
+#splash {
+    justify-content: center;
+    text-align:center;
 }
 
 h1 {
@@ -38,7 +28,7 @@ h4 {
 }
 
 body {
-    background-color: white;
+    background-color: rgb(255, 207, 130);
     font-family: sans-serif;
 
 }
