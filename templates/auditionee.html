@@ -63,7 +63,7 @@
                         {% for audition in auditions: %}
                         <tr>
                             <td id="group_name"><span data-toggle="tooltip" data-placement="right" title="{{audition.get_group()}}">{{audition.get_group()}}</span></td>
-                            <td>{{audition.get_timeslot()}} </td>
+                            <td>{{audition.get_formatted_timeslot()}} </td>
                         </tr>
                         {% endfor %}
                     </table>
