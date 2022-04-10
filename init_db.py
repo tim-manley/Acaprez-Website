@@ -62,6 +62,11 @@ def create_accessibility(cur):
     cur.execute('DROP TABLE IF EXISTS accessibility;')
     cur.execute('''CREATE TABLE accessibility 
                    (isAccessible boolean PRIMARY KEY)''')
+    # Default to being open
+    cur.execute('''
+                INSERT INTO accessibility (isAccessible)
+                VALUES (TRUE)
+                ''')
 
 def reset_database():
     # Setup connection and cursor

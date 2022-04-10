@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 from operator import add
 from sys import stderr
 from typing import List
@@ -644,6 +645,36 @@ def cancel_audition(audition_id: str):
                         SET auditioneeNetID = NULL
                         WHERE auditionID=%s;
                         ''', (audition_id,))
+
+#-----------------------------------------------------------------------
+
+def change_website_access(open: bool):
+    '''
+    Modifies entry in accessibility table to True if website is open
+    and False if website is closed.
+
+        Parameters:
+            open: Whether the website is open or not
+        
+        Returns:
+            Nothing
+    '''
+    if not isinstance(open, bool):
+        raise ValueError("open should be a boolean")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            if open:
+                cur.execute('''
+                            UPDATE accessibility
+                            SET isAccessible=TRUE;
+                            ''')
+            else:
+                cur.execute('''
+                            UPDATE accessibility
+                            SET isAccessible=FALSE;
+                            ''')
 
 #-----------------------------------------------------------------------
 

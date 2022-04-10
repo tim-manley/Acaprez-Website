@@ -104,11 +104,17 @@ def reset():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    is_open = request.form.getlist('isopen')
-    dates = request.form['dates'].split('; ')
+    is_open = request.form.getlist('isopen') # Get toggle switch state
+    dates = request.form['dates'].split('; ') # Parse dates input
     reset_database()
-    for date in dates:
-        db.add_audition_day(date)
+    if dates[0] != "": # Check whether any dates have been input
+        for date in dates:
+            db.add_audition_day(date)
+    if len(is_open) > 0: # Check if the toggle is selected
+        open = True
+    else:
+        open = False
+    db.change_website_access(open) # Open/close the website
     return redirect(url_for('admin'))
 
 #-----------------------------------------------------------------------
