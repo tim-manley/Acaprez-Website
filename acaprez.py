@@ -122,7 +122,8 @@ def reset():
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()
-    if session.get('permissions') != 'auditionee' or \
+    if session.get('permissions') == 'leader' or \
+        session.get('permissions') == 'admin' or \
             session.get('username') is None or \
             session.get('username').strip() == '':
         html = render_template('insufficient.html')
