@@ -66,8 +66,6 @@ def login():
     response = make_response(html)
     return response
 
-
-
 #-----------------------------------------------------------------------
 
 @app.route('/leader', methods=['GET'])
@@ -85,10 +83,23 @@ def leader():
 
 #-----------------------------------------------------------------------
 
+@app.route('/admin', methods=['GET'])
+def admin():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+    html = render_template('admin.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()
-    if session.get('permissions') == 'leader' or \
+    if session.get('permissions') != 'auditionee' or \
             session.get('username') is None or \
             session.get('username').strip() == '':
         html = render_template('insufficient.html')
@@ -208,13 +219,17 @@ def netID():
     _ = auth.authenticate()
     print('acaprez user: ', session.get('username'), file=stderr)
     print('acaprez perms: ', session.get('permissions'), file=stderr)
-    if session.get('permissions') == 'leader':
+    permission = session.get('permissions')
+    if permission == 'leader':
         return redirect(url_for('leader'))
+    elif permission == 'admin':
+        return redirect(url_for('admin'))
     else:
         return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
 
+# MUST DELETE BEFORE PUBLISHING
 @app.route('/bypasslogin', methods=['GET'])
 def bypass():
     netID = request.args.get('netID')
@@ -224,6 +239,8 @@ def bypass():
     session['permissions'] = permission
     if permission == 'leader':
         return redirect(url_for('leader'))
+    elif permission == 'admin':
+        return redirect(url_for('admin'))
     else:
         return redirect(url_for('auditionee'))
 

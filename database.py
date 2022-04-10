@@ -698,4 +698,4 @@ def get_permissions(netID: str):
 
 # For testing
 if __name__ == "__main__":
-    cancel_audition("5")
+    _add_user('admin', 'admin')

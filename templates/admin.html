@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <title>Acaprez</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+
+</head>
+
+{% include 'nav.html' %}
+
+<body>
+    <div class="bootstrap-iso">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+
+                    <h2>Current status:</h2>
+                    <p>Some logic determining and displaying if the website is open,
+                        and the dates for auditions
+                    </p>
+
+                    <h2>Open/close the website:</h2>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                        <label class="custom-control-label" for="customSwitch1">Toggle website availability</label>
+                    </div>
+
+                    <h2>Select audition dates:</h2>
+                    <!-- Form code begins -->
+                    <form id='datepicker' method="post">
+                        <div class="form-group">
+                            <!-- Date input -->
+                            <input class="form-control" id="date" name="date" type="text" />
+                        </div>
+                        <h2>Reset website</h2>
+                        <div class="form-group">
+                            <!-- Submit button -->
+                            <button class="btn btn-danger " name="reset" type="submit">Reset</button>
+                        </div>
+                    </form>
+                    <!-- Form code ends -->
+
+                </div>
+            </div>
+        </div>
+
+        <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+        </script>
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
+            </script>
+
+
+        <script>
+            $(document).ready(function () {
+                var date_input = $('input[name="date"]'); //our date input has the name "date"
+                var container = $('#datepicker');
+                var options = {
+                    format: 'MM dd, yyyy',
+                    container: container,
+                    startView: 2,
+                    multidate: true,
+                    multidateSeparator: "; "
+                };
+                date_input.datepicker(options);
+            })
+        </script>
+
+</body>
+
+</html>
