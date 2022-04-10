@@ -96,6 +96,23 @@ def admin():
 
 #-----------------------------------------------------------------------
 
+@app.route('/reset', methods=['POST'])
+def reset():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+    is_open = request.form.getlist('isopen')
+    print("is open?: ", is_open, file=stderr)
+    dates = request.form['dates'].split('; ')
+    print("dates: ", dates, file=stderr)
+    html = render_template('insufficient.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()

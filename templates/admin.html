@@ -26,18 +26,18 @@
                         and the dates for auditions
                     </p>
 
-                    <h2>Open/close the website:</h2>
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                        <label class="custom-control-label" for="customSwitch1">Toggle website availability</label>
-                    </div>
 
-                    <h2>Select audition dates:</h2>
                     <!-- Form code begins -->
-                    <form id='datepicker' method="post">
-                        <div class="form-group">
+                    <form action="reset" method="post">
+                        <h2>Open/close the website:</h2>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="customSwitch1" name="isopen">
+                            <label class="custom-control-label" for="customSwitch1">Toggle website accessibility</label>
+                        </div>
+                        <h2>Select audition dates:</h2>
+                        <div id='datepicker' class="form-group">
                             <!-- Date input -->
-                            <input class="form-control" id="date" name="date" type="text" />
+                            <input class="form-control" id="date" name="dates" type="text" />
                         </div>
                         <h2>Reset website</h2>
                         <div class="form-group">
@@ -60,14 +60,15 @@
 
         <script>
             $(document).ready(function () {
-                var date_input = $('input[name="date"]'); //our date input has the name "date"
+                var date_input = $('input[name="dates"]'); //our date input has the name "date"
                 var container = $('#datepicker');
                 var options = {
-                    format: 'MM dd, yyyy',
+                    format: 'yyyy-mm-dd',
                     container: container,
                     startView: 2,
                     multidate: true,
-                    multidateSeparator: "; "
+                    multidateSeparator: "; ",
+                    clearBtn: true
                 };
                 date_input.datepicker(options);
             })
