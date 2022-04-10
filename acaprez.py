@@ -20,6 +20,7 @@ from flask import render_template, session
 from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
+from init_db import reset_database
 from sys import stderr
 from urllib.parse import unquote
 
@@ -105,6 +106,7 @@ def reset():
         return response
     is_open = request.form.getlist('isopen')
     dates = request.form['dates'].split('; ')
+    reset_database()
     return redirect(url_for('admin'))
 
 #-----------------------------------------------------------------------
