@@ -107,6 +107,13 @@ def auditionee():
     return response
 
 #-----------------------------------------------------------------------
+@app.route('/cancelaudition', methods=['POST'])
+def cancel_audition():
+    audition_id = request.args.get('auditionid')
+    db.cancel_audition(audition_id) # Error handling ommitted
+    return redirect(url_for('auditionee'))
+
+#-----------------------------------------------------------------------
 
 @app.route('/editprofile', methods=['GET'])
 def editprofile():

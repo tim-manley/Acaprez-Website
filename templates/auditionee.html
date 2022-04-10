@@ -97,9 +97,24 @@
 
         'use strict';
 
+        let request = null;
+
         function cancelAudition() {
             let auditionID = this.id;
-            console.log("here")
+            auditionID = encodeURIComponent(auditionID);
+
+            let url = "/cancelaudition?auditionid=" + auditionID;
+
+            if (request != null) {
+                request.abort()
+            }
+
+            request = $.ajax(
+                {
+                    type: 'POST',
+                    url: url
+                }
+            );
         }
 
         function setup() {
