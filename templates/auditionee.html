@@ -100,23 +100,28 @@
         let request = null;
 
         function cancelAudition() {
-            let auditionID = this.id;
-            auditionID = encodeURIComponent(auditionID);
+            let str = "Are you sure you want to cancel this audition?"
+            let confirmed = window.confirm(str);
 
-            let url = "/cancelaudition?auditionid=" + auditionID;
+            if (confirmed) {
+                let auditionID = this.id;
+                auditionID = encodeURIComponent(auditionID);
 
-            if (request != null) {
-                request.abort()
-            }
+                let url = "/cancelaudition?auditionid=" + auditionID;
 
-            request = $.ajax(
-                {
-                    type: 'POST',
-                    url: url
+                if (request != null) {
+                    request.abort()
                 }
-            );
 
-            location.reload();
+                request = $.ajax(
+                    {
+                        type: 'POST',
+                        url: url
+                    }
+                );
+
+                location.reload();
+            }
         }
 
         function setup() {
