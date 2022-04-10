@@ -308,23 +308,3 @@ def signup_confirmation():
     html = render_template('signup-confirmation.html')
     response = make_response(html)
     return response
-
-#Below here is for reference only
-'''@app.route('/searchresults', methods=['GET'])
-def search_results():
-
-    author = request.args.get('author')
-    if (author is None) or (author.strip() == ''):
-        error_msg = 'Please type an author name.'
-        return redirect(url_for('search_form', error_msg=error_msg))
-
-    books = search(author)  # Exception handling omitted
-
-    html = render_template('searchresults.html',
-        ampm=get_ampm(),
-        current_time=get_current_time(),
-        author=author,
-        books=books)
-    response = make_response(html)
-    response.set_cookie('prev_author', author)
-    return response'''
