@@ -558,6 +558,42 @@ def remove_auditionee(netID: str):
 
 #-----------------------------------------------------------------------
 
+def cancel_audition(audition_id: str):
+    '''
+    Given an audition id, updates the audition so that there is no
+    auditionee associated with it, and it is thus available again.
+
+        Parameters:
+            audition_id: The audition id
+        
+        Returns:
+            Nothing
+    '''
+    if not isinstance(audition_id, str):
+        raise ValueError("audition_id must be a string")
+    
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if the audition exists
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE auditionID=%s;
+                        ''', (audition_id,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"No audition with audition_id: {audition_id} "
+                ex += "exists"
+                raise ValueError(ex)
+            # Update the audition
+            cur.execute('''
+                        UPDATE auditionTimes
+                        SET auditioneeNetID = NULL
+                        WHERE auditionID=%s;
+                        ''', (audition_id,))
+
+#-----------------------------------------------------------------------
+
 def _print_all_auditionees():
     '''
     For testing, prints all the auditionees in the database
@@ -662,4 +698,4 @@ def get_permissions(netID: str):
 
 # For testing
 if __name__ == "__main__":
-    print(is_available_audition("nassoons", "2022-09-02 17:00:00"))
+    cancel_audition("5")

@@ -5,7 +5,9 @@
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
 
+from crypt import methods
 from doctest import DocTestRunner
+from math import perm
 from os import remove, environ
 from os import remove
 import sched
@@ -107,6 +109,13 @@ def auditionee():
     return response
 
 #-----------------------------------------------------------------------
+@app.route('/cancelaudition', methods=['POST'])
+def cancel_audition():
+    audition_id = request.args.get('auditionid')
+    db.cancel_audition(audition_id) # Error handling ommitted
+    return redirect(url_for('auditionee'))
+
+#-----------------------------------------------------------------------
 
 @app.route('/editprofile', methods=['GET'])
 def editprofile():
@@ -200,6 +209,20 @@ def netID():
     print('acaprez user: ', session.get('username'), file=stderr)
     print('acaprez perms: ', session.get('permissions'), file=stderr)
     if session.get('permissions') == 'leader':
+        return redirect(url_for('leader'))
+    else:
+        return redirect(url_for('auditionee'))
+
+#-----------------------------------------------------------------------
+
+@app.route('/bypasslogin', methods=['GET'])
+def bypass():
+    netID = request.args.get('netID')
+    print(netID, file=stderr)
+    permission = db.get_permissions(netID)
+    session['username'] = netID
+    session['permissions'] = permission
+    if permission == 'leader':
         return redirect(url_for('leader'))
     else:
         return redirect(url_for('auditionee'))
