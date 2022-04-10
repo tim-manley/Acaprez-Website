@@ -104,12 +104,8 @@ def reset():
         response = make_response(html)
         return response
     is_open = request.form.getlist('isopen')
-    print("is open?: ", is_open, file=stderr)
     dates = request.form['dates'].split('; ')
-    print("dates: ", dates, file=stderr)
-    html = render_template('insufficient.html')
-    response = make_response(html)
-    return response
+    return redirect(url_for('admin'))
 
 #-----------------------------------------------------------------------
 
