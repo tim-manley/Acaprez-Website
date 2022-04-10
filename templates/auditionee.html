@@ -59,7 +59,7 @@
                 </div>
 
                 <div class="row">
-                    <table class="table table-striped">
+                    <table id="auditions" class="table table-striped">
                         <tr>
                             <th class="table_header">Group</th>
                             <th class="table_header">Time</th>
@@ -69,26 +69,19 @@
                             <td id="{{audition.get_auditionID()}}"><span data-toggle="tooltip" data-placement="right"
                                     title="{{audition.get_group()}}">{{audition.get_group()}}</span></td>
                             <td>{{audition.get_formatted_timeslot()}} </td>
+                            <td>
+                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger">
+                                    Cancel
+                                </button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
                 </div>
-
-
             </div>
-
-
         </div>
-
-
-
-
     </div>
-
     <br>
-
-
-
     </div>
 
     <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
@@ -104,24 +97,13 @@
 
         'use strict';
 
-        let exampleTimes = ["21:00", "21:15", "21:30", "21:45"]
-
-        function addTimes() {
-
-        }
-
-        function addSlot(group_name, time) {
-            var slot = document.createElement("td");
-            slot.innerHTML = group_name + " - " + time;
-            var afterID = "#" + time.replace(":", "");
-            $(afterID).after(slot);
+        function cancelAudition() {
+            let auditionID = this.id;
+            console.log("here")
         }
 
         function setup() {
-            for (var i in exampleTimes) {
-                addSlot("Nassoons", exampleTimes[i])
-
-            }
+            $('#auditions .btn btn-danger').on('click', cancelAudition);
         }
 
         $('document').ready(function () {
