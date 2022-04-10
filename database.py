@@ -1,3 +1,4 @@
+from operator import add
 from sys import stderr
 from typing import List
 from psycopg2 import connect
@@ -359,6 +360,29 @@ def add_audition_time(group_netID: str, time_slot: str):
 
 #-----------------------------------------------------------------------
 
+def add_audition_day(day: str):
+    '''
+    Given a day, adds it to the auditiondays table
+
+        Parameters:
+            day: The day to be added
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(day, str):
+        raise ValueError("time_slot must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO auditionDays (day)
+                        VALUES (%s);
+                        ''', (day,))
+
+#-----------------------------------------------------------------------
+
 def is_available_audition(group_netID: str, time_slot: str):
     '''
         TO-DO
@@ -693,4 +717,4 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    _add_user('admin', 'admin')
+    add_audition_day('2022-09-01')

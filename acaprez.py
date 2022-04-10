@@ -107,6 +107,8 @@ def reset():
     is_open = request.form.getlist('isopen')
     dates = request.form['dates'].split('; ')
     reset_database()
+    for date in dates:
+        db.add_audition_day(date)
     return redirect(url_for('admin'))
 
 #-----------------------------------------------------------------------
