@@ -1,3 +1,4 @@
+from datetime import datetime
 from multiprocessing.sharedctypes import Value
 from operator import add
 from sys import stderr
@@ -255,6 +256,31 @@ def get_permissions(netID: str):
                 return None
 
     return row[1]
+
+#-----------------------------------------------------------------------
+
+def get_audition_dates() -> List[datetime]:
+    '''
+    Returns the dates that auditions are scheduled for
+
+        Parameters:
+            Nothing
+
+        Returns:
+            A list of datetimes
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionDays;
+                        ''')
+            days = []
+            row = cur.fetchone()
+            while row is not None:
+                days.append(row[0])
+                row = cur.fetchone()
+            return days
 
 #-----------------------------------------------------------------------
 
@@ -748,4 +774,4 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    add_audition_day('2022-09-01')
+    print(get_audition_dates())
