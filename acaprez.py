@@ -20,6 +20,7 @@ from flask import render_template, session
 from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
+from init_db import reset_database
 from sys import stderr
 from urllib.parse import unquote
 
@@ -66,8 +67,6 @@ def login():
     response = make_response(html)
     return response
 
-
-
 #-----------------------------------------------------------------------
 
 @app.route('/leader', methods=['GET'])
@@ -85,10 +84,46 @@ def leader():
 
 #-----------------------------------------------------------------------
 
+@app.route('/admin', methods=['GET'])
+def admin():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+    html = render_template('admin.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/reset', methods=['POST'])
+def reset():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+    is_open = request.form.getlist('isopen') # Get toggle switch state
+    dates = request.form['dates'].split('; ') # Parse dates input
+    reset_database()
+    if dates[0] != "": # Check whether any dates have been input
+        for date in dates:
+            db.add_audition_day(date)
+    if len(is_open) > 0: # Check if the toggle is selected
+        open = True
+    else:
+        open = False
+    db.change_website_access(open) # Open/close the website
+    return redirect(url_for('admin'))
+
+#-----------------------------------------------------------------------
+
 @app.route('/auditionee', methods=['GET'])
 def auditionee():
     netID = auth.authenticate()
     if session.get('permissions') == 'leader' or \
+        session.get('permissions') == 'admin' or \
             session.get('username') is None or \
             session.get('username').strip() == '':
         html = render_template('insufficient.html')
@@ -144,6 +179,16 @@ def addtimes():
         response = make_response(html)
         return response
 
+    # Setup the calendar
+    dates = db.get_audition_dates()
+    fdays =[]
+    days = []
+    for date in dates:
+        fday = date.strftime("%b %d")
+        day = date.strftime("%Y-%m-%d")
+        fdays.append(fday)
+        days.append(day)
+
     scheduled_slots = db.get_group_times(netID)
     scheduled = []
     for slot in scheduled_slots:
@@ -152,6 +197,8 @@ def addtimes():
 
     html = render_template('addtimes.html',
                             netID=netID,
+                            fdays=fdays,
+                            days=days,
                             scheduled=scheduled)
     response = make_response(html)
     return response
@@ -208,13 +255,17 @@ def netID():
     _ = auth.authenticate()
     print('acaprez user: ', session.get('username'), file=stderr)
     print('acaprez perms: ', session.get('permissions'), file=stderr)
-    if session.get('permissions') == 'leader':
+    permission = session.get('permissions')
+    if permission == 'leader':
         return redirect(url_for('leader'))
+    elif permission == 'admin':
+        return redirect(url_for('admin'))
     else:
         return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
 
+# MUST DELETE BEFORE PUBLISHING
 @app.route('/bypasslogin', methods=['GET'])
 def bypass():
     netID = request.args.get('netID')
@@ -224,6 +275,8 @@ def bypass():
     session['permissions'] = permission
     if permission == 'leader':
         return redirect(url_for('leader'))
+    elif permission == 'admin':
+        return redirect(url_for('admin'))
     else:
         return redirect(url_for('auditionee'))
 
@@ -242,13 +295,26 @@ def show_group_auditions():
         response = make_response(html)
         return response
 
+    # Setup the calendar
+    dates = db.get_audition_dates()
+    fdays =[]
+    days = []
+    for date in dates:
+        fday = date.strftime("%b %d")
+        day = date.strftime("%Y-%m-%d")
+        fdays.append(fday)
+        days.append(day)
+
     groupNetID = request.args.get('groupNetID')
     available_auditions = db.get_group_availability(groupNetID)
     available = []
     for audition in available_auditions:
         time = audition.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
         available.append(time)
-    html = render_template('auditioneeCalendar.html', available=available)
+    html = render_template('auditioneeCalendar.html',
+                            fdays=fdays,
+                            days=days,
+                            available=available)
     response = make_response(html)
     return response
 
@@ -263,6 +329,7 @@ def createAudition():
         response = make_response(html)
         return response
     groups = db.get_groups()
+
     html = render_template('createAudition.html',
                             groups=groups)
     response = make_response(html)
@@ -308,23 +375,3 @@ def signup_confirmation():
     html = render_template('signup-confirmation.html')
     response = make_response(html)
     return response
-
-#Below here is for reference only
-'''@app.route('/searchresults', methods=['GET'])
-def search_results():
-
-    author = request.args.get('author')
-    if (author is None) or (author.strip() == ''):
-        error_msg = 'Please type an author name.'
-        return redirect(url_for('search_form', error_msg=error_msg))
-
-    books = search(author)  # Exception handling omitted
-
-    html = render_template('searchresults.html',
-        ampm=get_ampm(),
-        current_time=get_current_time(),
-        author=author,
-        books=books)
-    response = make_response(html)
-    response.set_cookie('prev_author', author)
-    return response'''

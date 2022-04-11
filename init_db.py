@@ -53,7 +53,22 @@ def create_audition_times(cur):
                     groupNetID varchar(50) NOT NULL,
                     timeSlot timestamp NOT NULL)''')
 
-def main():
+def create_audition_days(cur):
+    cur.execute('DROP TABLE IF EXISTS auditionDays;')
+    cur.execute('''CREATE TABLE auditionDays 
+                   (day timestamp PRIMARY KEY)''')
+
+def create_accessibility(cur):
+    cur.execute('DROP TABLE IF EXISTS accessibility;')
+    cur.execute('''CREATE TABLE accessibility 
+                   (isAccessible boolean PRIMARY KEY)''')
+    # Default to being open
+    cur.execute('''
+                INSERT INTO accessibility (isAccessible)
+                VALUES (TRUE)
+                ''')
+
+def reset_database():
     # Setup connection and cursor
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
@@ -63,6 +78,8 @@ def main():
             create_groups(cur)
             create_auditionees(cur)
             create_audition_times(cur)
+            create_audition_days(cur)
+            create_accessibility(cur)
 
             # Add acaprez groups to database
             add_group(cur, 'nassoons', 'The Nassoons')
@@ -73,10 +90,13 @@ def main():
             add_group(cur, 'roaring20', 'Roaring 20')
             add_group(cur, 'katzenjammers', 'The Katzenjammers')
             add_group(cur, 'tigertones', 'The Tigertones')
+            
+            # Add generic admin user
+            add_user(cur, 'admin', 'admin')
 
             # Commit changes
             con.commit()
 
 
 if __name__ == '__main__':
-    main()
+    reset_database()

@@ -1,4 +1,6 @@
-from tokenize import group
+from datetime import datetime
+from multiprocessing.sharedctypes import Value
+from operator import add
 from sys import stderr
 from typing import List
 from psycopg2 import connect
@@ -227,6 +229,61 @@ def get_auditionee_auditions(netID: str) -> List[Audition]:
 
 #-----------------------------------------------------------------------
 
+def get_permissions(netID: str):
+    """
+    Given a netID, returns the permissions of the user.
+
+        Parameters:
+            netID: The auditionee's netID
+
+        Returns:
+            An string containing the type of user
+    """
+    # Type validation
+    if not isinstance(netID, str):
+        raise ValueError("netID must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM users
+                           WHERE netID=%s;''', (netID,))
+
+            row = cur.fetchone()
+            print('database row: ', row, file=stderr)
+            # Check the auditionee exists
+            if row is None:
+                return None
+
+    return row[1]
+
+#-----------------------------------------------------------------------
+
+def get_audition_dates() -> List[datetime]:
+    '''
+    Returns the dates that auditions are scheduled for
+
+        Parameters:
+            Nothing
+
+        Returns:
+            A list of datetimes
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionDays;
+                        ''')
+            days = []
+            row = cur.fetchone()
+            while row is not None:
+                days.append(row[0])
+                row = cur.fetchone()
+            return days
+
+#-----------------------------------------------------------------------
+
 def audition_signup(auditionee_netID: str, group_netID: str,
                  time_slot: str):
     '''
@@ -327,6 +384,29 @@ def add_audition_time(group_netID: str, time_slot: str):
                         INSERT INTO auditionTimes (groupNetID, timeSlot)
                         VALUES (%s, %s);
                         ''', (group_netID, time_slot))
+
+#-----------------------------------------------------------------------
+
+def add_audition_day(day: str):
+    '''
+    Given a day, adds it to the auditiondays table
+
+        Parameters:
+            day: The day to be added
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(day, str):
+        raise ValueError("time_slot must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO auditionDays (day)
+                        VALUES (%s);
+                        ''', (day,))
 
 #-----------------------------------------------------------------------
 
@@ -594,6 +674,36 @@ def cancel_audition(audition_id: str):
 
 #-----------------------------------------------------------------------
 
+def change_website_access(open: bool):
+    '''
+    Modifies entry in accessibility table to True if website is open
+    and False if website is closed.
+
+        Parameters:
+            open: Whether the website is open or not
+        
+        Returns:
+            Nothing
+    '''
+    if not isinstance(open, bool):
+        raise ValueError("open should be a boolean")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            if open:
+                cur.execute('''
+                            UPDATE accessibility
+                            SET isAccessible=TRUE;
+                            ''')
+            else:
+                cur.execute('''
+                            UPDATE accessibility
+                            SET isAccessible=FALSE;
+                            ''')
+
+#-----------------------------------------------------------------------
+
 def _print_all_auditionees():
     '''
     For testing, prints all the auditionees in the database
@@ -613,7 +723,6 @@ def _print_all_auditionees():
             while row is not None:
                 print(row, flush=True)
                 row = cur.fetchone()
-            
 
 #-----------------------------------------------------------------------
 
@@ -661,41 +770,8 @@ def _print_all_users():
                 print(row)
                 row = cur.fetchone()
 
-
 #-----------------------------------------------------------------------
-
-
-def get_permissions(netID: str):
-    """
-    Given a netID, returns the permissions of the user.
-
-        Parameters:
-            netID: The auditionee's netID
-
-        Returns:
-            An string containing the type of user
-    """
-    # Type validation
-    if not isinstance(netID, str):
-        raise ValueError("netID must be a string")
-
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('''SELECT * FROM users
-                           WHERE netID=%s;''', (netID,))
-
-            row = cur.fetchone()
-            print('database row: ', row, file=stderr)
-            # Check the auditionee exists
-            if row is None:
-                return None
-
-    return row[1]
-
-# ----------------------------------------------------------------------
-
 
 # For testing
 if __name__ == "__main__":
-    cancel_audition("5")
+    print(get_audition_dates())
