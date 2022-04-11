@@ -179,6 +179,16 @@ def addtimes():
         response = make_response(html)
         return response
 
+    # Setup the calendar
+    dates = db.get_audition_dates()
+    fdays =[]
+    days = []
+    for date in dates:
+        fday = date.strftime("%b %d")
+        day = date.strftime("%Y-%m-%d")
+        fdays.append(fday)
+        days.append(day)
+
     scheduled_slots = db.get_group_times(netID)
     scheduled = []
     for slot in scheduled_slots:
@@ -187,6 +197,8 @@ def addtimes():
 
     html = render_template('addtimes.html',
                             netID=netID,
+                            fdays=fdays,
+                            days=days,
                             scheduled=scheduled)
     response = make_response(html)
     return response
@@ -283,13 +295,26 @@ def show_group_auditions():
         response = make_response(html)
         return response
 
+    # Setup the calendar
+    dates = db.get_audition_dates()
+    fdays =[]
+    days = []
+    for date in dates:
+        fday = date.strftime("%b %d")
+        day = date.strftime("%Y-%m-%d")
+        fdays.append(fday)
+        days.append(day)
+
     groupNetID = request.args.get('groupNetID')
     available_auditions = db.get_group_availability(groupNetID)
     available = []
     for audition in available_auditions:
         time = audition.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
         available.append(time)
-    html = render_template('auditioneeCalendar.html', available=available)
+    html = render_template('auditioneeCalendar.html',
+                            fdays=fdays,
+                            days=days,
+                            available=available)
     response = make_response(html)
     return response
 
@@ -304,6 +329,7 @@ def createAudition():
         response = make_response(html)
         return response
     groups = db.get_groups()
+
     html = render_template('createAudition.html',
                             groups=groups)
     response = make_response(html)

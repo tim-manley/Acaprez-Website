@@ -1,16 +1,16 @@
 <tbody>
     <tr id="headers">
         <th class="table_header">Time</th>
-        <th class="table_header">Sept 1</th>
-        <th class="table_header">Sept 2</th>
-        <th class="table_header">Sept 3</th>
+        {% for day in fdays %}
+        <th class="table_header">{{day}}</th>
+        {% endfor %}
     </tr>
     {% for i in range(17,22) %}
     {% for j in range(0, 60, 15) %}
     <tr>
         <td>{{i}}:{{'%02d' % j}}</td>
-        {% for k in range(1,4)%}
-        {% set time_slot = '2022-09-%02d %02d:%02d:00' % (k, i, j) %}
+        {% for day in days%}
+        {% set time_slot = '%s %02d:%02d:00' % (day, i, j) %}
         {% if time_slot not in scheduled %}
         <td>
             <label>
