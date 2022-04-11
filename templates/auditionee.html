@@ -63,6 +63,7 @@
                         <tr>
                             <th class="table_header">Group</th>
                             <th class="table_header">Time</th>
+                            <th class="table_header"></th>
                         </tr>
                         {% for audition in auditions: %}
                         <tr>
@@ -70,7 +71,7 @@
                                     title="{{audition.get_group()}}">{{audition.get_group()}}</span></td>
                             <td>{{audition.get_formatted_timeslot()}} </td>
                             <td>
-                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger">
+                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger" style="float:right">
                                     Cancel
                                 </button>
                             </td>

@@ -59,27 +59,8 @@ class Audition:
     def get_formatted_timeslot(self):
         # original: 2022-09-01 17:15:00
         # goal: Sept 1 - 8:30pm
-        months = {1:"Jan", 2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",
-        7:"Jul",8:"Aug",9:"Sep",10:"Oct",11:"Nov",12:"Dec"}
-        
-        init_slot = str(self._timeslot)
-        datetime = init_slot.split(" ")
-        
-        ymd = datetime[0].split("-")
-        month = int(ymd[1])
-        day = int(ymd[2])
 
-        time = datetime[1].split(":")
-        hour = int(time[0])
-        minute = time[1]
-        ampm = "am"
-
-        if (hour >= 12): ampm = "pm"
-        hour %= 12
-
-        fin_slot = months[month] + " " + str(day) + " - " + str(hour) + ":" + minute + ampm
-
-        return fin_slot
+        return self._timeslot.strftime("%b %-d - %-I:%M %p")
 
 
 
