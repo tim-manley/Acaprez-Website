@@ -5,7 +5,7 @@
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
 
-from crypt import methods
+# from crypt import methods
 from doctest import DocTestRunner
 from math import perm
 from os import remove, environ
