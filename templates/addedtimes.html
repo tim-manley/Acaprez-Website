@@ -10,7 +10,7 @@
 
 </head>
 
-{% include 'nav.html' %}
+{% include 'leadernav.html' %}
 
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
@@ -21,14 +21,10 @@
             </div>
         <div class="row">
             <div class="col-sm-2">
-                <button id="new-audition" class="btn btn-primary">
-                    <a href='addtimes'>Add More Times</a>
-                </button>
+                <a href="/addtimes" class="btn btn-primary" id="new-audition" role="button">Add More Times</a>
             </div>
             <div class="col-sm-2">
-                <button id="leader" class="btn btn-primary">
-                    <a href='leader'>Return Home</a>
-                </button>
+                <a href="/leader" class="btn btn-primary" id="leader" role="button">Return Home</a>
             </div>
 
         </div>
