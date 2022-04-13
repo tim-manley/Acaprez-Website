@@ -161,7 +161,8 @@ def editprofile():
         return response
     user_instr = 'Fill out the form to change your profile.'
     user = db.get_auditionee(netID)
-    html = render_template('editprofile.html', netID=netID, name=user.get_name(),
+    html = render_template('editprofile.html', netID=netID, firstname=user.get_firstname(), 
+                            lastname=user.get_lastname(),
                             instruction=user_instr, year=user.get_class_year(),
                             dorm=user.get_dorm_room(), voice=user.get_voice_part(),
                             phone=user.get_phone_number())
@@ -233,18 +234,19 @@ def confirmprofile():
         response = make_response(html)
         return response
     print("db netID addition: ", repr(netID), file=stderr)
-    name = request.form['name']
+    firstname = request.form['firstname']
+    lastname = request.form['lastname']
     year = int(request.form['year'])
     dorm = request.form['dorm']
     voice = request.form['voice']
     phone = request.form['phone']
     if db.get_auditionee(netID) is not None:
-        db.update_auditionee(netID, name, year, dorm, voice, phone)
+        db.update_auditionee(netID, firstname, lastname, year, dorm, voice, phone)
     else:
-        db.add_auditionee(netID, name, year, dorm, voice, phone)
+        db.add_auditionee(netID, firstname, lastname, year, dorm, voice, phone)
 
-    html = render_template('confirmprofile.html', netID=netID, name=name,
-                         year=year, dorm=dorm, voice=voice, phone=phone)
+    html = render_template('confirmprofile.html', netID=netID, firstname=firstname,
+                        lastname=lastname, year=year, dorm=dorm, voice=voice, phone=phone)
     response = make_response(html)
     return response
 
@@ -289,7 +291,7 @@ def show_group_auditions():
         response = make_response(html)
         return response
 
-    _ = auth.authenticate()
+    netID = auth.authenticate()
     if session.get('permissions') is None:
         html = render_template('insufficient.html')
         response = make_response(html)
@@ -304,9 +306,9 @@ def show_group_auditions():
         day = date.strftime("%Y-%m-%d")
         fdays.append(fday)
         days.append(day)
-
+    
     groupNetID = request.args.get('groupNetID')
-    available_auditions = db.get_group_availability(groupNetID)
+    available_auditions = db.get_group_availability(groupNetID, netID)
     available = []
     for audition in available_auditions:
         time = audition.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')

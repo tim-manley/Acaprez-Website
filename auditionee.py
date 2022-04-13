@@ -3,11 +3,12 @@ class Auditionee:
 
     # Will need to figure out exact implementation (what attributes are
     # necessary etc.)
-    def __init__(self, netID, name, class_year, dorm_room,
+    def __init__(self, netID, firstname, lastname, class_year, dorm_room,
                  voice_part=None, phone_number=None):
         # Need to add error handling
         self._netID = netID
-        self._name = name
+        self._firstname = firstname
+        self._lastname = lastname
         self._class_year = class_year
         self._dorm_room = dorm_room
         self._voice_part = voice_part
@@ -16,8 +17,11 @@ class Auditionee:
     def get_netID(self):
         return self._netID
     
-    def get_name(self):
-        return self._name
+    def get_firstname(self):
+        return self._firstname
+        
+    def get_lastname(self):
+        return self._lastname
     
     def get_class_year(self):
         return self._class_year
