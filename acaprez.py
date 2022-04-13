@@ -28,6 +28,12 @@ from urllib.parse import unquote
 
 app = Flask(__name__)
 
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE=True
+)
+
 import auth
 
 # This should be made to work, but for alpha we can just hard code stuff
