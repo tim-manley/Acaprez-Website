@@ -18,6 +18,35 @@ PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
 #-----------------------------------------------------------------------
 
+def get_group(netID: str) -> Group:
+    '''
+    Returns a list of the groups in the database
+
+        Parameters:
+            netID: Net id of the group
+
+        Returns:
+            groups ([group]): A list of group objects
+    '''
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM groups
+                        WHERE netID=%s;
+                        ''', (netID,))
+
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError("No group with given netID")
+            
+            group = Group(row[0], row[1])
+
+    return group
+
+#-----------------------------------------------------------------------
+
 def get_groups() -> List[Group]:
     '''
     Returns a list of the groups in the database
@@ -774,4 +803,5 @@ def _print_all_users():
 
 # For testing
 if __name__ == "__main__":
-    print(get_audition_dates())
+    group = get_group("hello")
+    print(group.get_name())
