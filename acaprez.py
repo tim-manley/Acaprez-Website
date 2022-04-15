@@ -375,3 +375,14 @@ def signup_confirmation():
     html = render_template('signup-confirmation.html')
     response = make_response(html)
     return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/about', methods=['GET'])
+def about():
+    _ = auth.authenticate()
+    groups = db.get_groups()
+    html = render_template('about.html',
+                            groups=groups)
+    response = make_response(html)
+    return response

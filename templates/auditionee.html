@@ -20,13 +20,12 @@
         <h1 id="welcome">{{"Welcome, " ~ profile.get_name() ~ " :)"}}</h1>
         <br>
         <div class="row">
-
             <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-6">
                         <h3 id="profile">My Profile</h3>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-6">
                         <a href="/editprofile" class="btn btn-outline-primary" id="edit-profile-but" role="button">Edit
                             Profile</a>
                     </div>
@@ -48,10 +47,10 @@
             <div class="col-sm-8">
 
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-6">
                         <h3 id="profile">Current Auditions</h3>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-6">
                         <a href="/createAudition" class="btn btn-primary" id="new-audition" role="button">New
                             Audition</a>
                     </div>
@@ -67,8 +66,7 @@
                         </tr>
                         {% for audition in auditions: %}
                         <tr>
-                            <td id="{{audition.get_auditionID()}}"><span data-toggle="tooltip" data-placement="right"
-                                    title="{{audition.get_group()}}">{{audition.get_group()}}</span></td>
+                            <td id="{{audition.get_auditionID()}}"><a href="{{audition.get_group_url()}}" target="_blank">{{audition.get_group_name()}}</a></td>
                             <td>{{audition.get_formatted_timeslot()}} </td>
                             <td>
                                 <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger" style="float:right">
@@ -81,9 +79,26 @@
                 </div>
             </div>
         </div>
+        <br>
+        <div class="row">
+            <div class="col-3">
+                <h3>What is Acaprez?</h3>
+            </div>
+            <div class="col-2">
+                <a href="/about" class="btn btn-primary" id="about" role="button">Learn more</a>
+            </div>
+            <div>
+                <ul class="list-group">
+                    {% for group in groups %}
+                    <li class="list-group-item list-group-item-light"><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+        </div>
     </div>
     <br>
-    </div>
 
     <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
     </script>
