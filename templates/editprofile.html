@@ -31,8 +31,12 @@
             <div class="col-sm-4">
                 <form action="/confirmprofile" method="POST" class="needs-validation" novalidate>
                     <div class="form-group">
-                        <label for="name">Preferred First & Last Name:</label>
-                        <input type="text" class="form-control" value="{{name}}" id="name" name="name" required>
+                        <label for="firstname">Preferred First Name:</label>
+                        <input type="text" class="form-control" value="{{firstname}}" id="firstname" name="firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Preferred Last Name:</label>
+                        <input type="text" class="form-control" value="{{lastname}}" id="lastname" name="lastname" required>
                     </div>
                     <!--- Some of these are going to need to be auto-populated, like 
                     res college, class year, but i'm including them as things 
