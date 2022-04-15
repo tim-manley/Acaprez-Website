@@ -81,21 +81,9 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-3">
-                <h3>What is Acaprez?</h3>
+            <div class="col-4">
+                <a href="/about" class="btn btn-primary" id="about" role="button">What is Acaprez?</a>
             </div>
-            <div class="col-2">
-                <a href="/about" class="btn btn-primary" id="about" role="button">Learn more</a>
-            </div>
-            <div>
-                <ul class="list-group">
-                    {% for group in groups %}
-                    <li class="list-group-item list-group-item-light"><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-
         </div>
     </div>
     <br>
