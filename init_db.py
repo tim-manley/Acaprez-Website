@@ -40,7 +40,8 @@ def create_auditionees(cur):
     cur.execute('DROP TABLE IF EXISTS auditionees;')
     cur.execute('''CREATE TABLE auditionees
                    (netID varchar(50) PRIMARY KEY,
-                    name varchar(50) NOT NULL,
+                    first_name varchar(50) NOT NULL,
+                    last_name varchar(50) NOT NULL,
                     classYear integer NOT NULL,
                     voicePart varchar(50),
                     dormRoom varchar(50) NOT NULL,
