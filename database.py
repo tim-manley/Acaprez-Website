@@ -102,8 +102,8 @@ def get_auditionee(netID: str) -> Auditionee:
                 return None
                 #raise KeyError(f"No auditionee with {netID} exists")
             
-            auditionee = Auditionee(row[0], row[1], row[2], row[4], 
-                                    row[3], row[5])
+            auditionee = Auditionee(row[0], row[1], row[2], row[3], 
+                                    row[5], row[4], row[6])
 
     return auditionee
 
@@ -575,7 +575,7 @@ def add_auditionee(netID: str, firstname: str, lastname: str, class_yr: int, dor
              # Now add data to auditionees table
             cur.execute('''
                         INSERT INTO auditionees 
-                        (netID, firstname, lastname, classYear, 
+                        (netID, firstName, lastName, classYear, 
                          voicePart, dormRoom, phoneNumber)
                         VALUES (%s, %s, %s, %s, %s, %s, %s);
                         ''',
@@ -617,14 +617,14 @@ def update_auditionee(netID: str, firstname=None, lastname=None,
             if firstname is not None:
                 cur.execute('''
                             UPDATE auditionees
-                            SET firstname=%s
+                            SET firstName=%s
                             WHERE netID=%s;
                             ''',
                             (firstname, netID))
             if lastname is not None:
                 cur.execute('''
                             UPDATE auditionees
-                            SET lastname=%s
+                            SET lastName=%s
                             WHERE netID=%s;
                             ''',
                             (lastname, netID))
