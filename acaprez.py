@@ -130,7 +130,9 @@ def auditionee():
         response = make_response(html)
         return response
     auditions = db.get_auditionee_auditions(netID)
-    groups = db.get_groups()
+    for audition in auditions:
+        audition.set_group()
+
     profile = db.get_auditionee(netID)
     if profile is None:
         welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
@@ -139,7 +141,7 @@ def auditionee():
                                 year='', room='', voice='', phone=''
         )
     else:
-        html = render_template('auditionee.html', auditions=auditions, profile=profile, groups=groups)
+        html = render_template('auditionee.html', auditions=auditions, profile=profile)
     response = make_response(html)
     return response
 
@@ -306,7 +308,6 @@ def show_group_auditions():
         day = date.strftime("%Y-%m-%d")
         fdays.append(fday)
         days.append(day)
-    
     groupNetID = request.args.get('groupNetID')
     available_auditions = db.get_group_availability(groupNetID, netID)
     available = []

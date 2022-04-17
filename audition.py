@@ -7,8 +7,9 @@ class Audition:
         self._auditionID = auditionID
         self._auditionee_netID = auditionee_netID
         self._group_netID = group_netID
-        self._group = db.get_group(group_netID)
         self._timeslot = timeslot
+        # self._group is only set from the auditionee page (where it is
+        # needed)
 
     def __str__(self):
         # should probably make this better
@@ -76,5 +77,5 @@ class Audition:
 
         return self._timeslot.strftime("%b %-d - %-I:%M %p")
 
-
-
+    def set_group(self):
+        self._group = db.get_group(self._group_netID)

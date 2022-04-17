@@ -129,10 +129,10 @@ def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Auditi
     
     available_auditions = []
     
-    unavailable = []
+    unavailable = set()
     if aud_netID is not None:
         for aud in get_auditionee_auditions(aud_netID):
-            unavailable.append(aud.get_timeslot)
+            unavailable.add(aud.get_timeslot())
 
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
@@ -148,7 +148,7 @@ def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Auditi
             row = cur.fetchone()
             while row is not None:
                 audition = Audition(row[0], row[1], row[2], row[3])
-                if audition.get_timeslot() not in unavailable:
+                if row[3] not in unavailable:
                     available_auditions.append(audition)
                 row = cur.fetchone()
     
