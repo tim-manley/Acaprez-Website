@@ -18,6 +18,35 @@ PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
 #-----------------------------------------------------------------------
 
+def get_group(netID: str) -> Group:
+    '''
+    Returns a list of the groups in the database
+
+        Parameters:
+            netID: Net id of the group
+
+        Returns:
+            groups ([group]): A list of group objects
+    '''
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM groups
+                        WHERE netID=%s;
+                        ''', (netID,))
+
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError("No group with given netID")
+            
+            group = Group(row[0], row[1], row[2])
+
+    return group
+
+#-----------------------------------------------------------------------
+
 def get_groups() -> List[Group]:
     '''
     Returns a list of the groups in the database
@@ -38,7 +67,7 @@ def get_groups() -> List[Group]:
             row = cur.fetchone()
             while row is not None:
                 # Do we need exception handling???
-                group = Group(row[0], row[1])
+                group = Group(row[0], row[1], row[2])
                 groups.append(group)
                 row = cur.fetchone()
 
@@ -100,10 +129,10 @@ def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Auditi
     
     available_auditions = []
     
-    unavailable = []
+    unavailable = set()
     if aud_netID is not None:
         for aud in get_auditionee_auditions(aud_netID):
-            unavailable.append(aud.get_timeslot)
+            unavailable.add(aud.get_timeslot())
 
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
@@ -119,7 +148,7 @@ def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Auditi
             row = cur.fetchone()
             while row is not None:
                 audition = Audition(row[0], row[1], row[2], row[3])
-                if audition.get_timeslot() not in unavailable:
+                if row[3] not in unavailable:
                     available_auditions.append(audition)
                 row = cur.fetchone()
     
