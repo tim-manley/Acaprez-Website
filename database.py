@@ -287,7 +287,6 @@ def get_permissions(netID: str):
                            WHERE netID=%s;''', (netID,))
 
             row = cur.fetchone()
-            print('database row: ', row, file=stderr)
             # Check the auditionee exists
             if row is None:
                 return None
