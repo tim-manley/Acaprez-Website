@@ -1,5 +1,4 @@
-from calendar import day_abbr
-
+import database as db
 
 class Audition:
 
@@ -9,12 +8,15 @@ class Audition:
         self._auditionee_netID = auditionee_netID
         self._group_netID = group_netID
         self._timeslot = timeslot
+        # self._group is only set from the auditionee page (where it is
+        # needed)
 
     def __str__(self):
         # should probably make this better
         s = str(self._auditionID)
         s += " " + str(self._auditionee_netID)
         s += " " + str(self._group_netID)
+        s += " " + str(self._group)
         s += " " + str(self._timeslot)
         return s
 
@@ -27,7 +29,8 @@ class Audition:
 
         d['auditionID'] = self._auditionID
         d['auditionee_netID'] = self._auditionee_netID
-        d['group_netID'] = self._group_netID
+        d['group'] = self._group_netID
+        d['group_name'] = self._group_name
         d['timeslot'] = self._timeslot
 
         return d
@@ -46,9 +49,21 @@ class Audition:
 
     def get_group(self):
         '''
-        Returns group netID of given audition
+        Returns group netID for a given audition
         '''
         return self._group_netID
+    
+    def get_group_name(self):
+        '''
+        Returns group name for a given audition
+        '''
+        return self._group.get_name()
+
+    def get_group_url(self):
+        '''
+        Returns group url for a given audition
+        '''
+        return self._group.get_url()
 
     def get_timeslot(self):
         '''
@@ -62,5 +77,5 @@ class Audition:
 
         return self._timeslot.strftime("%b %-d - %-I:%M %p")
 
-
-
+    def set_group(self):
+        self._group = db.get_group(self._group_netID)

@@ -27,19 +27,21 @@ def create_groups(cur):
     cur.execute('DROP TABLE IF EXISTS groups;')
     cur.execute('''CREATE TABLE groups
                     (netID varchar(50) PRIMARY KEY,
-                    name varchar(50) NOT NULL);''')
+                    name varchar(50) NOT NULL, 
+                    url varchar(50) NOT NULL);''')
 
-def add_group(cur, netID, name):
+def add_group(cur, netID, name, url):
     add_user(cur, netID, 'leader')
     cur.execute('''INSERT INTO groups
-                   VALUES (%s, %s);''',
-                   (netID, name))
+                   VALUES (%s, %s, %s);''',
+                   (netID, name, url))
 
 def create_auditionees(cur):
     cur.execute('DROP TABLE IF EXISTS auditionees;')
     cur.execute('''CREATE TABLE auditionees
                    (netID varchar(50) PRIMARY KEY,
-                    name varchar(50) NOT NULL,
+                    firstName varchar(50) NOT NULL,
+                    lastName varchar(50) NOT NULL,
                     classYear integer NOT NULL,
                     voicePart varchar(50),
                     dormRoom varchar(50) NOT NULL,
@@ -82,15 +84,23 @@ def reset_database():
             create_accessibility(cur)
 
             # Add acaprez groups to database
-            add_group(cur, 'nassoons', 'The Nassoons')
-            add_group(cur, 'footnotes', 'The Footnotes')
-            add_group(cur, 'tigerlillies', 'The Tigerlillies')
-            add_group(cur, 'tigressions', 'The Tigressions')
-            add_group(cur, 'wildcats', 'The Wildcats')
-            add_group(cur, 'roaring20', 'Roaring 20')
-            add_group(cur, 'katzenjammers', 'The Katzenjammers')
-            add_group(cur, 'tigertones', 'The Tigertones')
-            
+            add_group(cur, 'nassoons', 'The Nassoons', 
+            'http://www.nassoons.com/')
+            add_group(cur, 'footnotes', 'The Footnotes', 
+            'http://princetonfootnotes.com/')
+            add_group(cur, 'tigerlillies', 'The Tigerlillies', 
+            'https://www.putigerlilies.com/')
+            add_group(cur, 'tigressions', 'The Tigressions', 
+            'http://www.theprincetontigressions.com/')
+            add_group(cur, 'wildcats', 'The Wildcats', 
+            'https://www.princetonwildcats.com/')
+            add_group(cur, 'roaring20', 'Roaring 20', 
+            'https://www.princetonroaring20.com/')
+            add_group(cur, 'katzenjammers', 'The Katzenjammers', 
+            'http://www.theprincetonkatzenjammers.com/')
+            add_group(cur, 'tigertones', 'The Tigertones', 
+            'http://www.tigertones.com/')
+
             # Add generic admin user
             add_user(cur, 'admin', 'admin')
 

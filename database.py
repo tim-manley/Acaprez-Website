@@ -41,7 +41,7 @@ def get_group(netID: str) -> Group:
             if row is None:
                 raise ValueError("No group with given netID")
             
-            group = Group(row[0], row[1])
+            group = Group(row[0], row[1], row[2])
 
     return group
 
@@ -67,7 +67,7 @@ def get_groups() -> List[Group]:
             row = cur.fetchone()
             while row is not None:
                 # Do we need exception handling???
-                group = Group(row[0], row[1])
+                group = Group(row[0], row[1], row[2])
                 groups.append(group)
                 row = cur.fetchone()
 
@@ -102,30 +102,37 @@ def get_auditionee(netID: str) -> Auditionee:
                 return None
                 #raise KeyError(f"No auditionee with {netID} exists")
             
-            auditionee = Auditionee(row[0], row[1], row[2], row[4], 
-                                    row[3], row[5])
+            auditionee = Auditionee(row[0], row[1], row[2], row[3], 
+                                    row[5], row[4], row[6])
 
     return auditionee
 
 #-----------------------------------------------------------------------
 
-def get_group_availability(group_netID: str) -> List[Audition]:
+def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Audition]:
     '''
     Given a group netID, returns a list of all times that HAVE NOT been
     signed up for by an auditionee.
 
         Parameters:
         group_netID: The group's netID
+        (optional) aud_netID: The auditionee's netID
 
         Returns:
             A list of Audition objects, in which are contained the 
             details of each un-occupied audition. Returns empty list if
-            no auditions are available
+            no auditions are available. Does not return times that the
+            auditionee is already signed up for, if provided.
     '''
     if not isinstance(group_netID, str):
         raise ValueError("group_netID must be a string")
     
     available_auditions = []
+    
+    unavailable = set()
+    if aud_netID is not None:
+        for aud in get_auditionee_auditions(aud_netID):
+            unavailable.add(aud.get_timeslot())
 
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
@@ -141,7 +148,8 @@ def get_group_availability(group_netID: str) -> List[Audition]:
             row = cur.fetchone()
             while row is not None:
                 audition = Audition(row[0], row[1], row[2], row[3])
-                available_auditions.append(audition)
+                if row[3] not in unavailable:
+                    available_auditions.append(audition)
                 row = cur.fetchone()
     
     return available_auditions
@@ -511,14 +519,15 @@ def _add_user(netID: str, access: str):
 
 #-----------------------------------------------------------------------
 
-def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
+def add_auditionee(netID: str, firstname: str, lastname: str, class_yr: int, dorm: str,
                    voice_pt="", phone=""):
     '''
     Creates an auditionee in the auditionees table.
 
         Parameters:
             netID: The netID of the auditionee
-            name: The name of the auditionee
+            firstname: The first name of the auditionee
+            lastname: The last name of the auditionee
             class_yr: The auditionee's class year
             dorm: The auditionee's hall and room number
             voice_pt: The voice part(s) of the auditionee (optional)
@@ -530,8 +539,10 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
     # Check argument types
     if not isinstance(netID, str):
         raise ValueError("netID must be a string")
-    if not isinstance(name, str):
-        raise ValueError("name must be a string")
+    if not isinstance(firstname, str):
+        raise ValueError("first name must be a string")
+    if not isinstance(lastname, str):
+        raise ValueError("last name must be a string")
     if not isinstance(class_yr, int):
         raise ValueError("class_yr must be an integer")
     if not isinstance(dorm, str):
@@ -564,22 +575,23 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
              # Now add data to auditionees table
             cur.execute('''
                         INSERT INTO auditionees 
-                        (netID, name, classYear, 
+                        (netID, firstName, lastName, classYear, 
                          voicePart, dormRoom, phoneNumber)
-                        VALUES (%s, %s, %s, %s, %s, %s);
+                        VALUES (%s, %s, %s, %s, %s, %s, %s);
                         ''',
-                        (netID, name, class_yr, voice_pt, dorm, phone))
+                        (netID, firstname, lastname, class_yr, voice_pt, dorm, phone))
 
 #-----------------------------------------------------------------------
 
-def update_auditionee(netID: str, name=None, class_yr=None, dorm=None,
-                      voice_pt=None, phone=None):
+def update_auditionee(netID: str, firstname=None, lastname=None, 
+                    class_yr=None, dorm=None, voice_pt=None, phone=None):
     '''
     Updates an auditionee with the given parameters.
 
         Parameters:
             netID: The netID of the auditionee
-            name: The name of the auditionee
+            firstname: The first name of the auditionee
+            lastname: The last name of the auditionee
             class_yr: The auditionee's class year
             dorm: The auditionee's hall and room number
             voice_pt: The voice part(s) of the auditionee (optional)
@@ -602,13 +614,20 @@ def update_auditionee(netID: str, name=None, class_yr=None, dorm=None,
                 ex = f"No auditionee with netID: {netID} exists"
                 raise ValueError(ex)
             # Update table
-            if name is not None:
+            if firstname is not None:
                 cur.execute('''
                             UPDATE auditionees
-                            SET name=%s
+                            SET firstName=%s
                             WHERE netID=%s;
                             ''',
-                            (name, netID))
+                            (firstname, netID))
+            if lastname is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET lastName=%s
+                            WHERE netID=%s;
+                            ''',
+                            (lastname, netID))
             if class_yr is not None:
                 cur.execute('''
                             UPDATE auditionees
