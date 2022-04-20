@@ -200,6 +200,10 @@ def accept_callback():
 @app.route('/offercallback', methods=['POST'])
 def offer_callback():
     groupID = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     netID = request.args.get('netID')
     db.offer_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('leader'))
