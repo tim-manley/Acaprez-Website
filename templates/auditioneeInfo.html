@@ -15,11 +15,12 @@
 
 
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin:10px">
         <div class="row">
-            <div class="col-md-6">
+            <div>
                 <h2>Auditionee Details</h2>
             </div>
+    
         </div>
         <div class="row">
             <div class="col-md-5">
@@ -35,8 +36,14 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-md-6">
-                <a href="https://mail.google.com/mail/u/0/?fs=1&tf=cm&to={{ auditionee.get_netID() }}@princeton.edu" target="_blank" class="btn btn-primary" id="email-auditionee" role="button">Email Auditionee</a>
+            <div>
+                <a href="https://mail.google.com/mail/u/1/?fs=1&tf=cm&to={{ auditionee.get_netID() }}@princeton.edu" target="_blank" class="btn btn-primary" id="email-auditionee" role="button">Email Auditionee</a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div>
+                <a href="/leader"class="btn-outline-primary btn" id="return-home" role="button">Return to Group Page</a>
             </div>
         </div>
     </div>
