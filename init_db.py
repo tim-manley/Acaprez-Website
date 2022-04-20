@@ -53,7 +53,8 @@ def create_audition_times(cur):
                    (auditionID SERIAL PRIMARY KEY,
                     auditioneeNetID varchar(50),
                     groupNetID varchar(50) NOT NULL,
-                    timeSlot timestamp NOT NULL);''')
+                    timeSlot timestamp NOT NULL,
+                    callbackOffered boolean);''')
 #-----------------------------------------------------------------------
 def create_audition_days(cur):
     cur.execute('DROP TABLE IF EXISTS auditionDays;')
