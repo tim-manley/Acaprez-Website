@@ -194,6 +194,83 @@ def get_group_auditions(group_netID: str) -> List[Audition]:
 
 #-----------------------------------------------------------------------
 
+def get_group_pending_auditions(group_netID: str) -> List[Audition]:
+    '''
+    Given a group netID, returns a list of all times that HAVE been
+    signed up for by an auditionee and HAVE NOT been offered a callback.
+
+        Parameters:
+        group_netID: The group's netID
+
+        Returns:
+            A list of Audition objects, in which are contained the 
+            details of each audition that has been signed up for.
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    
+    auditions = []
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM auditionTimes
+                        WHERE groupNetID=%s 
+                        AND auditioneeNetID IS NOT NULL
+                        AND callbackOffered=FALSE
+                        ORDER BY timeSlot
+                        ''',
+                        (group_netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                audition = Audition(row[0], row[1], row[2], row[3])
+                auditions.append(audition)
+                row = cur.fetchone()
+    
+    return auditions
+
+#-----------------------------------------------------------------------
+
+def get_group_offered_callbacks(group_netID: str):
+    '''
+    Given a group netID, returns a list of all times that HAVE been
+    signed up for by an auditionee and HAVE been offered a callback.
+
+        Parameters:
+        group_netID: The group's netID
+
+        Returns:
+            A list of tuples of the form (name, acceptance)
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID must be a string")
+    
+    auditions = []
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM callbackOffers
+                        WHERE groupNetID=%s 
+                        AND auditioneeNetID IS NOT NULL
+                        ''',
+                        (group_netID,))
+            
+            row = cur.fetchone()
+            while row is not None:
+                if row[2] is True:
+                    auditions.append((row[0], "Accepted"))
+                else:
+                    auditions.append((row[0], "Pending"))
+                row = cur.fetchone()
+    
+    return auditions
+
+#-----------------------------------------------------------------------
+
 def get_group_times(group_netID: str) -> List[Audition]:
     '''
     Given a group netID, returns a list of ALL times that the group 
@@ -725,7 +802,8 @@ def cancel_audition(audition_id: str):
 def offer_callback(group_netID: str, auditionee_netID: str):
     '''
     Adds an entry to the callbackOffers table for a group to offer a 
-    callback to an auditionee.
+    callback to an auditionee, and sets callbackOffered to TRUE for
+    the auditionee.
 
         Parameters:
             group_nedId: the netid of the group offering the callback
