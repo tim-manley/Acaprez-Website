@@ -66,10 +66,12 @@
                         </tr>
                         {% for audition in auditions: %}
                         <tr>
-                            <td id="{{audition.get_auditionID()}}"><a href="{{audition.get_group_url()}}" target="_blank">{{audition.get_group_name()}}</a></td>
+                            <td id="{{audition.get_auditionID()}}"><a href="{{audition.get_group_url()}}"
+                                    target="_blank">{{audition.get_group_name()}}</a></td>
                             <td>{{audition.get_formatted_timeslot()}} </td>
                             <td>
-                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger" style="float:right">
+                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
+                                    style="float:right">
                                     Cancel
                                 </button>
                             </td>
@@ -81,9 +83,64 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-4">
+            <div class="col-6">
                 <a href="/about" class="btn btn-primary" id="about" role="button">What is Acaprez?</a>
             </div>
+
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col">
+                <div class="float-right">
+                    <h3 id="profile">Callback Offers</h3>
+
+                    <table id="callbacks" class="table table-striped">
+                        <tr>
+                            <th class="table_header">Group</th>
+                            <th class="table_header"></th>
+                        </tr>
+                        <!--in python: need callbacks = db.get_callbacks(netID), or equivalent implementation-->
+                        {% for group in callbacks: %}
+                        <tr>
+                            <td><a href="{{group.get_group_url()}}" target="_blank">{{group.get_group_name()}}</a></td>
+                            <td>
+                                <button id="{{callback.get_groupID()}}" type="button" class="btn btn-primary"
+                                    style="float:right">
+                                    Accept
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col">
+                <div class="float-right">
+                    <h3 id="profile">Accepted Callbacks</h3>
+
+                    <table id="accepted" class="table table-striped">
+                        <tr>
+                            <th class="table_header">Group</th>
+                        </tr>
+
+                        {% for group in accepted: %}
+                        <tr>
+                            <td><a href="{{accepted.get_group_url()}}" target="_blank">{{accepted.get_group_name()}}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+
         </div>
     </div>
     <br>
@@ -128,8 +185,44 @@
             }
         }
 
+        function acceptCallback() {
+            var num_groups = '{{len(accepted)}}'
+            if (num_groups == 2) {
+                let str = "Already accepted callbacks from two groups"
+                let confirmed = window.confirm(str)
+                if (confirmed) {
+                    location.reload()
+                }
+            }
+            else {
+                let str = "Accept callback? You may only accept callbacks from two groups"
+                let confirmed = window.confirm(str);
+
+                if (confirmed) {
+                    let groupID = this.id;
+                    groupID = encodeURIComponent(groupID);
+
+                    let url = "/acceptcallback?groupID=" + groupID;
+
+                    if (request != null) {
+                        request.abort()
+                    }
+
+                    request = $.ajax(
+                        {
+                            type: 'POST',
+                            url: url
+                        }
+                    );
+
+                    location.reload();
+                }
+            }
+        }
+
         function setup() {
             $('#auditions .btn').on('click', cancelAudition);
+            $('#callbacks .btn').on('click', acceptCallback);
         }
 
         $('document').ready(function () {

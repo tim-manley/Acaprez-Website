@@ -23,6 +23,7 @@ import database as db
 from init_db import reset_database
 from sys import stderr
 from urllib.parse import unquote
+import group
 
 #-----------------------------------------------------------------------
 
@@ -132,6 +133,9 @@ def auditionee():
     auditions = db.get_auditionee_auditions(netID)
     for audition in auditions:
         audition.set_group()
+   
+    callbacks = db.get_callbacks(netID) 
+    accepted = db.get_accepted(netID)
 
     profile = db.get_auditionee(netID)
     if profile is None:
@@ -141,15 +145,26 @@ def auditionee():
                                 year='', room='', voice='', phone=''
         )
     else:
-        html = render_template('auditionee.html', auditions=auditions, profile=profile)
+        html = render_template('auditionee.html', auditions=auditions, profile=profile,
+                                callbacks=callbacks, accepted=accepted)
     response = make_response(html)
     return response
 
 #-----------------------------------------------------------------------
+
 @app.route('/cancelaudition', methods=['POST'])
 def cancel_audition():
     audition_id = request.args.get('auditionid')
     db.cancel_audition(audition_id) # Error handling ommitted
+    return redirect(url_for('auditionee'))
+
+#-----------------------------------------------------------------------
+
+@app.route('/acceptcallback', methods=['POST'])
+def accept_callback():
+    netID = auth.authenticate()
+    groupID = request.args.get('groupID')
+    db.accept_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
