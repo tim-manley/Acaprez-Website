@@ -5,10 +5,10 @@
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
 
-# from crypt import methods
 from doctest import DocTestRunner
 from math import perm
 from os import remove, environ
+# import environ as envi
 from os import remove
 import sched
 from time import time
@@ -46,9 +46,19 @@ import auth
 #     debug_netid = ''
 #     debug_perms = ''
 #     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
+# ----------------------------------------------------------------------
+# env = environ.Env(
+#     DEBUG=(bool, False),
+#     SECRET_KEY=(str, b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'),
+#     DEBUG_NETID=(str, '')
+# )
+#
+# READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+# if READ_DOT_ENV_FILE:
+#     environ.Env.read_env()
 
-debug = False
-debug_netid = ''
+DEBUG = False
+DEBUG_NETID = ''
 app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
@@ -66,8 +76,8 @@ def index():
 
 @app.route('/login', methods=['GET'])
 def login():
-    if debug:
-        session['username'] = debug_netid
+    if DEBUG:
+        session['username'] = DEBUG_NETID
         auth.authenticate()
 
     html = render_template('caslogin.html')
@@ -161,6 +171,11 @@ def auditionee():
 
 @app.route('/cancelaudition', methods=['POST'])
 def cancel_audition():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     audition_id = request.args.get('auditionid')
     db.cancel_audition(audition_id) # Error handling ommitted
     return redirect(url_for('auditionee'))
@@ -170,6 +185,10 @@ def cancel_audition():
 @app.route('/acceptcallback', methods=['POST'])
 def accept_callback():
     netID = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     groupID = request.args.get('groupID')
     db.accept_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('auditionee'))
@@ -404,5 +423,20 @@ def about():
     groups = db.get_groups()
     html = render_template('about.html',
                             groups=groups)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/logoutconfirmation', methods=['GET'])
+def logoutconfirmation():
+    _ = auth.authenticate()
+    prev_url = request.referrer
+    if prev_url is not None:
+        prev_url = prev_url.split('/')[-1]
+    else:
+        prev_url = "index"
+    html = render_template('logoutConfirmation.html',
+                           url=prev_url)
     response = make_response(html)
     return response
