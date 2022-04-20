@@ -93,9 +93,11 @@ def leader():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    auds = db.get_group_auditions(netID)
+    pending = db.get_group_pending_auditions(netID) 
+    offered = db.get_group_offered_callbacks(netID) 
     times = db.get_group_times(netID)
-    html = render_template('leader.html', netID=netID, auds=auds, times=times)
+    html = render_template('leader.html', netID=netID, pending=pending, 
+                            offered=offered, times=times)
     response = make_response(html)
     return response
 
@@ -192,6 +194,15 @@ def accept_callback():
     groupID = request.args.get('groupID')
     db.accept_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('auditionee'))
+
+#-----------------------------------------------------------------------
+
+@app.route('/offercallback', methods=['POST'])
+def offer_callback():
+    groupID = auth.authenticate()
+    netID = request.args.get('netID')
+    db.offer_callback(groupID, netID) # Error handling ommitted
+    return redirect(url_for('leader'))
 
 #-----------------------------------------------------------------------
 
