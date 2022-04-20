@@ -6,5 +6,5 @@ audition.py
 import database as db
 
 if __name__ == "__main__":
-    db.accept_callback("nassoons", "tdmanley")
-    db.offer_callback("tigerlilies", "janeec")
+    for group in db.get_pending_callbacks("tdmanley"):
+        print(group.get_name())
