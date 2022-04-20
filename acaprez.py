@@ -44,7 +44,6 @@ import auth
 # except KeyError:
 #     debug = False
 #     debug_netid = ''
-#     debug_perms = ''
 #     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 # ----------------------------------------------------------------------
 # env = environ.Env(
@@ -200,6 +199,10 @@ def accept_callback():
 @app.route('/offercallback', methods=['POST'])
 def offer_callback():
     groupID = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     netID = request.args.get('netID')
     db.offer_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('leader'))
