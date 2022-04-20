@@ -721,6 +721,46 @@ def cancel_audition(audition_id: str):
 
 #-----------------------------------------------------------------------
 
+def offer_callback(group_netID: str, auditionee_netID: str):
+    '''
+    Adds an entry to the callbackOffers table for a group to offer a 
+    callback to an auditionee.
+
+        Parameters:
+            group_nedId: the netid of the group offering the callback
+            auditionee_netID: the netid of the auditionee being offered
+                             a callback.
+        
+        Returns:
+            Nothing
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID should be a string")
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # First check if already in table
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"{auditionee_netID} has already been offered a "
+                ex += f"callback by {group_netID}"
+                raise ValueError(ex)
+            
+            # Now add entry to the table, default to not accepted
+            cur.execute('''INSERT INTO callbackOffers
+                           (auditioneeNetID, groupNetID, accepted)
+                           VALUES (%s, %s, FALSE)''',
+                           (auditionee_netID, group_netID))
+
+#-----------------------------------------------------------------------
+
 def change_website_access(open: bool):
     '''
     Modifies entry in accessibility table to True if website is open
@@ -819,7 +859,7 @@ def _print_all_users():
 
 #-----------------------------------------------------------------------
 
-# For testing
-if __name__ == "__main__":
-    group = get_group("hello")
-    print(group.get_name())
+'''
+To test this module, use testdb.py otherwise there is a circular import
+if this is the main module.
+'''
