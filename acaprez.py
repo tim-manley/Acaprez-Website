@@ -164,7 +164,7 @@ def cancel_audition():
 def accept_callback():
     netID = auth.authenticate()
     groupID = request.args.get('groupID')
-    db.accept_callback(groupID, netID) # Error handling ommitted
+    db.accept_callback(netID, groupID) # Error handling ommitted
     return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
