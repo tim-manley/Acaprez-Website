@@ -11,7 +11,7 @@ DATABASE = 'd8tdd1oslp407c'
 USER = 'cmjmzphzaovzef'
 PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
-
+#-----------------------------------------------------------------------
 def create_users(cur):
     cur.execute('DROP TABLE IF EXISTS users;')
     cur.execute('''CREATE TABLE users
@@ -46,42 +46,71 @@ def create_auditionees(cur):
                     voicePart varchar(50),
                     dormRoom varchar(50) NOT NULL,
                     phoneNumber varchar(50));''')
-
+#-----------------------------------------------------------------------
 def create_audition_times(cur):
     cur.execute('DROP TABLE IF EXISTS auditionTimes;')
     cur.execute('''CREATE TABLE auditionTimes
                    (auditionID SERIAL PRIMARY KEY,
                     auditioneeNetID varchar(50),
                     groupNetID varchar(50) NOT NULL,
-                    timeSlot timestamp NOT NULL)''')
-
+                    timeSlot timestamp NOT NULL);''')
+#-----------------------------------------------------------------------
 def create_audition_days(cur):
     cur.execute('DROP TABLE IF EXISTS auditionDays;')
     cur.execute('''CREATE TABLE auditionDays 
-                   (day timestamp PRIMARY KEY)''')
+                   (day timestamp PRIMARY KEY);''')
 
 def create_accessibility(cur):
     cur.execute('DROP TABLE IF EXISTS accessibility;')
     cur.execute('''CREATE TABLE accessibility 
-                   (isAccessible boolean PRIMARY KEY)''')
+                   (isAccessible boolean PRIMARY KEY);''')
     # Default to being open
     cur.execute('''
                 INSERT INTO accessibility (isAccessible)
-                VALUES (TRUE)
+                VALUES (TRUE);
                 ''')
+#-----------------------------------------------------------------------
+def create_callback_offers(cur):
+    cur.execute('DROP TABLE IF EXISTS callbackOffers;')
+    cur.execute('''CREATE TABLE callbackOffers
+                   (auditioneeNetID varchar(50) NOT NULL,
+                    groupNetID varchar(50) NOT NULL,
+                    accepted boolean NOT NULL);''')
 
+def create_callback_availability(cur):
+    cur.execute('DROP TABLE IF EXISTS callbackAvailability;')
+    cur.execute('''CREATE TABLE callbackAvailability
+                   (auditioneeNetID varchar(50) NOT NULL,
+                    timeslot timestamp NOT NULL);''')
+
+def create_callbacks(cur):
+    cur.execute('DROP TABLE IF EXISTS callbacks;')
+    cur.execute('''CREATE TABLE callbacks
+                   (auditioneeNetID varchar(50) NOT NULL,
+                    groupNetID varchar(50) NOT NULL,
+                    timeslot timestamp NOT NULL);''')
+#-----------------------------------------------------------------------
 def reset_database():
     # Setup connection and cursor
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
-            # Create the tables
+            # Create the user tables
             create_users(cur)
             create_groups(cur)
             create_auditionees(cur)
+
+            # Create the first round table
             create_audition_times(cur)
+
+            # Create administrative tables
             create_audition_days(cur)
             create_accessibility(cur)
+
+            # Create the callback tables
+            create_callback_offers(cur)
+            create_callback_availability(cur)
+            create_callbacks(cur)
 
             # Add acaprez groups to database
             add_group(cur, 'nassoons', 'The Nassoons', 
@@ -101,7 +130,7 @@ def reset_database():
             add_group(cur, 'tigertones', 'The Tigertones', 
             'http://www.tigertones.com/')
 
-            # Add generic admin user
+            # Add generic admin user (should be a specific person)
             add_user(cur, 'admin', 'admin')
 
             # Commit changes

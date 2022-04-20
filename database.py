@@ -287,7 +287,6 @@ def get_permissions(netID: str):
                            WHERE netID=%s;''', (netID,))
 
             row = cur.fetchone()
-            print('database row: ', row, file=stderr)
             # Check the auditionee exists
             if row is None:
                 return None
@@ -722,6 +721,150 @@ def cancel_audition(audition_id: str):
 
 #-----------------------------------------------------------------------
 
+def offer_callback(group_netID: str, auditionee_netID: str):
+    '''
+    Adds an entry to the callbackOffers table for a group to offer a 
+    callback to an auditionee.
+
+        Parameters:
+            group_nedId: the netid of the group offering the callback
+            auditionee_netID: the netid of the auditionee being offered
+                             a callback.
+        
+        Returns:
+            Nothing
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID should be a string")
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # First check if already in table
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"{auditionee_netID} has already been offered a "
+                ex += f"callback by {group_netID}"
+                raise ValueError(ex)
+            
+            # Now add entry to the table, default to not accepted
+            cur.execute('''INSERT INTO callbackOffers
+                           (auditioneeNetID, groupNetID, accepted)
+                           VALUES (%s, %s, FALSE)''',
+                           (auditionee_netID, group_netID))
+
+#-----------------------------------------------------------------------
+
+def accept_callback(group_netID: str, auditionee_netID: str):
+    '''
+    Modifies entry in callbackOffers table with auditionee_netID and 
+    group_netID, changing accepted from FALSE to TRUE.
+
+        Parameters:
+            group_netID: The group's callback to accept
+            auditionee_netID: The netID of the callbackee
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID should be a string")
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # First check if callback offer exists
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{auditionee_netID} has not been offered a "
+                ex += f"callback by {group_netID}"
+                raise ValueError(ex)
+            
+            # Now update record to accept callback
+            cur.execute('''UPDATE callbackOffers
+                           SET accepted=TRUE
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+
+#-----------------------------------------------------------------------
+
+def get_pending_callbacks(netID: str) -> List[Group]:
+    '''
+    Given a user's netid, returns a list of all the groups whose
+    callbacks they have been offered but not yet accepted.
+
+        Parameters:
+            netID: The netID of the auditionee
+
+        Returns:
+            A list of group objects. Empty list if no unnaccepted 
+            callbacks.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+
+    groups = []
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE auditioneeNetID=%s
+                           AND accepted=FALSE;''',
+                           (netID,))
+            row = cur.fetchone()
+            while row is not None:
+                group = get_group(row[1])
+                groups.append(group)
+                row = cur.fetchone()
+            return groups
+
+#-----------------------------------------------------------------------
+
+def get_accepted_callbacks(netID: str) -> List[Group]:
+    '''
+    Given a user's netid, returns a list of all the groups whose
+    callbacks they have been offered and have accepted.
+
+        Parameters:
+            netID: The netID of the auditionee
+
+        Returns:
+            A list of group objects. Empty list if no unnaccepted 
+            callbacks.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+
+    groups = []
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE auditioneeNetID=%s
+                           AND accepted=TRUE;''',
+                           (netID,))
+            row = cur.fetchone()
+            while row is not None:
+                group = get_group(row[1])
+                groups.append(group)
+                row = cur.fetchone()
+            return groups
+
+#-----------------------------------------------------------------------
+
 def change_website_access(open: bool):
     '''
     Modifies entry in accessibility table to True if website is open
@@ -820,6 +963,7 @@ def _print_all_users():
 
 #-----------------------------------------------------------------------
 
-# For testing
-if __name__ == "__main__":
-    print(get_audition_dates())
+'''
+To test this module, use testdb.py otherwise there is a circular import
+if this is the main module.
+'''
