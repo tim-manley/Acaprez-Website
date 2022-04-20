@@ -417,8 +417,9 @@ def add_audition_time(group_netID: str, time_slot: str):
 
             # Create audition time
             cur.execute('''
-                        INSERT INTO auditionTimes (groupNetID, timeSlot)
-                        VALUES (%s, %s);
+                        INSERT INTO auditionTimes 
+                        (groupNetID, timeSlot, callbackOffered)
+                        VALUES (%s, %s, FALSE);
                         ''', (group_netID, time_slot))
 
 #-----------------------------------------------------------------------
@@ -757,6 +758,11 @@ def offer_callback(group_netID: str, auditionee_netID: str):
             cur.execute('''INSERT INTO callbackOffers
                            (auditioneeNetID, groupNetID, accepted)
                            VALUES (%s, %s, FALSE)''',
+                           (auditionee_netID, group_netID))
+            cur.execute('''UPDATE auditionTimes
+                           SET callbackOffered=TRUE
+                           WHERE auditioneeNetID=%s
+                           AND groupNetID=%s;''',
                            (auditionee_netID, group_netID))
 
 #-----------------------------------------------------------------------
