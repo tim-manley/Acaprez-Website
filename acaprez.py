@@ -135,7 +135,7 @@ def auditionee():
         audition.set_group()
    
     callbacks = db.get_pending_callbacks(netID) 
-    accepted = db.get_accepted(netID)
+    accepted = db.get_accepted_callbacks(netID)
 
     profile = db.get_auditionee(netID)
     if profile is None:
