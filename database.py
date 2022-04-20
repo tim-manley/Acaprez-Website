@@ -761,6 +761,46 @@ def offer_callback(group_netID: str, auditionee_netID: str):
 
 #-----------------------------------------------------------------------
 
+def accept_callback(group_netID: str, auditionee_netID: str):
+    '''
+    Modifies entry in callbackOffers table with auditionee_netID and 
+    group_netID, changing accepted from FALSE to TRUE.
+
+        Parameters:
+            group_netID: The group's callback to accept
+            auditionee_netID: The netID of the callbackee
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID should be a string")
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # First check if callback offer exists
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{auditionee_netID} has not been offered a "
+                ex += f"callback by {group_netID}"
+                raise ValueError(ex)
+            
+            # Now update record to accept callback
+            cur.execute('''UPDATE callbackOffers
+                           SET accepted=TRUE
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+
+#-----------------------------------------------------------------------
+
 def change_website_access(open: bool):
     '''
     Modifies entry in accessibility table to True if website is open

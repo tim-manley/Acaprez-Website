@@ -6,5 +6,5 @@ audition.py
 import database as db
 
 if __name__ == "__main__":
-    db.offer_callback("nassoons", "tdmanley")
+    db.accept_callback("nassoons", "tdmanley")
     db.offer_callback("tigerlilies", "janeec")
