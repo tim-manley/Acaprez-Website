@@ -250,7 +250,6 @@ def confirmprofile():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    print("db netID addition: ", repr(netID), file=stderr)
     firstname = request.form['firstname']
     lastname = request.form['lastname']
     year = int(request.form['year'])
@@ -272,8 +271,6 @@ def confirmprofile():
 @app.route('/netID', methods=['GET'])
 def netID():
     _ = auth.authenticate()
-    print('acaprez user: ', session.get('username'), file=stderr)
-    print('acaprez perms: ', session.get('permissions'), file=stderr)
     permission = session.get('permissions')
     if permission == 'leader':
         return redirect(url_for('leader'))
@@ -288,7 +285,6 @@ def netID():
 @app.route('/bypasslogin', methods=['GET'])
 def bypass():
     netID = request.args.get('netID')
-    print(netID, file=stderr)
     permission = db.get_permissions(netID)
     session['username'] = netID
     session['permissions'] = permission
@@ -364,7 +360,6 @@ def auditioneeInfo():
         return response
 
     netid = request.args.get('netID')
-    print("looking for this netID: ", repr(netid), file=stderr)
     auditionee = db.get_auditionee(netid)
     html = render_template('auditioneeInfo.html', auditionee=auditionee)
     response = make_response(html)
