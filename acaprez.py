@@ -5,10 +5,10 @@
 # Authors: Tim Manley
 #-----------------------------------------------------------------------
 
-from crypt import methods
 from doctest import DocTestRunner
 from math import perm
 from os import remove, environ
+# import environ as envi
 from os import remove
 import sched
 from time import time
@@ -23,6 +23,7 @@ import database as db
 from init_db import reset_database
 from sys import stderr
 from urllib.parse import unquote
+import group
 
 #-----------------------------------------------------------------------
 
@@ -31,7 +32,7 @@ app = Flask(__name__)
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE=True
+    SESSION_COOKIE_SAMESITE='Lax'
 )
 
 import auth
@@ -45,9 +46,19 @@ import auth
 #     debug_netid = ''
 #     debug_perms = ''
 #     app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
+# ----------------------------------------------------------------------
+# env = environ.Env(
+#     DEBUG=(bool, False),
+#     SECRET_KEY=(str, b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'),
+#     DEBUG_NETID=(str, '')
+# )
+#
+# READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+# if READ_DOT_ENV_FILE:
+#     environ.Env.read_env()
 
-debug = False
-debug_netid = ''
+DEBUG = False
+DEBUG_NETID = ''
 app.secret_key = b'\xbc>\xe0\xf8\xdf\x84\xe9aS\x02`i\x8e\xa1\xee\x92'
 
 #-----------------------------------------------------------------------
@@ -65,8 +76,8 @@ def index():
 
 @app.route('/login', methods=['GET'])
 def login():
-    if debug:
-        session['username'] = debug_netid
+    if DEBUG:
+        session['username'] = DEBUG_NETID
         auth.authenticate()
 
     html = render_template('caslogin.html')
@@ -136,7 +147,13 @@ def auditionee():
         response = make_response(html)
         return response
     auditions = db.get_auditionee_auditions(netID)
-    groups = db.get_groups()
+    for audition in auditions:
+        audition.set_group()
+   
+    callbacks = db.get_pending_callbacks(netID) 
+    accepted = db.get_accepted_callbacks(netID)
+    num_accepted = len(accepted)
+
     profile = db.get_auditionee(netID)
     if profile is None:
         welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
@@ -145,15 +162,35 @@ def auditionee():
                                 year='', room='', voice='', phone=''
         )
     else:
-        html = render_template('auditionee.html', auditions=auditions, profile=profile, groups=groups)
+        html = render_template('auditionee.html', auditions=auditions, profile=profile,
+                                callbacks=callbacks, accepted=accepted, num_accepted=num_accepted)
     response = make_response(html)
     return response
 
 #-----------------------------------------------------------------------
+
 @app.route('/cancelaudition', methods=['POST'])
 def cancel_audition():
+    _ = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
     audition_id = request.args.get('auditionid')
     db.cancel_audition(audition_id) # Error handling ommitted
+    return redirect(url_for('auditionee'))
+
+#-----------------------------------------------------------------------
+
+@app.route('/acceptcallback', methods=['POST'])
+def accept_callback():
+    netID = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+    groupID = request.args.get('groupID')
+    db.accept_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------
@@ -167,7 +204,8 @@ def editprofile():
         return response
     user_instr = 'Fill out the form to change your profile.'
     user = db.get_auditionee(netID)
-    html = render_template('editprofile.html', netID=netID, name=user.get_name(),
+    html = render_template('editprofile.html', netID=netID, firstname=user.get_firstname(), 
+                            lastname=user.get_lastname(),
                             instruction=user_instr, year=user.get_class_year(),
                             dorm=user.get_dorm_room(), voice=user.get_voice_part(),
                             phone=user.get_phone_number())
@@ -238,19 +276,19 @@ def confirmprofile():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    print("db netID addition: ", repr(netID), file=stderr)
-    name = request.form['name']
+    firstname = request.form['firstname']
+    lastname = request.form['lastname']
     year = int(request.form['year'])
     dorm = request.form['dorm']
     voice = request.form['voice']
     phone = request.form['phone']
     if db.get_auditionee(netID) is not None:
-        db.update_auditionee(netID, name, year, dorm, voice, phone)
+        db.update_auditionee(netID, firstname, lastname, year, dorm, voice, phone)
     else:
-        db.add_auditionee(netID, name, year, dorm, voice, phone)
+        db.add_auditionee(netID, firstname, lastname, year, dorm, voice, phone)
 
-    html = render_template('confirmprofile.html', netID=netID, name=name,
-                         year=year, dorm=dorm, voice=voice, phone=phone)
+    html = render_template('confirmprofile.html', netID=netID, firstname=firstname,
+                        lastname=lastname, year=year, dorm=dorm, voice=voice, phone=phone)
     response = make_response(html)
     return response
 
@@ -259,8 +297,6 @@ def confirmprofile():
 @app.route('/netID', methods=['GET'])
 def netID():
     _ = auth.authenticate()
-    print('acaprez user: ', session.get('username'), file=stderr)
-    print('acaprez perms: ', session.get('permissions'), file=stderr)
     permission = session.get('permissions')
     if permission == 'leader':
         return redirect(url_for('leader'))
@@ -275,7 +311,6 @@ def netID():
 @app.route('/bypasslogin', methods=['GET'])
 def bypass():
     netID = request.args.get('netID')
-    print(netID, file=stderr)
     permission = db.get_permissions(netID)
     session['username'] = netID
     session['permissions'] = permission
@@ -295,7 +330,7 @@ def show_group_auditions():
         response = make_response(html)
         return response
 
-    _ = auth.authenticate()
+    netID = auth.authenticate()
     if session.get('permissions') is None:
         html = render_template('insufficient.html')
         response = make_response(html)
@@ -310,9 +345,8 @@ def show_group_auditions():
         day = date.strftime("%Y-%m-%d")
         fdays.append(fday)
         days.append(day)
-
     groupNetID = request.args.get('groupNetID')
-    available_auditions = db.get_group_availability(groupNetID)
+    available_auditions = db.get_group_availability(groupNetID, netID)
     available = []
     for audition in available_auditions:
         time = audition.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
@@ -352,7 +386,6 @@ def auditioneeInfo():
         return response
 
     netid = request.args.get('netID')
-    print("looking for this netID: ", repr(netid), file=stderr)
     auditionee = db.get_auditionee(netid)
     html = render_template('auditioneeInfo.html', auditionee=auditionee)
     response = make_response(html)
@@ -379,5 +412,31 @@ def signup_confirmation():
     time_slot = unquote(time_slot)
     db.audition_signup(auditionee_netID, group_netID, time_slot)
     html = render_template('signup-confirmation.html')
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/about', methods=['GET'])
+def about():
+    _ = auth.authenticate()
+    groups = db.get_groups()
+    html = render_template('about.html',
+                            groups=groups)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/logoutconfirmation', methods=['GET'])
+def logoutconfirmation():
+    _ = auth.authenticate()
+    prev_url = request.referrer
+    if prev_url is not None:
+        prev_url = prev_url.split('/')[-1]
+    else:
+        prev_url = "index"
+    html = render_template('logoutConfirmation.html',
+                           url=prev_url)
     response = make_response(html)
     return response
