@@ -18,6 +18,35 @@ PSWD='79e77741d5870f7fd84ac66ddc04c0074e407ba91b548ebd847ee076d8092600'
 
 #-----------------------------------------------------------------------
 
+def get_group(netID: str) -> Group:
+    '''
+    Returns a list of the groups in the database
+
+        Parameters:
+            netID: Net id of the group
+
+        Returns:
+            groups ([group]): A list of group objects
+    '''
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM groups
+                        WHERE netID=%s;
+                        ''', (netID,))
+
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError("No group with given netID")
+            
+            group = Group(row[0], row[1], row[2])
+
+    return group
+
+#-----------------------------------------------------------------------
+
 def get_groups() -> List[Group]:
     '''
     Returns a list of the groups in the database
@@ -38,7 +67,7 @@ def get_groups() -> List[Group]:
             row = cur.fetchone()
             while row is not None:
                 # Do we need exception handling???
-                group = Group(row[0], row[1])
+                group = Group(row[0], row[1], row[2])
                 groups.append(group)
                 row = cur.fetchone()
 
@@ -73,30 +102,37 @@ def get_auditionee(netID: str) -> Auditionee:
                 return None
                 #raise KeyError(f"No auditionee with {netID} exists")
             
-            auditionee = Auditionee(row[0], row[1], row[2], row[4], 
-                                    row[3], row[5])
+            auditionee = Auditionee(row[0], row[1], row[2], row[3], 
+                                    row[5], row[4], row[6])
 
     return auditionee
 
 #-----------------------------------------------------------------------
 
-def get_group_availability(group_netID: str) -> List[Audition]:
+def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Audition]:
     '''
     Given a group netID, returns a list of all times that HAVE NOT been
     signed up for by an auditionee.
 
         Parameters:
         group_netID: The group's netID
+        (optional) aud_netID: The auditionee's netID
 
         Returns:
             A list of Audition objects, in which are contained the 
             details of each un-occupied audition. Returns empty list if
-            no auditions are available
+            no auditions are available. Does not return times that the
+            auditionee is already signed up for, if provided.
     '''
     if not isinstance(group_netID, str):
         raise ValueError("group_netID must be a string")
     
     available_auditions = []
+    
+    unavailable = set()
+    if aud_netID is not None:
+        for aud in get_auditionee_auditions(aud_netID):
+            unavailable.add(aud.get_timeslot())
 
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
@@ -112,7 +148,8 @@ def get_group_availability(group_netID: str) -> List[Audition]:
             row = cur.fetchone()
             while row is not None:
                 audition = Audition(row[0], row[1], row[2], row[3])
-                available_auditions.append(audition)
+                if row[3] not in unavailable:
+                    available_auditions.append(audition)
                 row = cur.fetchone()
     
     return available_auditions
@@ -250,7 +287,6 @@ def get_permissions(netID: str):
                            WHERE netID=%s;''', (netID,))
 
             row = cur.fetchone()
-            print('database row: ', row, file=stderr)
             # Check the auditionee exists
             if row is None:
                 return None
@@ -381,8 +417,9 @@ def add_audition_time(group_netID: str, time_slot: str):
 
             # Create audition time
             cur.execute('''
-                        INSERT INTO auditionTimes (groupNetID, timeSlot)
-                        VALUES (%s, %s);
+                        INSERT INTO auditionTimes 
+                        (groupNetID, timeSlot, callbackOffered)
+                        VALUES (%s, %s, FALSE);
                         ''', (group_netID, time_slot))
 
 #-----------------------------------------------------------------------
@@ -482,14 +519,15 @@ def _add_user(netID: str, access: str):
 
 #-----------------------------------------------------------------------
 
-def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
+def add_auditionee(netID: str, firstname: str, lastname: str, class_yr: int, dorm: str,
                    voice_pt="", phone=""):
     '''
     Creates an auditionee in the auditionees table.
 
         Parameters:
             netID: The netID of the auditionee
-            name: The name of the auditionee
+            firstname: The first name of the auditionee
+            lastname: The last name of the auditionee
             class_yr: The auditionee's class year
             dorm: The auditionee's hall and room number
             voice_pt: The voice part(s) of the auditionee (optional)
@@ -501,8 +539,10 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
     # Check argument types
     if not isinstance(netID, str):
         raise ValueError("netID must be a string")
-    if not isinstance(name, str):
-        raise ValueError("name must be a string")
+    if not isinstance(firstname, str):
+        raise ValueError("first name must be a string")
+    if not isinstance(lastname, str):
+        raise ValueError("last name must be a string")
     if not isinstance(class_yr, int):
         raise ValueError("class_yr must be an integer")
     if not isinstance(dorm, str):
@@ -535,22 +575,23 @@ def add_auditionee(netID: str, name: str, class_yr: int, dorm: str,
              # Now add data to auditionees table
             cur.execute('''
                         INSERT INTO auditionees 
-                        (netID, name, classYear, 
+                        (netID, firstName, lastName, classYear, 
                          voicePart, dormRoom, phoneNumber)
-                        VALUES (%s, %s, %s, %s, %s, %s);
+                        VALUES (%s, %s, %s, %s, %s, %s, %s);
                         ''',
-                        (netID, name, class_yr, voice_pt, dorm, phone))
+                        (netID, firstname, lastname, class_yr, voice_pt, dorm, phone))
 
 #-----------------------------------------------------------------------
 
-def update_auditionee(netID: str, name=None, class_yr=None, dorm=None,
-                      voice_pt=None, phone=None):
+def update_auditionee(netID: str, firstname=None, lastname=None, 
+                    class_yr=None, dorm=None, voice_pt=None, phone=None):
     '''
     Updates an auditionee with the given parameters.
 
         Parameters:
             netID: The netID of the auditionee
-            name: The name of the auditionee
+            firstname: The first name of the auditionee
+            lastname: The last name of the auditionee
             class_yr: The auditionee's class year
             dorm: The auditionee's hall and room number
             voice_pt: The voice part(s) of the auditionee (optional)
@@ -573,13 +614,20 @@ def update_auditionee(netID: str, name=None, class_yr=None, dorm=None,
                 ex = f"No auditionee with netID: {netID} exists"
                 raise ValueError(ex)
             # Update table
-            if name is not None:
+            if firstname is not None:
                 cur.execute('''
                             UPDATE auditionees
-                            SET name=%s
+                            SET firstName=%s
                             WHERE netID=%s;
                             ''',
-                            (name, netID))
+                            (firstname, netID))
+            if lastname is not None:
+                cur.execute('''
+                            UPDATE auditionees
+                            SET lastName=%s
+                            WHERE netID=%s;
+                            ''',
+                            (lastname, netID))
             if class_yr is not None:
                 cur.execute('''
                             UPDATE auditionees
@@ -671,6 +719,155 @@ def cancel_audition(audition_id: str):
                         SET auditioneeNetID = NULL
                         WHERE auditionID=%s;
                         ''', (audition_id,))
+
+#-----------------------------------------------------------------------
+
+def offer_callback(group_netID: str, auditionee_netID: str):
+    '''
+    Adds an entry to the callbackOffers table for a group to offer a 
+    callback to an auditionee.
+
+        Parameters:
+            group_nedId: the netid of the group offering the callback
+            auditionee_netID: the netid of the auditionee being offered
+                             a callback.
+        
+        Returns:
+            Nothing
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID should be a string")
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # First check if already in table
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"{auditionee_netID} has already been offered a "
+                ex += f"callback by {group_netID}"
+                raise ValueError(ex)
+            
+            # Now add entry to the table, default to not accepted
+            cur.execute('''INSERT INTO callbackOffers
+                           (auditioneeNetID, groupNetID, accepted)
+                           VALUES (%s, %s, FALSE)''',
+                           (auditionee_netID, group_netID))
+            cur.execute('''UPDATE auditionTimes
+                           SET callbackOffered=TRUE
+                           WHERE auditioneeNetID=%s
+                           AND groupNetID=%s;''',
+                           (auditionee_netID, group_netID))
+
+#-----------------------------------------------------------------------
+
+def accept_callback(group_netID: str, auditionee_netID: str):
+    '''
+    Modifies entry in callbackOffers table with auditionee_netID and 
+    group_netID, changing accepted from FALSE to TRUE.
+
+        Parameters:
+            group_netID: The group's callback to accept
+            auditionee_netID: The netID of the callbackee
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(group_netID, str):
+        raise ValueError("group_netID should be a string")
+    if not isinstance(auditionee_netID, str):
+        raise ValueError("auditionee_netID should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # First check if callback offer exists
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{auditionee_netID} has not been offered a "
+                ex += f"callback by {group_netID}"
+                raise ValueError(ex)
+            
+            # Now update record to accept callback
+            cur.execute('''UPDATE callbackOffers
+                           SET accepted=TRUE
+                           WHERE groupNetID=%s 
+                           AND auditioneeNetID=%s;''',
+                           (group_netID, auditionee_netID))
+
+#-----------------------------------------------------------------------
+
+def get_pending_callbacks(netID: str) -> List[Group]:
+    '''
+    Given a user's netid, returns a list of all the groups whose
+    callbacks they have been offered but not yet accepted.
+
+        Parameters:
+            netID: The netID of the auditionee
+
+        Returns:
+            A list of group objects. Empty list if no unnaccepted 
+            callbacks.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+
+    groups = []
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE auditioneeNetID=%s
+                           AND accepted=FALSE;''',
+                           (netID,))
+            row = cur.fetchone()
+            while row is not None:
+                group = get_group(row[1])
+                groups.append(group)
+                row = cur.fetchone()
+            return groups
+
+#-----------------------------------------------------------------------
+
+def get_accepted_callbacks(netID: str) -> List[Group]:
+    '''
+    Given a user's netid, returns a list of all the groups whose
+    callbacks they have been offered and have accepted.
+
+        Parameters:
+            netID: The netID of the auditionee
+
+        Returns:
+            A list of group objects. Empty list if no unnaccepted 
+            callbacks.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+
+    groups = []
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE auditioneeNetID=%s
+                           AND accepted=TRUE;''',
+                           (netID,))
+            row = cur.fetchone()
+            while row is not None:
+                group = get_group(row[1])
+                groups.append(group)
+                row = cur.fetchone()
+            return groups
 
 #-----------------------------------------------------------------------
 
@@ -772,6 +969,7 @@ def _print_all_users():
 
 #-----------------------------------------------------------------------
 
-# For testing
-if __name__ == "__main__":
-    print(get_audition_dates())
+'''
+To test this module, use testdb.py otherwise there is a circular import
+if this is the main module.
+'''
