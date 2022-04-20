@@ -28,8 +28,9 @@
                     </tr>
                     {% for audition in pending: %}
                     <tr>
-                        <td id="auditionee"><a href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}"
-                                target="_blank">{{audition.get_auditionee_netID()}}</a></td>
+                        <td id="group_name"><a
+                                href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}">{{audition.get_auditionee_netID()}}</a>
+                        </td>
                         <td>{{audition.get_formatted_timeslot()}} </td>
                         <td>
                             <button id="{{audition.get_auditionee_netID()}}" type="button" class="btn btn-primary"
@@ -40,7 +41,7 @@
                     </tr>
                     {% endfor %}
                 </table>
-            <br>
+                <br>
                 <h3>Callback Offers:</h3>
                 <table id="callbacks" class="table table-striped">
                     <tr>
