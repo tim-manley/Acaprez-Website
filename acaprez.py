@@ -136,6 +136,7 @@ def auditionee():
    
     callbacks = db.get_pending_callbacks(netID) 
     accepted = db.get_accepted_callbacks(netID)
+    num_accepted = len(accepted)
 
     profile = db.get_auditionee(netID)
     if profile is None:
@@ -146,7 +147,7 @@ def auditionee():
         )
     else:
         html = render_template('auditionee.html', auditions=auditions, profile=profile,
-                                callbacks=callbacks, accepted=accepted)
+                                callbacks=callbacks, accepted=accepted, num_accepted=num_accepted)
     response = make_response(html)
     return response
 
@@ -164,7 +165,7 @@ def cancel_audition():
 def accept_callback():
     netID = auth.authenticate()
     groupID = request.args.get('groupID')
-    db.accept_callback(netID, groupID) # Error handling ommitted
+    db.accept_callback(groupID, netID) # Error handling ommitted
     return redirect(url_for('auditionee'))
 
 #-----------------------------------------------------------------------

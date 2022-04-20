@@ -104,9 +104,9 @@
                         <!--in python: need callbacks = db.get_callbacks(netID), or equivalent implementation-->
                         {% for group in callbacks: %}
                         <tr>
-                            <td><a href="{{group.get_group_url()}}" target="_blank">{{group.get_group_name()}}</a></td>
+                            <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
                             <td>
-                                <button id="{{callback.get_groupID()}}" type="button" class="btn btn-primary"
+                                <button id="{{group.get_netID()}}" type="button" class="btn btn-primary"
                                     style="float:right">
                                     Accept
                                 </button>
@@ -133,7 +133,7 @@
 
                         {% for group in accepted: %}
                         <tr>
-                            <td><a href="{{accepted.get_group_url()}}" target="_blank">{{accepted.get_group_name()}}</a></td>
+                            <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -186,13 +186,10 @@
         }
 
         function acceptCallback() {
-            var num_groups = '{{len(accepted)}}'
+            var num_groups = '{{num_accepted}}'
             if (num_groups == 2) {
                 let str = "Already accepted callbacks from two groups"
-                let confirmed = window.confirm(str)
-                if (confirmed) {
-                    location.reload()
-                }
+                window.alert(str)
             }
             else {
                 let str = "Accept callback? You may only accept callbacks from two groups"
