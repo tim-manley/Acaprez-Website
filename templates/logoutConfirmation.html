@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Logout Confirmation</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
+</head>
+
+{% include 'genericnav.html' %}
+
+
+<body class="align-middle">
+    <div id="CAS">
+        <h3 id="CAS-text">Are you sure you want to log out? This will log you out of all Princeton CAS applications.</h3>
+    </div>
+    <div class="login">
+        <a href="/logout" class="btn btn-outline-primary" role="button">Log Out</a>
+        <a href="/{{ url }}" class="btn btn-outline-danger" role="button">Go Back</a>
+    </div>
+</body>
+
+</html>
