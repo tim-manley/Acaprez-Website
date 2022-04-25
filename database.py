@@ -1,6 +1,7 @@
 from datetime import datetime
 from multiprocessing.sharedctypes import Value
 from operator import add
+from os import times
 from sys import stderr
 from typing import List
 from psycopg2 import connect
@@ -946,6 +947,49 @@ def get_accepted_callbacks(netID: str) -> List[Group]:
                 groups.append(group)
                 row = cur.fetchone()
             return groups
+
+#-----------------------------------------------------------------------
+
+def add_availability(netID: str, timeslot: str):
+    '''
+    Given an auditionee's netID and a timeslot, adds an entry to the
+    callbackAvailability table to indicate the auditionee is available
+    at the given time.
+
+        Parameters:
+            netID: The auditionee's netID
+            timeslot: The timeslot at which they are available
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+    if not isinstance(timeslot, str):
+        raise ValueError("timeslot should be a string")
+    
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if auditionee was offered any callbacks
+            cur.execute('''
+                        SELECT * FROM callbackOffers
+                        WHERE auditioneeNetID=%s
+                        ''', (netID,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{netID} has not been offered any callbacks"
+                raise ValueError(ex)
+
+            # Should check date is one of the callback dates
+
+            # Add entry to availability table
+            cur.execute('''
+                        INSERT INTO callbackAvailability
+                        (auditioneeNetID, timeslot)
+                        VALUES (%s, %s)
+                        ''', (netID, timeslot))
+
 
 #-----------------------------------------------------------------------
 
