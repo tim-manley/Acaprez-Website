@@ -152,6 +152,10 @@
 
         'use strict';
 
+        function reload() {
+            location.reload()
+        }
+
         let request = null;
 
         function cancelAudition() {
@@ -171,11 +175,10 @@
                 request = $.ajax(
                     {
                         type: 'POST',
-                        url: url
+                        url: url,
+                        success: reload
                     }
                 );
-
-                location.reload();
             }
         }
 
