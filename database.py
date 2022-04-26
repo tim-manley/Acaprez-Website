@@ -950,32 +950,32 @@ def get_accepted_callbacks(netID: str) -> List[Group]:
 
 #-----------------------------------------------------------------------
 
-def add_callback_day(day: str):
+def add_callback_session(sessionStart: str):
     '''
-    Given a day, adds it to the callbackDays table
+    Given a session start time, adds it to the callbackSessions table
 
         Parameters:
-            day: The day to be added
+            sessionStart: The start time of the session to be added.
 
         Returns:
             Nothing
     '''
-    if not isinstance(day, str):
-        raise ValueError("day must be a string")
+    if not isinstance(sessionStart, str):
+        raise ValueError("sessionStart must be a string")
 
     with connect(host=HOST, database=DATABASE,
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             cur.execute('''
-                        INSERT INTO callbackDays (day)
+                        INSERT INTO callbackSessions (sessionStart)
                         VALUES (%s);
-                        ''', (day,))
+                        ''', (sessionStart,))
 
 #-----------------------------------------------------------------------
 
-def get_callback_dates() -> List[datetime]:
+def get_callback_sessions() -> List[datetime]:
     '''
-    Returns the dates that callbacks are scheduled for
+    Returns the session times that callbacks are scheduled for
 
         Parameters:
             Nothing
@@ -987,7 +987,7 @@ def get_callback_dates() -> List[datetime]:
                  user=USER, password=PSWD) as con:
         with con.cursor() as cur:
             cur.execute('''
-                        SELECT * FROM callbackDays;
+                        SELECT * FROM callbackSessions;
                         ''')
             days = []
             row = cur.fetchone()
