@@ -125,10 +125,8 @@ def reset():
     is_open = request.form.getlist('isopen') # Get toggle switch state
     dates = request.form['dates'].split('; ') # Parse dates input
     dates.sort() # Sort for formatting
-
     callback_dates = request.form['callbackdates'].split('; ') # Parse dates input
     callback_dates.sort()
-
     reset_database()
     if dates[0] != "": # Check whether any dates have been input
         for date in dates:
