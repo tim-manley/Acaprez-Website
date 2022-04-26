@@ -6,4 +6,4 @@ audition.py
 import database as db
 
 if __name__ == "__main__":
-    print(db.get_callback_availability("rjg8"))
+    db.schedule_callback("tdmanley", "nassoons", "2022-09-01 12:00:00")
