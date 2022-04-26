@@ -22,7 +22,7 @@
                 <div class="group-selection">
                     {% for group in groups %}
                     <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
-                    <label for="{{group.get_netID()}}" data-toggle="tooltip" data-placement="right" title="{{group.get_name()}}">{{group.get_name()}}</label>
+                    <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
                     <br>
                     {% endfor %}
                 </div>
