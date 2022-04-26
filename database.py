@@ -949,6 +949,7 @@ def get_accepted_callbacks(netID: str) -> List[Group]:
             return groups
 
 #-----------------------------------------------------------------------
+
 def add_callback_day(day: str):
     '''
     Given a day, adds it to the callbackDays table
@@ -969,6 +970,31 @@ def add_callback_day(day: str):
                         INSERT INTO callbackDays (day)
                         VALUES (%s);
                         ''', (day,))
+
+#-----------------------------------------------------------------------
+
+def get_callback_dates() -> List[datetime]:
+    '''
+    Returns the dates that callbacks are scheduled for
+
+        Parameters:
+            Nothing
+
+        Returns:
+            A list of datetimes
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM callbackDays;
+                        ''')
+            days = []
+            row = cur.fetchone()
+            while row is not None:
+                days.append(row[0])
+                row = cur.fetchone()
+            return days
 
 #-----------------------------------------------------------------------
 

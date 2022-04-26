@@ -6,4 +6,4 @@ audition.py
 import database as db
 
 if __name__ == "__main__":
-    db.add_callback_day("2022-09-01")
+    print(db.get_callback_dates())
