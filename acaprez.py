@@ -524,7 +524,7 @@ def logoutconfirmation():
         prev_url = prev_url.split('/')[-1]
     else:
         prev_url = "index"
-    html = render_template('logoutConfirmation.html',
+    html = render_template('confirmLogout.html',
                            url=prev_url)
     response = make_response(html)
     return response
