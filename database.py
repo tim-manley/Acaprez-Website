@@ -998,7 +998,7 @@ def get_callback_dates() -> List[datetime]:
 
 #-----------------------------------------------------------------------
 
-def add_availability(netID: str, timeslot: str):
+def add_callback_availability(netID: str, timeslot: str):
     '''
     Given an auditionee's netID and a timeslot, adds an entry to the
     callbackAvailability table to indicate the auditionee is available
