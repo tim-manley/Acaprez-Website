@@ -33,6 +33,7 @@
 
             </div>
             <div class="col-sm-8">
+                <div class="d-flex justify-content-center" id="spinnerDiv"></div>
                 <table id="calendar"></table>
                 <br>
             </div>
@@ -58,11 +59,12 @@
         }
 
         function confirmResponse(response) {
+            if (response.includes("success"))
+                showAuditions(); // Reload the calendar
             $('#alertPlaceholder').html(response)
             setTimeout(function () {
                 $('.alert').alert('close');
             }, 2000);
-            showAuditions();
         }
 
         let confirmRequest = null;
@@ -97,7 +99,19 @@
             }
         }
 
+        function showSpinner() {
+            $('#calendar').html("")
+            html = '<div class="spinner-border" role="status">'
+            html += '<span class="sr-only">Loading...</span></div>'
+            $('#spinnerDiv').html(html)
+        }
+
+        function hideSpinner() {
+            $('#spinnerDiv').html("")
+        }
+
         function handleResponse(response) {
+            hideSpinner();
             $('#calendar').html(response);
             $('#calendar button').on('click', buttonPress);
         }
@@ -105,6 +119,7 @@
         let showRequest = null;
 
         function showAuditions() {
+            showSpinner();
             let groupNetID = $("input[type='radio']:checked").val();
 
             groupNetID = encodeURIComponent(groupNetID);
@@ -114,7 +129,6 @@
             if (showRequest != null) {
                 showRequest.abort();
             }
-
             showRequest = $.ajax(
                 {
                     type: 'GET',
