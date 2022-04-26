@@ -124,10 +124,13 @@ def reset():
         return response
     is_open = request.form.getlist('isopen') # Get toggle switch state
     dates = request.form['dates'].split('; ') # Parse dates input
+    callback_dates = request.form['callbackdates'].split('; ') # Parse dates input
     reset_database()
     if dates[0] != "": # Check whether any dates have been input
         for date in dates:
             db.add_audition_day(date)
+        for date in callback_dates:
+            db.add_callback_day(date)
     if len(is_open) > 0: # Check if the toggle is selected
         open = True
     else:
@@ -226,6 +229,56 @@ def editprofile():
     response = make_response(html)
     return response
 
+#-----------------------------------------------------------------------
+
+@app.route('/callbackavailability', methods=['GET'])
+def callbackavailability():
+    netID = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    # Setup the calendar
+    dates = db.get_callback_dates()
+    fdays =[]
+    days = []
+    for date in dates:
+        fday = date.strftime("%b %d")
+        day = date.strftime("%Y-%m-%d")
+        fdays.append(fday)
+        days.append(day)
+
+    scheduled_slots = db.get_callback_availability(netID)
+    scheduled = []
+    for slot in scheduled_slots:
+        time = slot.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        scheduled.append(time)
+
+    html = render_template('callbackavailability.html',
+                            netID=netID,
+                            fdays=fdays,
+                            days=days,
+                            scheduled=scheduled)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/addedcallbacks', methods=['GET', 'POST'])
+def addedcallbacks():
+    netID = auth.authenticate()
+    if session.get('permissions') != 'auditionee':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    times = request.form.getlist('times')
+    for time in times:
+        db.add_callback_availability(netID, time)
+    html = render_template('addedcallbacks.html')
+    response = make_response(html)
+    return response
 
 #-----------------------------------------------------------------------
 

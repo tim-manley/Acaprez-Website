@@ -40,6 +40,11 @@
                             <!-- Date input -->
                             <input class="form-control" id="date" name="dates" type="text" />
                         </div>
+                        <h2>Select callback date(s):</h2>
+                        <div id='callbackpicker' class="form-group input-group date">
+                            <!-- Date input -->
+                            <input class="form-control" id="date" name="callbackdates" type="text" />
+                        </div>
                         <br>
                         <h2>Reset website</h2>
                         <div class="form-group">
@@ -63,6 +68,7 @@
         <script>
             $(document).ready(function () {
                 var date_input = $('input[name="dates"]'); //our date input has the name "date"
+                var callback_input = $('input[name="callbackdates"]');
                 var container = $('#datepicker');
                 var options = {
                     format: 'yyyy-mm-dd',
@@ -73,6 +79,7 @@
                     clearBtn: true
                 };
                 date_input.datepicker(options);
+                callback_input.datepicker(options)
             })
         </script>
 

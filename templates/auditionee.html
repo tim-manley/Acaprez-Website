@@ -54,7 +54,6 @@
                         <a href="/createAudition" class="btn btn-primary" id="new-audition" role="button">New
                             Audition</a>
                     </div>
-
                 </div>
 
                 <div class="row">
@@ -78,6 +77,7 @@
                         </tr>
                         {% endfor %}
                     </table>
+
                 </div>
             </div>
         </div>
@@ -85,57 +85,65 @@
 
         <br>
         <div class="row">
-            <div class="col-4"></div>
-            <div class="col">
-                <div class="float-right">
-                    <h3 id="profile">Callback Offers</h3>
-
-                    <table id="callbacks" class="table table-striped">
-                        <tr>
-                            <th class="table_header">Group</th>
-                            <th class="table_header"></th>
-                        </tr>
-                        <!--in python: need callbacks = db.get_callbacks(netID), or equivalent implementation-->
-                        {% for group in callbacks: %}
-                        <tr>
-                            <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
-                            <td>
-                                <button id="{{group.get_netID()}}" type="button" class="btn btn-primary"
-                                    style="float:right">
-                                    Accept
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
+            <div class="col-sm-4"> </div>
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-6">
+                        <h3 id="profile">Callback Offers</h3>
+                    </div>
+                    <div class="col-6">
+                        <a href="/callbackavailability" class="btn btn-primary" id="new-audition" role="button">Add
+                            Callback Availability</a>
+                    </div>
+                </div>
+                <div class="row">
+                <table id="callbacks" class="table table-striped">
+                    <tr>
+                        <th class="table_header">Group</th>
+                        <th class="table_header"></th>
+                    </tr>
+                    <!--in python: need callbacks = db.get_callbacks(netID), or equivalent implementation-->
+                    {% for group in callbacks: %}
+                    <tr>
+                        <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
+                        <td>
+                            <button id="{{group.get_netID()}}" type="button" class="btn btn-primary"
+                                style="float:right">
+                                Accept
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
                 </div>
             </div>
-
-
         </div>
-        <br>
-        <div class="row">
-            <div class="col-4"></div>
-            <div class="col">
-                <div class="float-right">
-                    <h3 id="profile">Accepted Callbacks</h3>
 
-                    <table id="accepted" class="table table-striped">
-                        <tr>
-                            <th class="table_header">Group</th>
-                        </tr>
 
-                        {% for group in accepted: %}
-                        <tr>
-                            <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col">
+            <div class="float-right">
+                <h3 id="profile">Accepted Callbacks</h3>
+
+                <table id="accepted" class="table table-striped">
+                    <tr>
+                        <th class="table_header">Group</th>
+                    </tr>
+
+                    {% for group in accepted: %}
+                    <tr>
+                        <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
-
-
         </div>
+
+
+    </div>
     </div>
     <br>
 
