@@ -6,4 +6,4 @@ audition.py
 import database as db
 
 if __name__ == "__main__":
-    db.offer_callback("nassoons", "tdmanley")
+    print(db.get_callback_availability("rjg8"))

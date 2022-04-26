@@ -42,7 +42,12 @@
                     {% endfor %}
                 </table>
                 <br>
+                <div class="row">
+                <div class="col-6">
                 <h3>Callback Offers:</h3>
+                </div>
+
+            </div>
                 <table id="callbacks" class="table table-striped">
                     <tr>
                         <th class="table_header">Auditionee</th>
@@ -57,6 +62,7 @@
                     </tr>
                     {% endfor %}
                 </table>
+                
             </div>
 
             <div class="col-sm-6">
@@ -103,6 +109,10 @@
 
         'use strict';
 
+        function reload() {
+            location.reload()
+        }
+
         let request = null;
         console.log("here")
         function offerCallback() {
@@ -122,11 +132,10 @@
                 request = $.ajax(
                     {
                         type: 'POST',
-                        url: url
+                        url: url,
+                        success: reload
                     }
                 );
-
-                setInterval('location.reload()', 500);
             }
         }
 
