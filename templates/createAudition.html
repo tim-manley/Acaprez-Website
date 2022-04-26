@@ -7,7 +7,7 @@
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
-    
+
 
 </head>
 
@@ -15,6 +15,7 @@
 
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <div id="alertPlaceholder"></div>
         <div class="row">
             <div class="col-sm-4">
                 <h2>Sign up for an audition: </h2>
@@ -28,7 +29,7 @@
                 </div>
                 <br>
 
-                <a href="auditionee" class="btn btn-warning" role="button" >Cancel</a>
+                <a href="auditionee" class="btn btn-warning" role="button">Cancel</a>
 
             </div>
             <div class="col-sm-8">
@@ -43,13 +44,41 @@
 
     <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 
     <script>
 
         function tooltip() {
             ('[data-toggle="tooltip"]').tooltip();
+        }
+
+        function confirmResponse(response) {
+            $('#alertPlaceholder').html(response)
+            setTimeout(function () {
+                $('.alert').alert('close');
+            }, 2000);
+            showAuditions();
+        }
+
+        let confirmRequest = null;
+
+        function confirmation(url) {
+            if (confirmRequest != null) {
+                confirmRequest.abort
+            }
+
+            confirmRequest = $.ajax(
+                {
+                    type: 'GET',
+                    url: url,
+                    success: confirmResponse
+                }
+            );
         }
 
         function buttonPress() {
@@ -64,7 +93,7 @@
                 time_slot = encodeURIComponent(time_slot);
                 let url = '/signup-confirmation?group=' + groupNetID;
                 url += '&timeslot=' + time_slot;
-                window.location.href = url;
+                confirmation(url);
             }
         }
 
@@ -96,13 +125,11 @@
         }
 
         function setup() {
-        
-            $('.group-selection input').on('change', showAuditions);
-        }
-
-        $('document').ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
-        }); 
+            $('.group-selection input').on('change', showAuditions);
+            $('#nassoons').prop('checked', true);
+            showAuditions();
+        }
 
         $('document').ready(setup);
     </script>

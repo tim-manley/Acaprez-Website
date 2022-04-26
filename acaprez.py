@@ -21,7 +21,7 @@ from html import escape  # Used to thwart XSS attacks.
 from cgi import FieldStorage
 import database as db
 from init_db import reset_database
-from sys import stderr
+from sys import audit, stderr
 from urllib.parse import unquote
 import group
 
@@ -477,12 +477,29 @@ def signup_confirmation():
         response = make_response(html)
         return response
 
+    auditions = db.get_auditionee_auditions(auditionee_netID)
     group_netID = request.args.get('group')
+    for audition in auditions:
+        if group_netID == audition.get_group():
+            audition.set_group()
+            grp_name = audition.get_group_name()
+            html = f'''
+                    <div class="alert alert-warning fade show" role="alert">
+                        Already signed up for audition with {grp_name}
+                    </div>
+                   '''
+            response = make_response(html)
+            return response
+
     time_slot = request.args.get('timeslot')
     group_netID = unquote(group_netID)
     time_slot = unquote(time_slot)
     db.audition_signup(auditionee_netID, group_netID, time_slot)
-    html = render_template('signup-confirmation.html')
+    html = f'''
+                <div class="alert alert-success fade show" role="alert">
+                    Successfully signed up for audition at {time_slot}
+                </div>
+            '''
     response = make_response(html)
     return response
 
