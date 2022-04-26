@@ -949,6 +949,28 @@ def get_accepted_callbacks(netID: str) -> List[Group]:
             return groups
 
 #-----------------------------------------------------------------------
+def add_callback_day(day: str):
+    '''
+    Given a day, adds it to the callbackDays table
+
+        Parameters:
+            day: The day to be added
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(day, str):
+        raise ValueError("day must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO callbackDays (day)
+                        VALUES (%s);
+                        ''', (day,))
+
+#-----------------------------------------------------------------------
 
 def add_availability(netID: str, timeslot: str):
     '''
@@ -974,7 +996,7 @@ def add_availability(netID: str, timeslot: str):
             # Check if auditionee was offered any callbacks
             cur.execute('''
                         SELECT * FROM callbackOffers
-                        WHERE auditioneeNetID=%s
+                        WHERE auditioneeNetID=%s;
                         ''', (netID,))
             row = cur.fetchone()
             if row is None:
@@ -987,7 +1009,7 @@ def add_availability(netID: str, timeslot: str):
             cur.execute('''
                         INSERT INTO callbackAvailability
                         (auditioneeNetID, timeslot)
-                        VALUES (%s, %s)
+                        VALUES (%s, %s);
                         ''', (netID, timeslot))
 
 
