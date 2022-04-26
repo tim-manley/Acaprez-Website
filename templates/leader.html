@@ -109,6 +109,10 @@
 
         'use strict';
 
+        function reload() {
+            location.reload()
+        }
+
         let request = null;
         console.log("here")
         function offerCallback() {
@@ -128,11 +132,10 @@
                 request = $.ajax(
                     {
                         type: 'POST',
-                        url: url
+                        url: url,
+                        success: reload
                     }
                 );
-
-                setInterval('location.reload()', 500);
             }
         }
 
