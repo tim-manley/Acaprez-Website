@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Request Success</title>
+    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
+
+</head>
+
+{% include 'nav.html' %}
+
+<body>
+    <div id="container-fluid" style="margin: 0px 15px 0px 15px">
+        <div class="row">
+            <div class="col-sm-4">
+                <h2>Request Success</h2>
+
+            </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <a href="/callbackavailability" class="btn btn-primary" id="new-audition" role="button">Add More Availability</a>
+            </div>
+            <div class="col-sm-2">
+                <a href="/auditionee" class="btn btn-primary" id="leader" role="button">Return Home</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
