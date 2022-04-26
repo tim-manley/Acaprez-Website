@@ -1038,6 +1038,38 @@ def add_availability(netID: str, timeslot: str):
                         VALUES (%s, %s);
                         ''', (netID, timeslot))
 
+#-----------------------------------------------------------------------
+
+def get_callback_availability(netID: str) -> List[datetime]:
+    '''
+    Given an auditionee's netID, returns a list of the times which they
+    are available for a callback.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+    
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if auditionee was offered any callbacks
+            cur.execute('''
+                        SELECT * FROM callbackOffers
+                        WHERE auditioneeNetID=%s;
+                        ''', (netID,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{netID} was not offered any callbacks"
+                raise ValueError(ex)
+            # Get all the dates they are available
+            cur.execute('''SELECT timeslot FROM callbackAvailability
+                           WHERE auditioneeNetID=%s''', (netID,))
+            times = []
+            row = cur.fetchone()
+            while row is not None:
+                time = row[0]
+                times.append(time)
+                row = cur.fetchone()
+            return times
 
 #-----------------------------------------------------------------------
 
