@@ -161,6 +161,7 @@ def auditionee():
     callbacks = db.get_pending_callbacks(netID) 
     accepted = db.get_accepted_callbacks(netID)
     num_accepted = len(accepted)
+    num_offered = num_accepted + len(callbacks)
 
     profile = db.get_auditionee(netID)
     if profile is None:
@@ -171,7 +172,8 @@ def auditionee():
         )
     else:
         html = render_template('auditionee.html', auditions=auditions, profile=profile,
-                                callbacks=callbacks, accepted=accepted, num_accepted=num_accepted)
+                                callbacks=callbacks, accepted=accepted, num_accepted=num_accepted,
+                                num_offered=num_offered)
     response = make_response(html)
     return response
 
@@ -256,7 +258,7 @@ def callbackavailability():
     scheduled_slots = db.get_callback_availability(netID)
     scheduled = []
     for slot in scheduled_slots:
-        time = slot.get_timeslot().strftime('%Y-%m-%d %H:%M:%S')
+        time = slot.strftime('%Y-%m-%d %H:%M:%S')
         scheduled.append(time)
 
     html = render_template('callbackavailability.html',

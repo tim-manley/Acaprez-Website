@@ -92,7 +92,7 @@
                         <h3 id="profile">Callback Offers</h3>
                     </div>
                     <div class="col-6">
-                        <a href="/callbackavailability" class="btn btn-primary" id="new-audition" role="button">Add
+                        <a href="/callbackavailability" class="btn btn-primary" id="callback_avail" role="button">Add
                             Callback Availability</a>
                     </div>
                 </div>
@@ -225,6 +225,12 @@
         function setup() {
             $('#auditions .btn').on('click', cancelAudition);
             $('#callbacks .btn').on('click', acceptCallback);
+
+            var num_offered = '{{num_offered}}'
+            if (num_offered == 0) {
+                var avail = document.getElementById('callback_avail');
+                avail.style.display = 'none'
+            }
         }
 
         $('document').ready(function () {
