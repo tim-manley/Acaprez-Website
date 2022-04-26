@@ -8,14 +8,15 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    
 
 </head>
 
-<body>
+<body class="hero-image">
     <div class="container-fluid">
         <div class="row align-items-center" style="height: 500px">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6" id="splash">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8" id="splash">
                 <img src="/static/logo.png" alt="Acaprez logo" width="300" height="auto" id="logo">
                 <br>
                 <br>
@@ -24,7 +25,7 @@
                 <br>
                 <a href="login" class="btn btn-primary" id="login" role="button">Login</a>
             </div>
-            <div class="col-sm-3"></div>
+            <div class="col-sm-2"></div>
         </div>
         <div class="row">
             <div class="col-sm-3"></div>
@@ -37,28 +38,27 @@
         </div>
         <br>
         <div class="row" style="text-align: center">
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">
-                <h3>Tim</h3>
+            <div class="col-md-3">
+                <h5>Tim Manley '24</h5>
                 <img src="/static/photo.png" alt="Tim profile" id="tim" width="150" height="auto">
-                <p>Tim is our fearless leader and lead dev.</p>
+                <h6>Team Lead</h6>
+                <p>Backend Development</p>
             </div>
-            <div class="col-sm-2">
-                <h3>Ryan</h3>
+            <div class="col-md-3">
+                <h5>Ryan Gibbons '24</h5>
                 <img src="/static/photo.png" alt="Ryan profile" id="ryan" width="150" height="auto">
-                <p>Ryan is our all-rounder, full stack dev, etc.</p>
+                <p>Fullstack Development</p>
             </div>
-            <div class="col-sm-2">
-                <h3>Jane</h3>
+            <div class="col-md-3">
+                <h5>Jane Castleman '24</h5>
                 <img src="/static/photo.png" alt="Jane profile" id="jane" width="150" height="auto">
-                <p>Jane is the hot girl who does front-end</p>
+                <p>Frontend Development</p>
             </div>
-            <div class="col-sm-2">
-                <h3>Silas</h3>
+            <div class="col-md-3">
+                <h5>Silas Mohr '24</h5>
                 <img src="/static/photo.png" alt="Silas profile" id="silas" width="150" height="auto">
-                <p>Silas protects us from security attacks we didn't even know existed</p>
+                <p>Security Engineer</p>
             </div>
-            <div class="col-sm-2"></div>
             
         </div>
 

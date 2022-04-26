@@ -5,6 +5,7 @@
     <title>Acaprez</title>
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         rel="stylesheet">
+    <link href=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/dataTables.bootstrap.min.css rel=stylesheet>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
@@ -75,7 +76,7 @@
                             Times</a>
                     </div>
                 </div>
-                <table class="table table-striped">
+                <table id="audition-slots" class="table table-striped">
                     <tr>
                         <th class="table_header">Auditionee</th>
                         <th class="table_header">Time</th>
@@ -144,7 +145,7 @@
         }
 
         $('document').ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('#audition-slots').DataTable();
         });
 
         $('document').ready(setup);
