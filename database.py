@@ -1,6 +1,7 @@
 from datetime import datetime
 from multiprocessing.sharedctypes import Value
 from operator import add
+from os import times
 from sys import stderr
 from typing import List
 from psycopg2 import connect
@@ -949,6 +950,129 @@ def get_accepted_callbacks(netID: str) -> List[Group]:
 
 #-----------------------------------------------------------------------
 
+def add_callback_day(day: str):
+    '''
+    Given a day, adds it to the callbackDays table
+
+        Parameters:
+            day: The day to be added
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(day, str):
+        raise ValueError("day must be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        INSERT INTO callbackDays (day)
+                        VALUES (%s);
+                        ''', (day,))
+
+#-----------------------------------------------------------------------
+
+def get_callback_dates() -> List[datetime]:
+    '''
+    Returns the dates that callbacks are scheduled for
+
+        Parameters:
+            Nothing
+
+        Returns:
+            A list of datetimes
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''
+                        SELECT * FROM callbackDays;
+                        ''')
+            days = []
+            row = cur.fetchone()
+            while row is not None:
+                days.append(row[0])
+                row = cur.fetchone()
+            return days
+
+#-----------------------------------------------------------------------
+
+def add_callback_availability(netID: str, timeslot: str):
+    '''
+    Given an auditionee's netID and a timeslot, adds an entry to the
+    callbackAvailability table to indicate the auditionee is available
+    at the given time.
+
+        Parameters:
+            netID: The auditionee's netID
+            timeslot: The timeslot at which they are available
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+    if not isinstance(timeslot, str):
+        raise ValueError("timeslot should be a string")
+    
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if auditionee was offered any callbacks
+            cur.execute('''
+                        SELECT * FROM callbackOffers
+                        WHERE auditioneeNetID=%s;
+                        ''', (netID,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{netID} has not been offered any callbacks"
+                raise ValueError(ex)
+
+            # Should check date is one of the callback dates
+
+            # Add entry to availability table
+            cur.execute('''
+                        INSERT INTO callbackAvailability
+                        (auditioneeNetID, timeslot)
+                        VALUES (%s, %s);
+                        ''', (netID, timeslot))
+
+#-----------------------------------------------------------------------
+
+def get_callback_availability(netID: str) -> List[datetime]:
+    '''
+    Given an auditionee's netID, returns a list of the times which they
+    are available for a callback.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+    
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check if auditionee was offered any callbacks
+            cur.execute('''
+                        SELECT * FROM callbackOffers
+                        WHERE auditioneeNetID=%s;
+                        ''', (netID,))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{netID} was not offered any callbacks"
+                raise ValueError(ex)
+            # Get all the dates they are available
+            cur.execute('''SELECT timeslot FROM callbackAvailability
+                           WHERE auditioneeNetID=%s''', (netID,))
+            times = []
+            row = cur.fetchone()
+            while row is not None:
+                time = row[0]
+                times.append(time)
+                row = cur.fetchone()
+            return times
+
+#-----------------------------------------------------------------------
+
 def change_website_access(open: bool):
     '''
     Modifies entry in accessibility table to True if website is open
@@ -976,6 +1100,68 @@ def change_website_access(open: bool):
                             UPDATE accessibility
                             SET isAccessible=FALSE;
                             ''')
+
+#-----------------------------------------------------------------------
+
+def schedule_callback(auditioneeID: str, groupID: str, timeslot: str):
+    '''
+    Given an auditionee's netID and a group's netID, schedules a
+    callback at time timeslot by adding an entry in the callbacks table.
+
+        Parameters:
+            auditioneeID: The auditionee's netID
+            groupID: The group's netID
+            timeslot: The callback start time
+
+        Returns:
+            Nothing
+    '''
+    if not isinstance(auditioneeID, str):
+        raise ValueError("auditioneeID should be a string")
+    if not isinstance(groupID, str):
+        raise ValueError("groupID should be a string")
+    if not isinstance(timeslot, str):
+        raise ValueError("timeslot should be a string")
+
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check auditionee has been offered a callback by this group
+            cur.execute('''
+                        SELECT * FROM callbackOffers
+                        WHERE auditioneeNetID=%s
+                        AND groupNetID=%s;
+                        ''', (auditioneeID, groupID))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{auditioneeID} was not offered a callback for "
+                ex += groupID
+                raise ValueError(ex)
+            # Check auditionee hasn't already been scheduled for a
+            # callback at the same time
+            cur.execute('''SELECT * FROM callbacks
+                           WHERE auditioneeNetID=%s
+                           AND timeslot=%s;''',
+                           (auditioneeID, timeslot))
+            row = cur.fetchone()
+            if row is not None:
+                ex = f"{auditioneeID} has already been scheduled a "
+                ex += f"callback at {timeslot}"
+                raise ValueError(ex)
+            # Check auditionee is available at the timeslot
+            cur.execute('''SELECT * FROM callbackAvailability
+                           WHERE auditioneeNetID=%s
+                           AND timeslot=%s;''',
+                           (auditioneeID, timeslot))
+            row = cur.fetchone()
+            if row is None:
+                ex = f"{auditioneeID} is not available at {timeslot}"
+                raise ValueError(ex)
+            # Add entry to callbacks table
+            cur.execute('''INSERT INTO callbacks
+                           (auditioneeNetID, groupNetID, timeslot)
+                           VALUES (%s, %s, %s);''',
+                           (auditioneeID, groupID, timeslot))
 
 #-----------------------------------------------------------------------
 

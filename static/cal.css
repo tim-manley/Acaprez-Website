@@ -4,8 +4,12 @@ h1 {
 
 body {
     background-color: white;
-    font-family: sans-serif;
+    font-family: Monaco, monospace, sans-serif;
 
+}
+
+th.table_header {
+    background-color: #ffd498;
 }
 
 table {

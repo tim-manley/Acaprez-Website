@@ -71,6 +71,11 @@ def create_accessibility(cur):
                 VALUES (TRUE);
                 ''')
 #-----------------------------------------------------------------------
+def create_callback_days(cur):
+    cur.execute('DROP TABLE IF EXISTS callbackDays')
+    cur.execute('''CREATE TABLE callbackDays
+                   (day timestamp PRIMARY KEY);''')
+
 def create_callback_offers(cur):
     cur.execute('DROP TABLE IF EXISTS callbackOffers;')
     cur.execute('''CREATE TABLE callbackOffers
@@ -109,6 +114,7 @@ def reset_database():
             create_accessibility(cur)
 
             # Create the callback tables
+            create_callback_days(cur)
             create_callback_offers(cur)
             create_callback_availability(cur)
             create_callbacks(cur)

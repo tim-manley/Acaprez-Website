@@ -23,12 +23,24 @@ h1 {
     color:white;
 }
 
-h4 {
+h5 {
     align-content: center;
+    font-size:80%;
 }
 
 body {
-    background-color: rgb(255, 207, 130);
-    font-family: sans-serif;
+    /* background-color: #ffd498;
+    background-image: url(arrow.svg);
+    background-repeat: no-repeat; */
+    background-color: #ffd498; /* Used if the image is unavailable */
+    font-family: Monaco, monospace, sans-serif;
 
 }
+
+.hero-image {
+    background-color: #ffd498; /* Used if the image is unavailable */
+    background-image: url("Untitled.svg"); /* The image used */
+    height: 500px; /* You must set a specified height */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+  }

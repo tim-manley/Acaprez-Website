@@ -4,10 +4,9 @@
 <head>
     <title>Audition Signup</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         rel="stylesheet">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
     
 
 </head>
@@ -23,7 +22,7 @@
                 <div class="group-selection">
                     {% for group in groups %}
                     <input type="radio" id="{{group.get_netID()}}" name="selected_group" value="{{group.get_netID()}}">
-                    <label for="{{group.get_netID()}}" data-toggle="tooltip" data-placement="right" title="{{group.get_name()}}">{{group.get_name()}}</label>
+                    <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
                     <br>
                     {% endfor %}
                 </div>
