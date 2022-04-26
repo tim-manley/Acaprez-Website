@@ -97,24 +97,24 @@
                     </div>
                 </div>
                 <div class="row">
-                <table id="callbacks" class="table table-striped">
-                    <tr>
-                        <th class="table_header">Group</th>
-                        <th class="table_header"></th>
-                    </tr>
-                    <!--in python: need callbacks = db.get_callbacks(netID), or equivalent implementation-->
-                    {% for group in callbacks: %}
-                    <tr>
-                        <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
-                        <td>
-                            <button id="{{group.get_netID()}}" type="button" class="btn btn-primary"
-                                style="float:right">
-                                Accept
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                    <table id="callbacks" class="table table-striped">
+                        <tr>
+                            <th class="table_header">Group</th>
+                            <th class="table_header"></th>
+                        </tr>
+                        <!--in python: need callbacks = db.get_callbacks(netID), or equivalent implementation-->
+                        {% for group in callbacks: %}
+                        <tr>
+                            <td><a href="{{group.get_url()}}" target="_blank">{{group.get_name()}}</a></td>
+                            <td>
+                                <button id="{{group.get_netID()}}" type="button" class="btn btn-primary"
+                                    style="float:right">
+                                    Accept
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
         </div>
@@ -213,11 +213,10 @@
                     request = $.ajax(
                         {
                             type: 'POST',
-                            url: url
+                            url: url,
+                            success: reload
                         }
                     );
-
-                    setInterval('location.reload()', 500);
                 }
             }
         }
