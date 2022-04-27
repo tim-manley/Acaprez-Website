@@ -12,10 +12,10 @@
         {% for day in days%}
         {% set time_slot = '%s %02d:%02d:00' % (day, i, j) %}
         {% if time_slot not in scheduled %}
-        <td>
+        <td class="table-default" onmousedown="md(this)" onmouseover="mo(this)" id="{{time_slot}}">
             <label>
                 {% set time = '%02d:%02d' % (i, j) %}
-                <input type="checkbox" name="times" value="{{time_slot}}"> {{time}}
+                <input type="checkbox" name="times" value="{{time_slot}}" hidden> {{time}}
             </label>
         </td>
         {% else %}
