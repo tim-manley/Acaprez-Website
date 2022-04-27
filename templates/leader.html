@@ -76,18 +76,20 @@
                             Times</a>
                     </div>
                 </div>
-                <table id="audition-slots" class="table table-striped">
-                    <tr>
-                        <th class="table_header">Auditionee</th>
-                        <th class="table_header">Time</th>
-                    </tr>
-                    {% for audition in times: %}
-                    <tr>
-                        <td id="group_name">{{audition.get_auditionee_netID()}}</td>
-                        <td>{{audition.get_formatted_timeslot()}} </td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                <div class="table-wrapper">
+                    <table id="audition-slots" class="table table-striped">
+                        <tr class="header">
+                            <th class="table_header">Auditionee</th>
+                            <th class="table_header">Time</th>
+                        </tr>
+                        {% for audition in times: %}
+                        <tr>
+                            <td id="group_name">{{audition.get_auditionee_netID()}}</td>
+                            <td>{{audition.get_formatted_timeslot()}} </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             </div>
 
         </div>

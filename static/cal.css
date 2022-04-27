@@ -43,3 +43,20 @@ tr {
     align-content: center;
     width: 100%;
 }
+
+.table-wrapper {
+    max-height: 500px;
+    overflow: auto;
+    display:inline-block;
+  }
+
+.card {
+    text-align: center;
+    border: 3px black;
+    padding: 20px;
+}
+
+.header {
+    position:sticky;
+    top: 0 ;
+}

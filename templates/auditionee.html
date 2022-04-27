@@ -57,27 +57,28 @@
                 </div>
 
                 <div class="row">
-                    <table id="auditions" class="table table-striped">
-                        <tr>
-                            <th class="table_header">Group</th>
-                            <th class="table_header">Time</th>
-                            <th class="table_header"></th>
-                        </tr>
-                        {% for audition in auditions: %}
-                        <tr>
-                            <td id="{{audition.get_auditionID()}}"><a href="{{audition.get_group_url()}}"
-                                    target="_blank">{{audition.get_group_name()}}</a></td>
-                            <td>{{audition.get_formatted_timeslot()}} </td>
-                            <td>
-                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
-                                    style="float:right">
-                                    Cancel
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-
+                    <div class="table-wrapper">
+                        <table id="auditions" class="table table-striped">
+                            <tr>
+                                <th class="table_header">Group</th>
+                                <th class="table_header">Time</th>
+                                <th class="table_header"></th>
+                            </tr>
+                            {% for audition in auditions: %}
+                            <tr>
+                                <td id="{{audition.get_auditionID()}}"><a href="{{audition.get_group_url()}}"
+                                        target="_blank">{{audition.get_group_name()}}</a></td>
+                                <td>{{audition.get_formatted_timeslot()}} </td>
+                                <td>
+                                    <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
+                                        style="float:right">
+                                        Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -92,7 +93,7 @@
                         <h3 id="profile">Callback Offers</h3>
                     </div>
                     <div class="col-6">
-                        <a href="/callbackavailability" class="btn btn-primary" id="callback_avail" role="button">Add
+                        <a href="/callbackavailability" class="btn btn-primary" id="callback_avail" role="button" style="float:right">Add
                             Callback Availability</a>
                     </div>
                 </div>
