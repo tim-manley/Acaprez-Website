@@ -1058,8 +1058,7 @@ def get_callback_availability(netID: str) -> List[datetime]:
                         ''', (netID,))
             row = cur.fetchone()
             if row is None:
-                ex = f"{netID} was not offered any callbacks"
-                raise ValueError(ex)
+                return []
             # Get all the dates they are available
             cur.execute('''SELECT timeslot FROM callbackAvailability
                            WHERE auditioneeNetID=%s''', (netID,))

@@ -19,10 +19,14 @@
                 <h2>Add Callback Availability: </h2>
                 <form action="addedcallbacks" method="POST" class="needs-validation" novalidate>
                     <div class="form-group">
-                        <h4>Select all times you would like to add: </h4>
-                        <table id="calendar">
-                            {% include 'leaderCalendar.html' %}
-                        </table>
+                        <h4>Select all times you would like to add.</h4>
+                        {% for fday in fdays%}
+                        <td>
+                            <label>
+                                <input type="checkbox" name="times" value="{{days[loop.index0]}}"> {{fday}}
+                            </label>
+                        </td>
+                        {% endfor %}
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
