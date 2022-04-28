@@ -75,7 +75,7 @@ class Audition:
         # original: 2022-09-01 17:15:00
         # goal: Sept 1 - 8:30pm
 
-        return self._timeslot.strftime("%b %d - %I:%M %p")
+        return self._timeslot.strftime("%b %-d - %-I:%M %p")
 
     def set_group(self):
         self._group = db.get_group(self._group_netID)

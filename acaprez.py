@@ -250,7 +250,7 @@ def callbackavailability():
     fdays =[]
     days = []
     for date in dates:
-        fday = date.strftime("%b %d, %I:%M %p")
+        fday = date.strftime("%b %-d, %-I:%M %p")
         day = date.strftime("%Y-%m-%d %H:%M:%S")
         fdays.append(fday)
         days.append(day)
