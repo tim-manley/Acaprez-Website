@@ -485,13 +485,15 @@ def show_group_callbacks():
                 entry.append('')
         entries.append(entry) 
     
-    sessions = []
+    dates = []
+    times = []
     for sesh in sessiondt:
-        time = sesh.strftime("%b %-d %-I:%M %p")
-        sessions.append(time)
+
+        dates.append(sesh.strftime("%b %-d"))
+        times.append(sesh.strftime("%-I:%M %p"))
 
     html = render_template('availabilityCalendar.html',
-                            sessions=sessions,
+                            dates=dates, times=times,
                             entries=entries, group=groupNetID)
     response = make_response(html)
     return response

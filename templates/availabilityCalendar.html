@@ -1,17 +1,17 @@
 <tbody>
     <tr id="headers">
-        <th class="table_header">Name</th>
-        <th class="table_header">Year</th>
-        <th class="table_header">Voice Part</th>
-        <th class="table_header">Other Group</th>
-        {% for session in sessions %}
-        <th class="table_header">{{session}}</th>
+        <th class="table_header" style="text-align:center">Name</th>
+        <th class="table_header" style="text-align:center">Year</th>
+        <th class="table_header" style="text-align:center">Voice Part</th>
+        <th class="table_header" style="text-align:center">Other Group</th>
+        {% for date in dates %}
+        <th class="table_header" style="text-align:center">{{date}}<br>{{times[loop.index0]}} </th>
         {% endfor %}
     </tr>
     {% for entry in entries %}
     <tr>
         {% for value in entry %}
-        <td>{{value}}</td>
+        <td style="text-align:center">{{value|safe}}</td>
         {% endfor %}
     </tr>
     {% endfor %}
