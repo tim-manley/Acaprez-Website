@@ -34,13 +34,13 @@
                         <h2>Select callback date(s):</h2>
                         <div id='callbackpicker' class="form-group input-group date">
                             <!-- Date input -->
-                            <input class="form-control" id="callbackdates" name="callbackdates[]" type="text" />
+                            <input class="form-control" id="callbackdates" name="callbackdates[]" type="text"/>
                             <div class="input-group-append">
                                 <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
                             </div>
                         </div>
                         <div id="newRow"></div>
-                        <button id="addRow" type="button" class="btn btn-info">Add Row</button>
+                        <button id="addRow" type="button" class="btn btn-secondary">Add Row</button>
      
                         <h2>Reset website</h2>
                         <div class="form-group">
@@ -61,8 +61,10 @@
                 </div>
 
                 <div class="col">
-                    
-                        <p>Select a group to view available time slots</p>
+                    <h2>Callback Availability:</h2>
+                        <p>Select a group to view auditionees who have accepted a callback from the group,
+                            the other group they have accepted a callback from (if applicable), and their availability.
+                        </p>
                         <div class="group-selection">
                             {% for group in groups %}
                             <input type="radio" id="{{group.get_netID()}}" name="selected_group"
