@@ -55,8 +55,8 @@
 
                 </div>
 
-                <div class="col-md-8 col-sm-8">
-                    <div class="col-sm-4">
+                <div class="col">
+                    
                         <p>Select a group to view available time slots</p>
                         <div class="group-selection">
                             {% for group in groups %}
@@ -66,10 +66,9 @@
                             <br>
                             {% endfor %}
                         </div>
-                    </div>
-                    <div class="col-sm-8">
-                        <table id="availabilityCalendar"></table>
-                    </div>
+                    
+                    <table id="availabilityCalendar"></table>
+                    <div class="d-flex justify-content-center" id="spinnerDiv"></div>
                 </div>
             </div>
         </div>
@@ -88,11 +87,13 @@
     <script>
 
         function handleResponse(response) {
+            hideSpinner();
             $('#availabilityCalendar').html(response);
         }
 
         let request = null;
         function callbackAvailability() {
+            showSpinner();
             let groupNetID = $("input[type='radio']:checked").val();
             groupNetID = encodeURIComponent(groupNetID);
             let url = "/showgroupcallbacks?groupNetID=" + groupNetID;
@@ -106,6 +107,17 @@
                     success: handleResponse
                 }
             )
+        }
+
+        function showSpinner() {
+            $('#availabilityCalendar').html("")
+            html = '<div class="spinner-border" role="status">'
+            html += '<span class="sr-only">Loading...</span></div>'
+            $('#spinnerDiv').html(html)
+        }
+
+        function hideSpinner() {
+            $('#spinnerDiv').html("")
         }
 
         $(document).ready(function () {
@@ -129,6 +141,8 @@
             callback_input.flatpickr(callback_options);
 
             $('.group-selection input').on('change', callbackAvailability);
+            $('#nassoons').prop('checked', true);
+            callbackAvailability();
         })
     </script>
 

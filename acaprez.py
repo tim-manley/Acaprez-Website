@@ -463,18 +463,17 @@ def show_group_callbacks():
     groupNetID = request.args.get('groupNetID')
     entries = []
     sessiondt = db.get_callback_sessions()
-    for netID in db.get_accepted_callbacks(groupNetID):
+    for netID in db.get_group_accepted_callbacks(groupNetID):
         auditionee = db.get_auditionee(netID)
-        first = auditionee.get_firstname()
-        last = auditionee.get_lastname()
+        name = auditionee.get_firstname() + " " + auditionee.get_lastname()
         year = auditionee.get_class_year()
         voice = auditionee.get_voice_part()
         alt_group = ''
-        for group in db.get_accepted_callbacks():
-            if group != groupNetID:
-                alt_group = group
+        for group in db.get_accepted_callbacks(netID):
+            if group.get_netID() != groupNetID:
+                alt_group = group.get_name()
 
-        entry = [first, last, year, voice, alt_group]
+        entry = [name, year, voice, alt_group]
         availability = db.get_callback_availability(netID)
         for time in sessiondt:
             if time in availability:
@@ -485,11 +484,12 @@ def show_group_callbacks():
     
     sessions = []
     for sesh in sessiondt:
-        time = sesh.strftime('%Y-%m-%d %H:%I %p')
+        time = sesh.strftime("%b %-d %-I:%M %p")
         sessions.append(time)
+
     html = render_template('availabilityCalendar.html',
                             sessions=sessions,
-                            entries=entries)
+                            entries=entries, group=groupNetID)
     response = make_response(html)
     return response
 
