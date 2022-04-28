@@ -5,7 +5,8 @@
     <title>Acaprez</title>
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         rel="stylesheet">
-    <link href=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/dataTables.bootstrap.min.css rel=stylesheet>
+    <link href=https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/dataTables.bootstrap.min.css
+        rel=stylesheet>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
@@ -15,9 +16,10 @@
 
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
-        <h1 id="welcome">{{"Welcome, group leader of " ~ netID ~ " :)"}}</h1>
+        <h1 id="welcome">{{"Welcome, group leader of " ~ group_name}}</h1>
 
         <br>
+        <div id="alertPlaceholder"></div>
         <div class="row">
             <div class="col-sm-6">
                 <h3>Pending Auditions:</h3>
@@ -44,11 +46,11 @@
                 </table>
                 <br>
                 <div class="row">
-                <div class="col-6">
-                <h3>Callback Offers:</h3>
-                </div>
+                    <div class="col-6">
+                        <h3>Callback Offers:</h3>
+                    </div>
 
-            </div>
+                </div>
                 <table id="callbacks" class="table table-striped">
                     <tr>
                         <th class="table_header">Auditionee</th>
@@ -63,7 +65,7 @@
                     </tr>
                     {% endfor %}
                 </table>
-                
+
             </div>
 
             <div class="col-sm-6">
@@ -78,14 +80,27 @@
                 </div>
                 <div class="table-wrapper">
                     <table id="audition-slots" class="table table-striped">
-                        <tr class="header">
+                        <tr>
                             <th class="table_header">Auditionee</th>
                             <th class="table_header">Time</th>
+                            <th class="table_header"></th>
                         </tr>
                         {% for audition in times: %}
                         <tr>
-                            <td id="group_name">{{audition.get_auditionee_netID()}}</td>
+                            {% set auditionee = audition.get_auditionee_netID() %}
+                            <td id="group_name">{{auditionee}}</td>
                             <td>{{audition.get_formatted_timeslot()}} </td>
+                            {% if auditionee is none %}
+                            <td>
+                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
+                                    style="float:right">
+                                    Cancel
+                                </button>
+                            </td>
+                            {% else %}
+                            <td>
+                            </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </table>
@@ -113,14 +128,20 @@
         'use strict';
 
         function reload() {
-            location.reload()
+            if (location.href.includes('#')) {
+                location.href = location.href.split('#')[0] + '#callback';
+                location.reload();
+            }
+            else {
+                location.href = location.href + '#callback';
+                location.reload();
+            }
         }
 
         let request = null;
-        console.log("here")
         function offerCallback() {
             let netID = this.id;
-            let str = "Offer callback to " + netID + "?"
+            let str = "Offer callback to " + netID + "?";
             let confirmed = window.confirm(str);
 
             if (confirmed) {
@@ -129,7 +150,7 @@
                 let url = "/offercallback?netID=" + netID;
 
                 if (request != null) {
-                    request.abort()
+                    request.abort();
                 }
 
                 request = $.ajax(
@@ -142,8 +163,60 @@
             }
         }
 
+        function cancelSuccess() {
+            if (location.href.includes('#')) {
+                location.href = location.href.split('#')[0] + '#cancel';
+                location.reload();
+            }
+            else {
+                location.href = location.href + '#cancel';
+                location.reload();
+            }
+        }
+
+        let cancelRequest = null;
+        function cancelTime() {
+            let url = "canceltime?auditionID=" + this.id;
+            console.log(url);
+            if (cancelRequest != null) cancelRequest.abort();
+
+            cancelRequest = $.ajax(
+                {
+                    type: 'POST',
+                    url: url,
+                    success: cancelSuccess
+                }
+            )
+        }
+
         function setup() {
+            console.log(window.performance.navigation.type);
+            if (window.location.href.includes("added")) {
+                let html = '<div class="alert alert-success fade show" role="alert">';
+                html += 'Successfully added times</div>';
+                $('#alertPlaceholder').html(html);
+                setTimeout(function () {
+                    $('.alert').alert('close');
+                }, 3000);
+            }
+            else if (window.location.href.includes("cancel")) {
+                let html = '<div class="alert alert-success fade show" role="alert">';
+                html += 'Successfully cancelled time</div>';
+                $('#alertPlaceholder').html(html);
+                setTimeout(function () {
+                    $('.alert').alert('close');
+                }, 3000);
+            }
+            else if (window.location.href.includes("#callback")) {
+                let html = '<div class="alert alert-success fade show" role="alert">';
+                html += 'Successfully offered callback</div>';
+                $('#alertPlaceholder').html(html);
+                setTimeout(function () {
+                    $('.alert').alert('close');
+                }, 3000);
+            }
             $('#auditions .btn').on('click', offerCallback);
+            $('#audition-slots .btn-danger').on('click', cancelTime);
         }
 
         $('document').ready(function () {

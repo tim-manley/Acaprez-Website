@@ -95,7 +95,9 @@ def leader():
     pending = db.get_group_pending_auditions(netID) 
     offered = db.get_group_offered_callbacks(netID) 
     times = db.get_group_times(netID)
-    html = render_template('leader.html', netID=netID, pending=pending, 
+    group = db.get_group(netID)
+    group_name = group.get_name()
+    html = render_template('leader.html', group_name=group_name, pending=pending, 
                             offered=offered, times=times)
     response = make_response(html)
     return response
@@ -333,9 +335,19 @@ def addedtimes():
     times = request.form.getlist('times')
     for time in times:
         db.add_audition_time(netID, time)
-    html = render_template('addedtimes.html')
-    response = make_response(html)
-    return response
+    '''html = render_template('addedtimes.html')
+    response = make_response(html)'''
+    return redirect(url_for('leader') + '#added')
+
+#-----------------------------------------------------------------------
+
+@app.route('/canceltime', methods=['POST'])
+def canceltime():
+    netID = auth.authenticate()
+    # Silas do security pls
+    auditionID = request.args.get('auditionID')
+    db.remove_audition_time(auditionID)
+    return redirect(url_for('leader'))
 
 #-----------------------------------------------------------------------
 
