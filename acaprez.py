@@ -168,7 +168,7 @@ def auditionee():
         accepted = db.get_accepted_callbacks(netID)
         num_accepted = len(accepted)
         num_offered = num_accepted + len(callbacks)
-        if len(db.get_callback_availability(netID)) is not 0:
+        if len(db.get_callback_availability(netID)) != 0:
             num_offered = 0 # So auditionee cannot sign up for more callback times
 
         html = render_template('auditionee.html', auditions=auditions, profile=profile,
