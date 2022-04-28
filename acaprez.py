@@ -92,13 +92,16 @@ def leader():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    pending = db.get_group_pending_auditions(netID) 
-    offered = db.get_group_offered_callbacks(netID) 
+    pending = db.get_group_pending_auditions(netID)
+    offered = db.get_group_offered_callbacks(netID)
+    for audition in offered:
+        auditionee = db.get_auditionee(audition[0])
+        audition.append(str(auditionee.get_firstname())+' '+str(auditionee.get_lastname()))
     times = db.get_group_times(netID)
     group = db.get_group(netID)
     group_name = group.get_name()
     html = render_template('leader.html', group_name=group_name, pending=pending, 
-                            offered=offered, times=times)
+                            offered=offered, times=times, db=db)
     response = make_response(html)
     return response
 
@@ -111,7 +114,8 @@ def admin():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    html = render_template('admin.html')
+    groups = db.get_groups()
+    html = render_template('admin.html', groups=groups)
     response = make_response(html)
     return response
 
@@ -443,6 +447,54 @@ def show_group_auditions():
     response = make_response(html)
     return response
 
+#-----------------------------------------------------------------------
+
+@app.route('/showgroupcallbacks', methods=['GET'])
+def show_group_callbacks():
+    if request.referrer is None or request.referrer.split('/')[-1] != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    netID = auth.authenticate()
+    if session.get('permissions') != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    # Setup the calendar
+    groupNetID = request.args.get('groupNetID')
+    entries = []
+    sessiondt = db.get_callback_sessions()
+    for netID in db.get_group_accepted_callbacks(groupNetID):
+        auditionee = db.get_auditionee(netID)
+        name = auditionee.get_firstname() + " " + auditionee.get_lastname()
+        year = auditionee.get_class_year()
+        voice = auditionee.get_voice_part()
+        alt_group = ''
+        for group in db.get_accepted_callbacks(netID):
+            if group.get_netID() != groupNetID:
+                alt_group = group.get_name()
+
+        entry = [name, year, voice, alt_group]
+        availability = db.get_callback_availability(netID)
+        for time in sessiondt:
+            if time in availability:
+                entry.append('Available')
+            else:
+                entry.append('')
+        entries.append(entry) 
+    
+    sessions = []
+    for sesh in sessiondt:
+        time = sesh.strftime("%b %-d %-I:%M %p")
+        sessions.append(time)
+
+    html = render_template('availabilityCalendar.html',
+                            sessions=sessions,
+                            entries=entries, group=groupNetID)
+    response = make_response(html)
+    return response
 
 #-----------------------------------------------------------------------
 

@@ -16,7 +16,6 @@ class Audition:
         s = str(self._auditionID)
         s += " " + str(self._auditionee_netID)
         s += " " + str(self._group_netID)
-        s += " " + str(self._group)
         s += " " + str(self._timeslot)
         return s
 
@@ -47,6 +46,16 @@ class Audition:
         '''
         return self._auditionee_netID
 
+    def get_auditionee_name(self):
+        '''
+        Returns auditionee full name of given audition
+        '''
+        if self._auditionee_netID is None:
+            return None
+
+        auditionee = db.get_auditionee(self._auditionee_netID)
+        return str(auditionee.get_firstname()+' '+auditionee.get_lastname())
+
     def get_group(self):
         '''
         Returns group netID for a given audition
@@ -75,7 +84,7 @@ class Audition:
         # original: 2022-09-01 17:15:00
         # goal: Sept 1 - 8:30pm
 
-        return self._timeslot.strftime("%b %-d - %-I:%M %p")
+        return self._timeslot.strftime("%b %d - %I:%M %p")
 
     def set_group(self):
         self._group = db.get_group(self._group_netID)
