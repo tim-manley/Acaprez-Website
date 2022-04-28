@@ -92,13 +92,16 @@ def leader():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    pending = db.get_group_pending_auditions(netID) 
-    offered = db.get_group_offered_callbacks(netID) 
+    pending = db.get_group_pending_auditions(netID)
+    offered = db.get_group_offered_callbacks(netID)
+    for audition in offered:
+        auditionee = db.get_auditionee(audition[0])
+        audition.append(str(auditionee.get_firstname())+' '+str(auditionee.get_lastname()))
     times = db.get_group_times(netID)
     group = db.get_group(netID)
     group_name = group.get_name()
     html = render_template('leader.html', group_name=group_name, pending=pending, 
-                            offered=offered, times=times)
+                            offered=offered, times=times, db=db)
     response = make_response(html)
     return response
 

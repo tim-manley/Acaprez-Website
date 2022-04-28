@@ -243,7 +243,7 @@ def get_group_offered_callbacks(group_netID: str):
         group_netID: The group's netID
 
         Returns:
-            A list of tuples of the form (name, acceptance)
+            A list of lists of the form [name, acceptance]
     '''
     if not isinstance(group_netID, str):
         raise ValueError("group_netID must be a string")
@@ -263,9 +263,9 @@ def get_group_offered_callbacks(group_netID: str):
             row = cur.fetchone()
             while row is not None:
                 if row[2] is True:
-                    auditions.append((row[0], "Accepted"))
+                    auditions.append([row[0], "Accepted"])
                 else:
-                    auditions.append((row[0], "Pending"))
+                    auditions.append([row[0], "Pending"])
                 row = cur.fetchone()
     
     return auditions
