@@ -189,8 +189,24 @@
             )
         }
 
+        function removeHash() {
+            var scrollV, scrollH, loc = window.location;
+            if ("pushState" in history)
+                history.pushState("", document.title, loc.pathname + loc.search);
+            else {
+                // Prevent scrolling by storing the page's current scroll offset
+                scrollV = document.body.scrollTop;
+                scrollH = document.body.scrollLeft;
+
+                loc.hash = "";
+
+                // Restore the scroll offset, should be flicker free
+                document.body.scrollTop = scrollV;
+                document.body.scrollLeft = scrollH;
+            }
+        }
+
         function setup() {
-            console.log(window.performance.navigation.type);
             if (window.location.href.includes("added")) {
                 let html = '<div class="alert alert-success fade show" role="alert">';
                 html += 'Successfully added times</div>';
@@ -198,6 +214,7 @@
                 setTimeout(function () {
                     $('.alert').alert('close');
                 }, 3000);
+                removeHash();
             }
             else if (window.location.href.includes("cancel")) {
                 let html = '<div class="alert alert-success fade show" role="alert">';
@@ -206,6 +223,7 @@
                 setTimeout(function () {
                     $('.alert').alert('close');
                 }, 3000);
+                removeHash();
             }
             else if (window.location.href.includes("#callback")) {
                 let html = '<div class="alert alert-success fade show" role="alert">';
@@ -214,6 +232,7 @@
                 setTimeout(function () {
                     $('.alert').alert('close');
                 }, 3000);
+                removeHash();
             }
             $('#auditions .btn').on('click', offerCallback);
             $('#audition-slots .btn-danger').on('click', cancelTime);
