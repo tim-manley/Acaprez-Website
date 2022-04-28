@@ -502,6 +502,35 @@ def add_audition_time(group_netID: str, time_slot: str):
 
 #-----------------------------------------------------------------------
 
+def remove_audition_time(auditionID: int):
+    '''
+    Given a group and a timeslot, removes the audition time from the
+    database.
+
+        Parameters:
+            group_netID: The group's netID
+            time_slot: The timeslot
+
+        Returns:
+            Nothing
+    '''
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            # Check audition time exists
+            cur.execute('''SELECT * FROM auditionTimes
+                           WHERE auditionID=%s;''', 
+                           (auditionID,))
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError("No such audition time exists")
+            # Remove audition time from database
+            cur.execute('''DELETE FROM auditionTimes
+                           WHERE auditionID=%s;''', 
+                           (auditionID,))
+
+#-----------------------------------------------------------------------
+
 def add_audition_day(day: str):
     '''
     Given a day, adds it to the auditiondays table

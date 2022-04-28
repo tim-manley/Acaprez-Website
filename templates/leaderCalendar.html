@@ -1,6 +1,5 @@
 <tbody>
     <tr id="headers">
-        <th class="table_header">Time</th>
         {% for day in fdays %}
         <th class="table_header">{{day}}</th>
         {% endfor %}
@@ -8,18 +7,17 @@
     {% for i in range(17,22) %}
     {% for j in range(0, 60, 15) %}
     <tr>
-        <td>{{i}}:{{'%02d' % j}}</td>
         {% for day in days%}
         {% set time_slot = '%s %02d:%02d:00' % (day, i, j) %}
         {% if time_slot not in scheduled %}
-        <td class="table-default" onmousedown="md(this)" onmouseover="mo(this)" id="{{time_slot}}">
+        <td class="table-default text-center" onmousedown="md(this)" onmouseover="mo(this)" id="{{time_slot}}">
             <label>
                 {% set time = '%02d:%02d' % (i, j) %}
                 <input type="checkbox" name="times" value="{{time_slot}}" hidden> {{time}}
             </label>
         </td>
         {% else %}
-        <td>Already scheduled</td>
+        <td class="table-secondary text-center">Already scheduled</td>
         {% endif %}
         {% endfor %}
     </tr>
