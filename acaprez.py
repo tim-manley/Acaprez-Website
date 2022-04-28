@@ -123,16 +123,16 @@ def reset():
         response = make_response(html)
         return response
     is_open = request.form.getlist('isopen') # Get toggle switch state
-    dates = request.form['dates'].split('; ') # Parse dates input
+    dates = request.form['dates'].split(', ') # Parse dates input
     dates.sort() # Sort for formatting
-    callback_dates = request.form['callbackdates'].split('; ') # Parse dates input
+    callback_dates = request.form['callbackdates'].split(', ') # Parse dates input
     callback_dates.sort()
     reset_database()
     if dates[0] != "": # Check whether any dates have been input
         for date in dates:
             db.add_audition_day(date)
         for date in callback_dates:
-            db.add_callback_day(date)
+            db.add_callback_session(date)
     if len(is_open) > 0: # Check if the toggle is selected
         open = True
     else:
@@ -244,7 +244,7 @@ def callbackavailability():
         return response
 
     # Setup the calendar
-    dates = db.get_callback_dates()
+    dates = db.get_callback_sessions()
     fdays =[]
     days = []
     for date in dates:
