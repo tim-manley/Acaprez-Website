@@ -21,10 +21,11 @@
     <div class="bootstrap-iso">
         <div class="container-fluid" style="margin:0px 10px 0px 10px">
             <div class="row">
-                <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="col-md-4 col-sm-4 col-xs-12">
 
                     <!-- Form code begins -->
-                    <form action="reset" method="post" onsubmit="return confirm('Are you sure you want to reset the site?');">
+                    <form action="reset" method="post"
+                        onsubmit="return confirm('Are you sure you want to reset the site?');">
                         <h2>Select audition dates:</h2>
                         <div id='datepicker' class="form-group input-group date">
                             <!-- Date input -->
@@ -44,51 +45,106 @@
                                 <li>clear all auditionee profiles</li>
                                 <li>clear all auditions</li>
                             </ul>
-                            <p>This action cannot be undone. This should only be done at the beginning of an audition cycle.</p>
-                            <button class="btn btn-danger" data-confirm="Are you sure you want to reset?" id="reset-btn" name="reset" type="submit">Reset Site</button>
+                            <p>This action cannot be undone. This should only be done at the beginning of an audition
+                                cycle.</p>
+                            <button class="btn btn-danger" data-confirm="Are you sure you want to reset?" id="reset-btn"
+                                name="reset" type="submit">Reset Site</button>
                         </div>
                     </form>
                     <!-- Form code ends -->
 
                 </div>
+
+                <div class="col">
+                    
+                        <p>Select a group to view available time slots</p>
+                        <div class="group-selection">
+                            {% for group in groups %}
+                            <input type="radio" id="{{group.get_netID()}}" name="selected_group"
+                                value="{{group.get_netID()}}">
+                            <label for="{{group.get_netID()}}">{{group.get_name()}}</label>
+                            <br>
+                            {% endfor %}
+                        </div>
+                    
+                    <table id="availabilityCalendar"></table>
+                    <div class="d-flex justify-content-center" id="spinnerDiv"></div>
+                </div>
             </div>
         </div>
     </div>
 
-        <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+    </script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
         </script>
-        <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.js">
-        </script>
-        <script src="static/jquery.domajax.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.js">
+    </script>
+    <script src="static/jquery.domajax.js"></script>
 
 
-        <script>
+    <script>
 
-            $(document).ready(function () {
-                var date_input = $('#dates'); //our date input has the name "date"
-                var callback_input = $('#callbackdates');
-                var audition_options = {
-                    enableTime: false,
-                    altInput: true,
-                    dateFormat: 'Y-m-d',
-                    altFormat: 'F, d Y',
-                    mode: 'multiple'
-                };
-                var callback_options = {
-                    enableTime: true,
-                    altInput: true,
-                    dateFormat: 'Y-m-d H:i',
-                    altFormat: 'F, d Y h:i K',
-                    mode: 'multiple'
+        function handleResponse(response) {
+            hideSpinner();
+            $('#availabilityCalendar').html(response);
+        }
+
+        let request = null;
+        function callbackAvailability() {
+            showSpinner();
+            let groupNetID = $("input[type='radio']:checked").val();
+            groupNetID = encodeURIComponent(groupNetID);
+            let url = "/showgroupcallbacks?groupNetID=" + groupNetID;
+
+            if (request != null) request.abort();
+
+            request = $.ajax(
+                {
+                    type: 'GET',
+                    url: url,
+                    success: handleResponse
                 }
-                date_input.flatpickr(audition_options);
-                callback_input.flatpickr(callback_options)
+            )
+        }
 
-            })
-        </script>
+        function showSpinner() {
+            $('#availabilityCalendar').html("")
+            html = '<div class="spinner-border" role="status">'
+            html += '<span class="sr-only">Loading...</span></div>'
+            $('#spinnerDiv').html(html)
+        }
+
+        function hideSpinner() {
+            $('#spinnerDiv').html("")
+        }
+
+        $(document).ready(function () {
+            var date_input = $('#dates'); //our date input has the name "date"
+            var callback_input = $('#callbackdates');
+            var audition_options = {
+                enableTime: false,
+                altInput: true,
+                dateFormat: 'Y-m-d',
+                altFormat: 'F, d Y',
+                mode: 'multiple'
+            };
+            var callback_options = {
+                enableTime: true,
+                altInput: true,
+                dateFormat: 'Y-m-d H:i',
+                altFormat: 'F, d Y h:i K',
+                mode: 'multiple'
+            }
+            date_input.flatpickr(audition_options);
+            callback_input.flatpickr(callback_options);
+
+            $('.group-selection input').on('change', callbackAvailability);
+            $('#nassoons').prop('checked', true);
+            callbackAvailability();
+        })
+    </script>
 
 </body>
 
