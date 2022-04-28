@@ -95,7 +95,7 @@
         function callbackAvailability() {
             let groupNetID = $("input[type='radio']:checked").val();
             groupNetID = encodeURIComponent(groupNetID);
-            let url = "/callbackavailability" + groupNetID;
+            let url = "/showgroupcallbacks?groupNetID=" + groupNetID;
 
             if (request != null) request.abort();
 
@@ -128,7 +128,7 @@
             date_input.flatpickr(audition_options);
             callback_input.flatpickr(callback_options);
 
-            ('.group-selection input').on('change', callbackAvailability);
+            $('.group-selection input').on('change', callbackAvailability);
         })
     </script>
 

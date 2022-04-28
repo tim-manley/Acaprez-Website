@@ -484,8 +484,8 @@ def show_group_callbacks():
         entries.append(entry) 
     
     sessions = []
-    for session in sessiondt:
-        time = session.strftime('%Y-%m-%d %H:%I %p')
+    for sesh in sessiondt:
+        time = sesh.strftime('%Y-%m-%d %H:%I %p')
         sessions.append(time)
     html = render_template('availabilityCalendar.html',
                             sessions=sessions,
