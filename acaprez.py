@@ -111,7 +111,8 @@ def admin():
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
-    html = render_template('admin.html')
+    groups = db.get_groups()
+    html = render_template('admin.html', groups=groups)
     response = make_response(html)
     return response
 
