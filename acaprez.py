@@ -156,11 +156,6 @@ def auditionee():
     for audition in auditions:
         audition.set_group()
    
-    callbacks = db.get_pending_callbacks(netID) 
-    accepted = db.get_accepted_callbacks(netID)
-    num_accepted = len(accepted)
-    num_offered = num_accepted + len(callbacks)
-
     profile = db.get_auditionee(netID)
     if profile is None:
         welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
@@ -169,9 +164,16 @@ def auditionee():
                                 year='', room='', voice='', phone=''
         )
     else:
+        callbacks = db.get_pending_callbacks(netID) 
+        accepted = db.get_accepted_callbacks(netID)
+        num_accepted = len(accepted)
+        num_offered = num_accepted + len(callbacks)
+        if len(db.get_callback_availability(netID)) is not 0:
+            num_offered = 0 # So auditionee cannot sign up for more callback times
+
         html = render_template('auditionee.html', auditions=auditions, profile=profile,
-                                callbacks=callbacks, accepted=accepted, num_accepted=num_accepted,
-                                num_offered=num_offered)
+                                    callbacks=callbacks, accepted=accepted, num_accepted=num_accepted,
+                                    num_offered=num_offered)
     response = make_response(html)
     return response
 
@@ -248,8 +250,8 @@ def callbackavailability():
     fdays =[]
     days = []
     for date in dates:
-        fday = date.strftime("%b %d")
-        day = date.strftime("%Y-%m-%d")
+        fday = date.strftime("%b %d, %H:%M")
+        day = date.strftime("%Y-%m-%d %H:%M:%S")
         fdays.append(fday)
         days.append(day)
 
