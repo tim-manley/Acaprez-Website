@@ -8,6 +8,8 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
     <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/themes/dark.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cal.css') }}">
 
@@ -21,12 +23,6 @@
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-xs-12">
 
-                    <h2>Current status:</h2>
-                    <p>Some logic determining and displaying if the website is open,
-                        and the dates for auditions
-                    </p>
-
-
                     <!-- Form code begins -->
                     <form action="reset" method="post">
                         <h2>Open/close the website:</h2>
@@ -38,12 +34,12 @@
                         <h2>Select audition dates:</h2>
                         <div id='datepicker' class="form-group input-group date">
                             <!-- Date input -->
-                            <input class="form-control" id="date" name="dates" type="text" />
+                            <input class="form-control" id="dates" name="dates" type="text" />
                         </div>
                         <h2>Select callback date(s):</h2>
                         <div id='callbackpicker' class="form-group input-group date">
                             <!-- Date input -->
-                            <input class="form-control" id="date" name="callbackdates" type="text" />
+                            <input class="form-control" id="callbackdates" name="callbackdates" type="text" />
                         </div>
                         <br>
                         <h2>Reset website</h2>
@@ -57,29 +53,37 @@
                 </div>
             </div>
         </div>
+    </div>
 
         <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
         </script>
         <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js">
-            </script>
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.js">
+        </script>
 
 
         <script>
             $(document).ready(function () {
-                var date_input = $('input[name="dates"]'); //our date input has the name "date"
-                var callback_input = $('input[name="callbackdates"]');
-                var container = $('#datepicker');
-                var options = {
-                    format: 'yyyy-mm-dd',
-                    container: container,
-                    startView: 2,
-                    multidate: true,
-                    multidateSeparator: "; ",
-                    clearBtn: true
+                var date_input = $('#dates'); //our date input has the name "date"
+                var callback_input = $('#callbackdates');
+                var audition_options = {
+                    enableTime: false,
+                    altInput: true,
+                    dateFormat: 'Y-m-d',
+                    altFormat: 'F, d Y',
+                    mode: 'multiple'
                 };
-                date_input.datepicker(options);
-                callback_input.datepicker(options)
+                var callback_options = {
+                    enableTime: true,
+                    altInput: true,
+                    dateFormat: 'Y-m-d H:i',
+                    altFormat: 'F, d Y h:i K',
+                    mode: 'multiple'
+                }
+                date_input.flatpickr(audition_options);
+                callback_input.flatpickr(callback_options)
             })
         </script>
 

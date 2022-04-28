@@ -73,7 +73,7 @@ def create_accessibility(cur):
 #-----------------------------------------------------------------------
 def create_callback_sessions(cur):
     cur.execute('DROP TABLE IF EXISTS callbackSessions')
-    cur.execute('''CREATE TABLE callbackDays
+    cur.execute('''CREATE TABLE callbackSessions
                    (sessionStart timestamp PRIMARY KEY);''')
 
 def create_callback_offers(cur):

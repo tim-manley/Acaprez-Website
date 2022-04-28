@@ -78,31 +78,33 @@
                             Times</a>
                     </div>
                 </div>
-                <table id="audition-slots" class="table table-striped">
-                    <tr>
-                        <th class="table_header">Auditionee</th>
-                        <th class="table_header">Time</th>
-                        <th class="table_header"></th>
-                    </tr>
-                    {% for audition in times: %}
-                    <tr>
-                        {% set auditionee = audition.get_auditionee_netID() %}
-                        <td id="group_name">{{auditionee}}</td>
-                        <td>{{audition.get_formatted_timeslot()}} </td>
-                        {% if auditionee is none %}
-                        <td>
-                            <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
-                                style="float:right">
-                                Cancel
-                            </button>
-                        </td>
-                        {% else %}
-                        <td>
-                        </td>
-                        {% endif %}
-                    </tr>
-                    {% endfor %}
-                </table>
+                <div class="table-wrapper">
+                    <table id="audition-slots" class="table table-striped">
+                        <tr>
+                            <th class="table_header">Auditionee</th>
+                            <th class="table_header">Time</th>
+                            <th class="table_header"></th>
+                        </tr>
+                        {% for audition in times: %}
+                        <tr>
+                            {% set auditionee = audition.get_auditionee_netID() %}
+                            <td id="group_name">{{auditionee}}</td>
+                            <td>{{audition.get_formatted_timeslot()}} </td>
+                            {% if auditionee is none %}
+                            <td>
+                                <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
+                                    style="float:right">
+                                    Cancel
+                                </button>
+                            </td>
+                            {% else %}
+                            <td>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             </div>
 
         </div>

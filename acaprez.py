@@ -125,16 +125,16 @@ def reset():
         response = make_response(html)
         return response
     is_open = request.form.getlist('isopen') # Get toggle switch state
-    dates = request.form['dates'].split('; ') # Parse dates input
+    dates = request.form['dates'].split(', ') # Parse dates input
     dates.sort() # Sort for formatting
-    callback_dates = request.form['callbackdates'].split('; ') # Parse dates input
+    callback_dates = request.form['callbackdates'].split(', ') # Parse dates input
     callback_dates.sort()
     reset_database()
     if dates[0] != "": # Check whether any dates have been input
         for date in dates:
             db.add_audition_day(date)
         for date in callback_dates:
-            db.add_callback_day(date)
+            db.add_callback_session(date)
     if len(is_open) > 0: # Check if the toggle is selected
         open = True
     else:
@@ -158,11 +158,6 @@ def auditionee():
     for audition in auditions:
         audition.set_group()
    
-    callbacks = db.get_pending_callbacks(netID) 
-    accepted = db.get_accepted_callbacks(netID)
-    num_accepted = len(accepted)
-    num_offered = num_accepted + len(callbacks)
-
     profile = db.get_auditionee(netID)
     if profile is None:
         welcome = 'Welcome, ' + str(netID) + '! Please create your profile.'
@@ -171,9 +166,16 @@ def auditionee():
                                 year='', room='', voice='', phone=''
         )
     else:
+        callbacks = db.get_pending_callbacks(netID) 
+        accepted = db.get_accepted_callbacks(netID)
+        num_accepted = len(accepted)
+        num_offered = num_accepted + len(callbacks)
+        if len(db.get_callback_availability(netID)) != 0:
+            num_offered = 0 # So auditionee cannot sign up for more callback times
+
         html = render_template('auditionee.html', auditions=auditions, profile=profile,
-                                callbacks=callbacks, accepted=accepted, num_accepted=num_accepted,
-                                num_offered=num_offered)
+                                    callbacks=callbacks, accepted=accepted, num_accepted=num_accepted,
+                                    num_offered=num_offered)
     response = make_response(html)
     return response
 
@@ -246,12 +248,12 @@ def callbackavailability():
         return response
 
     # Setup the calendar
-    dates = db.get_callback_dates()
+    dates = db.get_callback_sessions()
     fdays =[]
     days = []
     for date in dates:
-        fday = date.strftime("%b %d")
-        day = date.strftime("%Y-%m-%d")
+        fday = date.strftime("%b %-d, %-I:%M %p")
+        day = date.strftime("%Y-%m-%d %H:%M:%S")
         fdays.append(fday)
         days.append(day)
 

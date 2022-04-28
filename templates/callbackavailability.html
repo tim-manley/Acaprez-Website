@@ -15,27 +15,29 @@
 <body>
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <div class="row">
-            <div class="col-sm-10">
-                <h2>Add Callback Availability: </h2>
+                <h2>Add Callback Availability</h2>
+                <hr>
                 <form action="addedcallbacks" method="POST" class="needs-validation" novalidate>
                     <div class="form-group">
-                        <h4>Select all times you would like to add: </h4>
-                        <table id="calendar">
-                            {% include 'leaderCalendar.html' %}
-                        </table>
+                        <h4>Select all times you would like to add.</h4>
+                        <h5>Be warned, you can only submit these times once!</h5>
+                        {% for fday in fdays%}
+                        <td>
+                            <label>
+                                <input type="checkbox" name="times" value="{{days[loop.index0]}}"> {{fday}}
+                            </label>
+                        </td>
+                        <br>
+                        {% endfor %}
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="auditionee" class="btn btn-warning" role="button">Cancel</a>
+
                 </form>
 
-            </div>
 
-
-            <div class="col-sm-2">
-                <br>
-                <br>
-                <br>
-                <a href="auditionee" class="btn btn-warning" role="button" style="width:100%;">Cancel</a>
-            </div>
+           
+               
         </div>
 
 
