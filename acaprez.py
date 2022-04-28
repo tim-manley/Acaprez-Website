@@ -98,8 +98,6 @@ def leader():
         auditionee = db.get_auditionee(audition[0])
         audition.append(str(auditionee.get_firstname())+' '+str(auditionee.get_lastname()))
     times = db.get_group_times(netID)
-    for audition in times:
-        print(audition)
     group = db.get_group(netID)
     group_name = group.get_name()
     html = render_template('leader.html', group_name=group_name, pending=pending, 
