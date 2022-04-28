@@ -913,6 +913,39 @@ def accept_callback(group_netID: str, auditionee_netID: str):
                            AND auditioneeNetID=%s;''',
                            (group_netID, auditionee_netID))
 
+
+#-----------------------------------------------------------------------
+
+def get_accepted_callbacks(netID: str) -> List[Group]:
+    '''
+    Given a user's netid, returns a list of all the groups whose
+    callbacks they have been offered but HAVE accepted.
+
+        Parameters:
+            netID: The netID of the auditionee
+
+        Returns:
+            A list of group objects. Empty list if no unnaccepted 
+            callbacks.
+    '''
+    if not isinstance(netID, str):
+        raise ValueError("netID should be a string")
+
+    groups = []
+    with connect(host=HOST, database=DATABASE,
+                 user=USER, password=PSWD) as con:
+        with con.cursor() as cur:
+            cur.execute('''SELECT * FROM callbackOffers
+                           WHERE auditioneeNetID=%s
+                           AND accepted=TRUE;''',
+                           (netID,))
+            row = cur.fetchone()
+            while row is not None:
+                group = get_group(row[1])
+                groups.append(group)
+                row = cur.fetchone()
+            return groups
+
 #-----------------------------------------------------------------------
 
 def get_pending_callbacks(netID: str) -> List[Group]:

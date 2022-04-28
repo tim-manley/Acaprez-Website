@@ -443,6 +443,54 @@ def show_group_auditions():
     response = make_response(html)
     return response
 
+#-----------------------------------------------------------------------
+
+@app.route('/showgroupcallbacks', methods=['GET'])
+def show_group_callbacks():
+    if request.referrer is None or request.referrer.split('/')[-1] != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    netID = auth.authenticate()
+    if session.get('permissions') != 'admin':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
+    # Setup the calendar
+    groupNetID = request.args.get('groupNetID')
+    entries = []
+    sessiondt = db.get_callback_sessions()
+    for netID in db.get_accepted_callbacks(groupNetID):
+        auditionee = db.get_auditionee(netID)
+        first = auditionee.get_firstname()
+        last = auditionee.get_lastname()
+        year = auditionee.get_class_year()
+        voice = auditionee.get_voice_part()
+        alt_group = ''
+        for group in db.get_accepted_callbacks():
+            if group != groupNetID:
+                alt_group = group
+
+        entry = [first, last, year, voice, alt_group]
+        availability = db.get_callback_availability(netID)
+        for time in sessiondt:
+            if time in availability:
+                entry.append('Available')
+            else:
+                entry.append('')
+        entries.append(entry) 
+    
+    sessions = []
+    for session in sessiondt:
+        time = session.strftime('%Y-%m-%d %H:%I %p')
+        sessions.append(time)
+    html = render_template('availabilityCalendar.html',
+                            sessions=sessions,
+                            entries=entries)
+    response = make_response(html)
+    return response
 
 #-----------------------------------------------------------------------
 
