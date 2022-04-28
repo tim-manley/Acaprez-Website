@@ -16,7 +16,6 @@ class Audition:
         s = str(self._auditionID)
         s += " " + str(self._auditionee_netID)
         s += " " + str(self._group_netID)
-        s += " " + str(self._group)
         s += " " + str(self._timeslot)
         return s
 
@@ -46,6 +45,16 @@ class Audition:
         Returns auditionee netID of given audition
         '''
         return self._auditionee_netID
+
+    def get_auditionee_name(self):
+        '''
+        Returns auditionee full name of given audition
+        '''
+        if self._auditionee_netID is None:
+            return None
+
+        auditionee = db.get_auditionee(self._auditionee_netID)
+        return str(auditionee.get_firstname()+' '+auditionee.get_lastname())
 
     def get_group(self):
         '''

@@ -32,7 +32,7 @@
                     {% for audition in pending: %}
                     <tr>
                         <td id="group_name"><a
-                                href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}">{{audition.get_auditionee_netID()}}</a>
+                                href="auditioneeInfo?netID={{audition.get_auditionee_netID()}}">{{audition.get_auditionee_name()}}</a>
                         </td>
                         <td>{{audition.get_formatted_timeslot()}} </td>
                         <td>
@@ -59,7 +59,7 @@
                     {% for audition in offered: %}
                     <tr>
                         <td id="netID"><a href="auditioneeInfo?netID={{audition[0]}}"
-                                target="_blank">{{audition[0]}}</a></td>
+                                target="_blank">{{audition[2]}}</a></td>
                         <td>{{audition[1]}}</td>
 
                     </tr>
@@ -81,15 +81,17 @@
                 <div class="table-wrapper">
                     <table id="audition-slots" class="table table-striped">
                         <tr>
-                            <th class="table_header">Auditionee</th>
+                            <th class="table_header">NetID</th>
+                            <th class="table_header">Name</th>
                             <th class="table_header">Time</th>
                             <th class="table_header"></th>
                         </tr>
-                        {% for audition in times: %}
+                        {% for audition in times %}
                         <tr>
                             {% set auditionee = audition.get_auditionee_netID() %}
                             <td id="group_name">{{auditionee}}</td>
-                            <td>{{audition.get_formatted_timeslot()}} </td>
+                            <td>{{audition.get_auditionee_name()}}</td>
+                            <td>{{audition.get_formatted_timeslot()}}</td>
                             {% if auditionee is none %}
                             <td>
                                 <button id="{{audition.get_auditionID()}}" type="button" class="btn btn-danger"
