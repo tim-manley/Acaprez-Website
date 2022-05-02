@@ -29,35 +29,40 @@
     <div id="container-fluid" style="margin: 0px 15px 0px 15px">
         <h1 id="welcome">{{instruction}}</h1>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-md-4">
                 <form action="/confirmprofile" method="POST" class="needs-validation" novalidate>
                     <div class="form-group">
                         <label for="firstname">Preferred First Name:</label>
-                        <input type="text" class="form-control" value="{{firstname}}" id="firstname" name="firstname" required>
+                        <input type="text" class="form-control" value="{{firstname}}" id="firstname" name="firstname" pattern="[a-zA-Z -]{0,49}" required>
+                        <div class="invalid-feedback">Must be less than 50 characters. Only letters, spaces, and - characters permitted.</div>
                     </div>
                     <div class="form-group">
                         <label for="lastname">Preferred Last Name:</label>
-                        <input type="text" class="form-control" value="{{lastname}}" id="lastname" name="lastname" required>
+                        <input type="text" class="form-control" value="{{lastname}}" id="lastname" name="lastname" pattern="[a-zA-Z -]{0,49}" required>
+                        <div class="invalid-feedback">Must be less than 50 characters. Only letters, spaces, and - characters permitted.</div>
                     </div>
                     <!--- Some of these are going to need to be auto-populated, like 
                     res college, class year, but i'm including them as things 
                     for them to fill for now-->
                     <div class="form-group">
                         <label for="year">Class Year:</label>
-                        <input type="number" min = '2022' class="form-control" value="{{year}}" id="year" name="year" required>
+                        <input type="number" min = '2022'  max='2100' class="form-control" value="{{year}}" id="year" name="year" required>
                         <div class="invalid-feedback">Must be a number, 2022 or later</div>
                     </div>
                     <div class="form-group">
                         <label for="dorm">Dorm Room:</label>
-                        <input type="text" class="form-control" value="{{dorm}}" id="dorm" name="dorm" required>
+                        <span style="font-size:75%;"><em>This information is used for callbacks</em></span>
+                        <input type="text" class="form-control" value="{{dorm}}" id="dorm" name="dorm" pattern="[a-zA-Z0-9- ]{0,49}" required>
+                        <div class="invalid-feedback">Must be less than 50 characters. Only letters, numbers, spaces, and - characters permitted.</div>
                     </div>
                     <div class="form-group">
                         <label for="voice">Voice Part (optional):</label>
-                        <input type="text" class="form-control" value="{{voice}}" name="voice" id="voice">
+                        <input type="text" class="form-control" value="{{voice}}" name="voice" id="voice" pattern="[a-zA-Z0-9I ]{0,49}">
+                        <div class="invalid-feedback">Must be less than 50 characters. Only letters, numbers, spaces, and - characters permitted.</div>
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone Number (optional):</label>
-                        <input id="phone" class="form-control" name="phone" value="{{phone}}" type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"  placeholder="123-456-7890">
+                        <input id="phone" class="form-control" name="phone" value="{{phone}}" type="tel" pattern="[0-9]{3}[-]?[0-9]{3}[-]?[0-9]{4}"  placeholder="123-456-7890">
                         <div class="invalid-feedback">Must be a phone number of the type "123-456-7890"</div>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
