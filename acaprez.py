@@ -342,8 +342,12 @@ def addedtimes():
 
 @app.route('/canceltime', methods=['POST'])
 def canceltime():
-    netID = auth.authenticate()
-    # Silas do security pls
+    _ = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
     auditionID = request.args.get('auditionID')
     db.remove_audition_time(auditionID)
     return redirect(url_for('leader'))
@@ -354,9 +358,11 @@ def canceltime():
 def confirmprofile():
     netID = auth.authenticate()
     if session.get('permissions') == 'leader' or \
-            request.referrer is None or not \
-            (request.referrer.split('/')[-1] == 'editprofile' or \
-            request.referrer.split('/')[-1] == 'auditionee'):
+        session.get('permissions') == 'admin' or \
+        request.referrer is None or not \
+        (request.referrer.split('/')[-1] == 'editprofile' or \
+        request.referrer.split('/')[-1] == 'auditionee'):
+
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
@@ -415,7 +421,7 @@ def show_group_auditions():
         return response
 
     netID = auth.authenticate()
-    if session.get('permissions') is None:
+    if session.get('permissions') != 'auditionee':
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
@@ -451,7 +457,7 @@ def show_group_callbacks():
         response = make_response(html)
         return response
 
-    netID = auth.authenticate()
+    _ = auth.authenticate()
     if session.get('permissions') != 'admin':
         html = render_template('insufficient.html')
         response = make_response(html)
@@ -570,7 +576,6 @@ def signup_confirmation():
 
 @app.route('/about', methods=['GET'])
 def about():
-    _ = auth.authenticate()
     groups = db.get_groups()
     html = render_template('about.html',
                             groups=groups)
