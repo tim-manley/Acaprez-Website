@@ -455,7 +455,7 @@ def show_group_callbacks():
         response = make_response(html)
         return response
 
-    netID = auth.authenticate()
+    _ = auth.authenticate()
     if session.get('permissions') != 'admin':
         html = render_template('insufficient.html')
         response = make_response(html)
@@ -574,7 +574,6 @@ def signup_confirmation():
 
 @app.route('/about', methods=['GET'])
 def about():
-    _ = auth.authenticate()
     groups = db.get_groups()
     html = render_template('about.html',
                             groups=groups)
