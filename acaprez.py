@@ -347,8 +347,12 @@ def addedtimes():
 
 @app.route('/canceltime', methods=['POST'])
 def canceltime():
-    netID = auth.authenticate()
-    # Silas do security pls
+    _ = auth.authenticate()
+    if session.get('permissions') != 'leader':
+        html = render_template('insufficient.html')
+        response = make_response(html)
+        return response
+
     auditionID = request.args.get('auditionID')
     db.remove_audition_time(auditionID)
     return redirect(url_for('leader'))
@@ -420,7 +424,7 @@ def show_group_auditions():
         return response
 
     netID = auth.authenticate()
-    if session.get('permissions') is None:
+    if session.get('permissions') != 'auditionee':
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
