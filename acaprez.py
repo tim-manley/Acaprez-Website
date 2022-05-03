@@ -75,10 +75,6 @@ def index():
 
 @app.route('/login', methods=['GET'])
 def login():
-    if DEBUG:
-        session['username'] = DEBUG_NETID
-        auth.authenticate()
-
     html = render_template('caslogin.html')
     response = make_response(html)
     return response
