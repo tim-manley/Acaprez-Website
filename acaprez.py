@@ -8,7 +8,6 @@
 from doctest import DocTestRunner
 from math import perm
 from os import remove, environ
-# import environ as envi
 from os import remove
 import sched
 from time import time
