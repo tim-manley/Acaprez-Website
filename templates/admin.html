@@ -31,11 +31,15 @@
                             <!-- Date input -->
                             <input class="form-control" id="dates" name="dates" type="text" />
                         </div>
-                        <h2>Select callback date(s):</h2>
+                        <h2>Select callback timeslot(s):</h2>
+                        <p><em>Note: each input field can only hold one timeslot.</em></p>
                         <div id='callbackpicker' class="form-group input-group date">
                             <!-- Date input -->
-                            <input class="form-control" id="callbackdates" name="callbackdates" type="text" />
+                            <input class="form-control" id="callbackdates" name="callbackdates[]" type="text"/>
                         </div>
+                        <div id="newRow"></div>
+                        <button id="addRow" type="button" class="btn btn-secondary">Add Timeslot</button>
+                        <br>
                         <br>
                         <h2>Reset website</h2>
                         <div class="form-group">
@@ -56,8 +60,10 @@
                 </div>
 
                 <div class="col">
-                    
-                        <p>Select a group to view available time slots</p>
+                    <h2>Callback Availability:</h2>
+                        <p>Select a group to view auditionees who have accepted a callback from the group,
+                            the other group they have accepted a callback from (if applicable), and their availability.
+                        </p>
                         <div class="group-selection">
                             {% for group in groups %}
                             <input type="radio" id="{{group.get_netID()}}" name="selected_group"
@@ -120,6 +126,34 @@
             $('#spinnerDiv').html("")
         }
 
+        // add row
+    $("#addRow").click(function () {
+        var html = '';
+        html += '<div id="inputFormRow">';
+        html += '<div class="input-group mb-3">';
+        html += '<input class="form-control" id="callbackdates" name="callbackdates[]" type="text" />';
+        html += '<div class="input-group-append">';
+        html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+        html += '</div>';
+        html += '</div>';
+        $('#newRow').append(html);
+
+        var callback_options = {
+                enableTime: true,
+                altInput: true,
+                dateFormat: 'Y-m-d H:i',
+                altFormat: 'F, d Y h:i K',
+            }
+        var callback_input = document.getElementsByName('callbackdates[]');
+        callback_input[callback_input.length-1].flatpickr(callback_options);
+        
+    });
+
+    // remove row
+    $(document).on('click', '#removeRow', function () {
+        $(this).closest('#inputFormRow').remove();
+    });
+
         $(document).ready(function () {
             var date_input = $('#dates'); //our date input has the name "date"
             var callback_input = $('#callbackdates');
@@ -135,7 +169,6 @@
                 altInput: true,
                 dateFormat: 'Y-m-d H:i',
                 altFormat: 'F, d Y h:i K',
-                mode: 'multiple'
             }
             date_input.flatpickr(audition_options);
             callback_input.flatpickr(callback_options);
