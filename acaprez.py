@@ -358,9 +358,11 @@ def canceltime():
 def confirmprofile():
     netID = auth.authenticate()
     if session.get('permissions') == 'leader' or \
-            request.referrer is None or not \
-            (request.referrer.split('/')[-1] == 'editprofile' or \
-            request.referrer.split('/')[-1] == 'auditionee'):
+        session.get('permissions') == 'admin' or \
+        request.referrer is None or not \
+        (request.referrer.split('/')[-1] == 'editprofile' or \
+        request.referrer.split('/')[-1] == 'auditionee'):
+
         html = render_template('insufficient.html')
         response = make_response(html)
         return response
