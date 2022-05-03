@@ -8,7 +8,6 @@
 from doctest import DocTestRunner
 from math import perm
 from os import remove, environ
-# import environ as envi
 from os import remove
 import sched
 from time import time
@@ -576,6 +575,7 @@ def signup_confirmation():
 
 @app.route('/about', methods=['GET'])
 def about():
+    _ = auth.authenticate()
     groups = db.get_groups()
     html = render_template('about.html',
                             groups=groups)
