@@ -4,6 +4,7 @@ from operator import add
 from os import times
 from sys import stderr
 from typing import List
+from xmlrpc.client import Boolean
 from psycopg2 import connect
 from group import Group
 from audition import Audition
@@ -154,44 +155,6 @@ def get_group_availability(group_netID: str, aud_netID: str=None) -> List[Auditi
                 row = cur.fetchone()
     
     return available_auditions
-
-#-----------------------------------------------------------------------
-
-def get_group_auditions(group_netID: str) -> List[Audition]:
-    '''
-    Given a group netID, returns a list of all times that HAVE been
-    signed up for by an auditionee.
-
-        Parameters:
-        group_netID: The group's netID
-
-        Returns:
-            A list of Audition objects, in which are contained the 
-            details of each audition that has been signed up for.
-    '''
-    if not isinstance(group_netID, str):
-        raise ValueError("group_netID must be a string")
-    
-    auditions = []
-
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('''
-                        SELECT * FROM auditionTimes
-                        WHERE groupNetID=%s 
-                        AND auditioneeNetID IS NOT NULL
-                        ORDER BY timeSlot
-                        ''',
-                        (group_netID,))
-            
-            row = cur.fetchone()
-            while row is not None:
-                audition = Audition(row[0], row[1], row[2], row[3])
-                auditions.append(audition)
-                row = cur.fetchone()
-    
-    return auditions
 
 #-----------------------------------------------------------------------
 
@@ -554,33 +517,6 @@ def add_audition_day(day: str):
 
 #-----------------------------------------------------------------------
 
-def is_available_audition(group_netID: str, time_slot: str):
-    '''
-        TO-DO
-    '''
-    # Type validation
-    if not isinstance(group_netID, str):
-        raise ValueError("group_netID must be a string")
-    if not isinstance(time_slot, str):
-        raise ValueError("time_slot must be a string")
-
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('''
-                        SELECT * FROM auditionTimes
-                        WHERE groupNetID=%s AND timeSlot=%s
-                        AND auditioneeNetID IS NULL
-                        ''',
-                        (group_netID, time_slot))
-            
-            row = cur.fetchone()
-            if row is not None:
-                return True
-            return False
-
-#-----------------------------------------------------------------------
-
 def _add_user(netID: str, access: str):
     '''
     File private method which adds a user to the users table. Should
@@ -793,7 +729,7 @@ def remove_auditionee(netID: str):
 
 #-----------------------------------------------------------------------
 
-def cancel_audition(audition_id: str):
+def cancel_audition(audition_id: int):
     '''
     Given an audition id, updates the audition so that there is no
     auditionee associated with it, and it is thus available again.
@@ -1133,36 +1069,6 @@ def get_callback_availability(netID: str) -> List[datetime]:
 
 #-----------------------------------------------------------------------
 
-def change_website_access(open: bool):
-    '''
-    Modifies entry in accessibility table to True if website is open
-    and False if website is closed.
-
-        Parameters:
-            open: Whether the website is open or not
-        
-        Returns:
-            Nothing
-    '''
-    if not isinstance(open, bool):
-        raise ValueError("open should be a boolean")
-
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            if open:
-                cur.execute('''
-                            UPDATE accessibility
-                            SET isAccessible=TRUE;
-                            ''')
-            else:
-                cur.execute('''
-                            UPDATE accessibility
-                            SET isAccessible=FALSE;
-                            ''')
-
-#-----------------------------------------------------------------------
-
 def schedule_callback(auditioneeID: str, groupID: str, timeslot: str):
     '''
     Given an auditionee's netID and a group's netID, schedules a
@@ -1222,74 +1128,6 @@ def schedule_callback(auditioneeID: str, groupID: str, timeslot: str):
                            (auditioneeNetID, groupNetID, timeslot)
                            VALUES (%s, %s, %s);''',
                            (auditioneeID, groupID, timeslot))
-
-#-----------------------------------------------------------------------
-
-def _print_all_auditionees():
-    '''
-    For testing, prints all the auditionees in the database
-
-        Parameters:
-            Nothing
-
-        Returns:
-            Nothing
-    '''
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('SELECT * FROM auditionees;')
-            
-            row = cur.fetchone()
-            while row is not None:
-                print(row, flush=True)
-                row = cur.fetchone()
-
-#-----------------------------------------------------------------------
-
-def _print_all_auditions():
-    '''
-    For testing, prints all the auditions scheduled in the database to
-    the terminal.
-
-        Parameters:
-            Nothing
-
-        Returns:
-            Nothing
-    '''
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('SELECT * FROM auditionTimes;')
-            
-            row = cur.fetchone()
-            while row is not None:
-                print(row)
-                row = cur.fetchone()
-
-#-----------------------------------------------------------------------
-
-def _print_all_users():
-    '''
-    For testing, prints all the users scheduled in the database to
-    the terminal.
-
-        Parameters:
-            Nothing
-
-        Returns:
-            Nothing
-    '''
-    with connect(host=HOST, database=DATABASE,
-                 user=USER, password=PSWD) as con:
-        with con.cursor() as cur:
-            cur.execute('SELECT * FROM users;')
-            
-            row = cur.fetchone()
-            while row is not None:
-                print(row)
-                row = cur.fetchone()
 
 #-----------------------------------------------------------------------
 
