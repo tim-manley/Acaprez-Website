@@ -576,6 +576,7 @@ def signup_confirmation():
 
 @app.route('/about', methods=['GET'])
 def about():
+    _ = auth.authenticate()
     groups = db.get_groups()
     html = render_template('about.html',
                             groups=groups)
